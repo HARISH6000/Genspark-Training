@@ -1,0 +1,304 @@
+1
+SELECT title from titles;
+
+2
+SELECT title 
+FROM titles 
+WHERE YEAR(pubdate) = 1389;
+
+3
+SELECT *
+FROM titles 
+WHERE price between 10 and 15;
+
+4
+SELECT *
+FROM titles 
+WHERE price is null;
+
+5
+SELECT *
+FROM titles 
+WHERE title like 'The%';
+
+6
+SELECT *
+FROM titles 
+WHERE title not like '%v%';
+
+7
+SELECT *
+FROM titles 
+order by royalty;
+
+8
+SELECT *
+FROM titles join publishers ON titles.pub_id=publishers.pub_id
+ORDER BY publishers.pub_name DESC, titles.type ASC, titles.price DESC;
+
+9
+SELECT type, AVG(price) as 'Average Price'
+FROM titles
+GROUP BY type;
+
+10
+SELECT DISTINCT type
+FROM titles;
+
+11
+SELECT TOP 2 *
+FROM titles 
+ORDER BY price DESC;
+
+12
+SELECT *
+FROM titles 
+WHERE type LIKE 'business'
+AND price <20
+AND advance >7000;
+
+13
+SELECT pub_id, COUNT(*) as 'count' FROM titles where price between 15 and 25 AND title like '%It%' group by pub_id having count(*) > 2 order by count(*);
+
+14
+SELECT * FROM authors WHERE state like 'CA';
+
+15
+SELECT state, count(*) FROM authors GROUP BY state;
+
+
+-----------------------------
+
+Design the database for a shop which sells products
+Points for consideration
+  1) One product can be supplied by many suppliers
+  2) One supplier can supply many products
+  3) All customers details have to present
+  4) A customer can buy more than one product in every purchase
+  5) Bill for every purchase has to be stored
+  6) These are just details of one shop
+
+
+CustomerStatusMaster
+ Id, StatusMessage(Example - {id-1,StatusMessage-"Available"})
+
+OrderStatusMaster
+ Id, StatusMessage(Example - {id-1,StatusMessage-"Order Confirmed"})
+
+PaymentStatusMaster
+ Id, StatusMessage(Example - {id-1,StatusMessage-"Paid"})
+
+
+PaymentTypeMaster
+ Id, Name, status
+
+StateMaster
+ Id, StateName
+
+CityMaster
+ Id, CityName, StateId
+
+Address
+  Id, Doornumber, Street/Apartment Name, Area, Zip code, CityId
+
+Customer
+ Id, Name, Phone, Email, Address_Id, CustomerStatus_Id
+
+
+Product
+ Id, name, desc
+
+Supplier
+ Id, name, phone, email, Address_Id
+
+Product_Supplier_Details
+ Id, Product_Id, Supplier_Id, price, Available_Quantity
+
+OrderItem
+ Id, Product_Supplier_Id, Quantity
+
+Payment_Datails
+  Id, OrderNumber, PaymentType_Id, Amount, PaymentStatus_Id
+
+
+Order
+ OrderNumber, OrderDate, Customer_Id, Order_Status_Id
+
+OrderDetails
+ Id, OrderNumber, OrderItem_Id
+
+-------------------------------
+
+From mam
+
+Design the database for a shop which sells products
+
+Points for consideration
+
+  1) One product can be supplied by many suppliers
+
+  2) One supplier can supply many products
+
+  3) All customers details have to present
+
+  4) A customer can buy more than one product in every purchase
+
+  5) Bill for every purchase has to be stored
+
+  6) These are just details of one shop
+ 
+categories
+
+id, name, status
+ 
+country
+
+id, name
+ 
+state
+
+id, name, country_id
+ 
+City
+
+id, name, state_id
+ 
+area
+
+zipcode, name, city_id
+ 
+address
+
+id, door_number, addressline1, zipcode
+ 
+supplier
+
+id, name, contact_person, phone, email, address_id, status
+ 
+product
+
+id, Name, unit_price, quantity, description, image
+ 
+product_supplier
+
+transaction_id, product_id, supplier_id, date_of_supply, quantity,
+ 
+Customer
+
+id, Name, Phone, age, address_id
+ 
+order
+
+  order_number, customer_id, Date_of_order, amount, order_status
+ 
+order_details
+
+  id, order_number, product_id, quantity, unit_price
+
+--------------------------------------------------------
+
+DDL
+
+CREATE TABLE Categories (
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Status BIT NOT NULL
+);
+
+
+CREATE TABLE Country (
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE State (
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+	Country_Id INT NOT NULL,
+    FOREIGN KEY (Country_Id) REFERENCES Country(Id)
+);
+
+CREATE TABLE City (
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+	State_Id INT NOT NULL,
+    FOREIGN KEY (State_Id) REFERENCES State(Id)
+);
+
+CREATE TABLE Area (
+    ZipCode VARCHAR(20) PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    City_Id INT NOT NULL,
+    FOREIGN KEY (City_Id) REFERENCES City(Id)
+);
+
+CREATE TABLE Address (
+    Id INT PRIMARY KEY,
+    Door_Number VARCHAR(50),
+    AddressLine1 VARCHAR(255),
+    ZipCode VARCHAR(20) NOT NULL,
+    FOREIGN KEY (ZipCode) REFERENCES Area(ZipCode)
+);
+
+CREATE TABLE Supplier (
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Contact_Person VARCHAR(255),
+    Phone VARCHAR(20),
+    Email VARCHAR(255),
+    Address_Id INT NOT NULL,
+    Status  VARCHAR(255),
+    FOREIGN KEY (Address_Id) REFERENCES Address(Id)
+);
+
+CREATE TABLE Product (
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Unit_Price Decimal(10,2) NOT NULL,
+	Quantity INT NOT NULL,
+	Description TEXT,
+	Image VARCHAR(255)
+);
+
+CREATE TABLE Product_Supplier (
+    Transaction_Id INT PRIMARY KEY,
+    Product_Id INT NOT NULL,
+    Supplier_Id INT NOT NULL,
+    Date_Of_Supply DATE NOT NULL,
+    Quantity INT NOT NULL,
+    FOREIGN KEY (Product_Id) REFERENCES Product(Id),
+    FOREIGN KEY (Supplier_Id) REFERENCES Supplier(Id)
+);
+
+
+CREATE TABLE Customer (
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Phone VARCHAR(15),
+    Age INT,
+    Address_Id INT NOT NULL,
+    FOREIGN KEY (Address_Id) REFERENCES Address(Id)
+);
+
+
+CREATE TABLE Orders (
+    Order_Number INT PRIMARY KEY,
+    Customer_Id INT NOT NULL,
+    Date_Of_Order DATE NOT NULL,
+    Amount DECIMAL(10, 2) NOT NULL,
+    Order_Status VARCHAR(50),
+    FOREIGN KEY (Customer_Id) REFERENCES Customer(Id)
+);
+
+
+CREATE TABLE Order_Details (
+    Id INT PRIMARY KEY,
+    Order_Number INT NOT NULL,
+    Product_Id INT NOT NULL,
+    Quantity INT NOT NULL,
+    Unit_Price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (Order_Number) REFERENCES Orders(Order_Number),
+    FOREIGN KEY (Product_Id) REFERENCES Product(Id)
+);
+
+
