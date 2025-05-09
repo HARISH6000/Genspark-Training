@@ -193,6 +193,47 @@ delete from inventory where inventory_id=24;
 
 -- Write a trigger that ensures a rental can’t be made for a customer who owes more than $50.
 
+select * from customer
+
+create or replace function rent_check_function()
+returns trigger 
+as $$
+declare total numeric;
+begin
+	select sum(f.rental_rate) into total from rental r
+	left join payment p on r.rental_id=p.rental_id
+	join inventory i on r.inventory_id = i.inventory_id
+	join film f on i.film_id = f.film_id  
+	where p.payment_date is null
+	group by r.customer_id
+	having r.customer_id=293;
+	if total > 50 then
+        raise exception 'Customer % owes $%, rental denied.', new.customer_id, total;
+    end if;
+	raise notice 'total: %',total;
+	return new;
+end;
+$$ 
+language plpgsql;
+ 
+create or replace trigger trigger_check_rent_overdue
+before insert on rental
+for each row
+execute function rent_check_function();
+
+insert into public.rental (rental_date, inventory_id, customer_id, staff_id, return_date)
+values (now(), 1, 293, 1, null);
+
+--for seeing all the customers with due
+select r.customer_id, sum(f.rental_rate) as total from rental r
+left join payment p on r.rental_id=p.rental_id
+join inventory i on r.inventory_id = i.inventory_id
+join film f on i.film_id = f.film_id  
+where p.payment_date is null
+group by r.customer_id
+order by total desc;
+
+
 -- Transaction-Based Questions (5)
 -- Write a transaction that inserts a customer and an initial rental in one atomic operation.
 do $$
