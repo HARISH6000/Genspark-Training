@@ -1,0 +1,67 @@
+12 May 2025: Transactions and Concurrency
+
+CREATE TABLE product (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price INT NOT NULL
+);
+
+INSERT INTO product (name, price) VALUES ('Laptop', 120000);
+INSERT INTO product (name, price) VALUES ('Mouse', 500);
+
+SELECT * FROM product
+
+1️ Question:
+In a transaction, if I perform multiple updates and an error happens in the third statement, but I have not used SAVEPOINT, what will happen if I issue a ROLLBACK?
+Will my first two updates persist?
+No, the first two updates wont persist. As there is no save point even the successfull statements will also be reverted.
+
+example
+
+BEGIN;
+UPDATE product SET price = price + 1000 WHERE name = 'Laptop';
+INSERT INTO product (name, price) VALUES ('Keyboard', 75);
+UPDATE product SET price = 'abc' WHERE name = 'Laptop';
+SELECT * FROM product;
+ROLLBACK;
+SELECT * FROM product;
+
+
+
+2️ Question:
+Suppose Transaction A updates Alice’s balance but does not commit. Can Transaction B read the new balance if the isolation level is set to READ COMMITTED?
+Nope, uncommited changes cannot be read in READ COMMITTED isolation level. The changes will be reflected in Transaction B after Transaction A commits.
+
+3️ Question:
+What will happen if two concurrent transactions both execute:
+UPDATE tbl_bank_accounts SET balance = balance - 100 WHERE account_name = 'Alice';
+at the same time? Will one overwrite the other?
+The use of MVCC locks the transactions preventing overwrites. One updates first then the second one executes.
+
+4️ Question:
+If I issue ROLLBACK TO SAVEPOINT after_alice;, will it only undo changes made after the savepoint or everything?
+It will only undo changes made after the savepoint.
+
+5️ Question:
+Which isolation level in PostgreSQL prevents phantom reads?
+Serializable isolation level prevents phantom reads.
+
+6️ Question:
+Can Postgres perform a dirty read (reading uncommitted data from another transaction)?
+Nope. postgres does not support uncommitted reads hence no dirty reads possible
+
+7️ Question:
+If autocommit is ON (default in Postgres), and I execute an UPDATE, is it safe to assume the change is immediately committed?
+Yes, The change is immediately committed.
+
+8️ Question:
+If I do this:
+
+BEGIN;
+UPDATE accounts SET balance = balance - 500 WHERE id = 1;
+-- (No COMMIT yet)
+And from another session, I run:
+
+SELECT balance FROM accounts WHERE id = 1;
+
+The deduction wont reflect on the second session as the transaction have not yet been commited in the first session.
