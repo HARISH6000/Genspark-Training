@@ -1,0 +1,121 @@
+
+Create a stored procedure that inserts rental data on the primary server, and verify that changes replicate to the standby server. Add a logging mechanism to track each operation.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Tasks to Complete:
+-------------------
+1 .Set up streaming replication (if not already done): Primary on port 5432 and Standby on port 5433.
+
+# Initialize the primary database cluster.
+initdb -D "C:/PTemp/Pri"
+
+# Initialize the secondary database cluster.
+initdb -D "C:/PTemp/Sec"
+
+# Start the primary PostgreSQL server.
+pg_ctl -D "C:/PTemp/Pri" -o "-p 5433" -l "C:/PTemp/Pri/logfile" start
+
+# Create the replication role on the primary server.
+psql -p 5433 -d postgres -c "CREATE ROLE replicator WITH REPLICATION LOGIN PASSWORD 'repl_pass';"
+
+# Take a base backup of the primary database for the secondary.
+pg_basebackup -D "C:/PTemp/Sec" -Fp -Xs -P -R -h 127.0.0.1 -U replicator -p 5433
+
+# Start the secondary PostgreSQL server.
+pg_ctl -D "C:/PTemp/Sec" -o "-p 5435" -l "C:/PTemp/Sec/logfile" start
+
+# Connect to the primary server using psql.
+psql -p 5433 -d postgres
+
+# (In another command prompt)
+# Connect to the secondary server using psql.
+psql -p 5435 -d postgres
+
+-----------------------------------------------------------------------
+
+2. Create a table on the primary:
+
+CREATE TABLE rental_log (
+    log_id SERIAL PRIMARY KEY,
+    rental_time TIMESTAMP,
+    customer_id INT,
+    film_id INT,
+    amount NUMERIC,
+    logged_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+----------------------------------------------------------------------
+3. Ensure this table is replicated.
+
+From primary cmd:
+    INSERT INTO rental_log (rental_time, customer_id, film_id, amount)
+    VALUES (TIMESTAMP '2024-07-24 10:00:00', 123, 456, 19.99);
+From second cmd:
+    select * from rental_log;
+----------------------------------------------------------------------
+4. Write a stored procedure to:
+
+Insert a new rental log entry
+
+Accept customer_id, film_id, amount as inputs
+
+Wrap logic in a transaction with error handling (BEGIN...EXCEPTION...END)
+
+
+CREATE OR REPLACE PROCEDURE sp_add_rental_log(
+    p_customer_id INT,
+    p_film_id INT,
+    p_amount NUMERIC
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO rental_log (rental_time, customer_id, film_id, amount)
+    VALUES (CURRENT_TIMESTAMP, p_customer_id, p_film_id, p_amount);
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'Error occurred: %', SQLERRM;
+END;
+$$;
+
+Call the procedure on the primary:
+
+CALL sp_add_rental_log(1, 100, 4.99);
+
+On the standby (port 5433):
+
+Confirm that the new record appears in rental_log
+
+Run:SELECT * FROM rental_log ORDER BY log_id DESC LIMIT 1;
+
+---------------------------------------------------------------------------------------
+
+5. Add a trigger to log any UPDATE to rental_log
+
+CREATE TABLE rental (
+    rental_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    film_id INT,
+    inventory_id INT,
+    amount NUMERIC,
+    staff_id INT,
+    return_date TIMESTAMP,
+    rental_date TIMESTAMP
+);
+
+CREATE OR REPLACE FUNCTION fn_log_rental_insert()
+RETURNS TRIGGER AS $$
+BEGIN
+    CALL sp_add_rental_log(NEW.customer_id, NEW.film_id, NEW.amount);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_rental_insert
+AFTER INSERT ON rental
+FOR EACH ROW
+EXECUTE FUNCTION fn_log_rental_insert();
+
+
+INSERT INTO rental (customer_id, film_id, inventory_id, amount, staff_id, return_date, rental_date)
+VALUES (1, 100, 200, 4.99, 1, TIMESTAMP '2024-07-31 12:00:00', TIMESTAMP '2024-07-24 10:00:00');
+
+From cmd 2:
+    select * from rental_log;
