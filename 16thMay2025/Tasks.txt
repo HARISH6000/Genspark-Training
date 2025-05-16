@@ -1,0 +1,123 @@
+You are tasked with building a PostgreSQL-backed database for an EdTech company that manages online training and certification programs for individuals across various technologies.
+
+The goal is to:
+
+Design a normalized schema
+
+Support querying of training data
+
+Ensure secure access
+
+Maintain data integrity and control over transactional updates
+
+Database planning (Nomalized till 3NF)
+
+A student can enroll in multiple courses
+
+Each course is led by one trainer
+
+Students can receive a certificate after passing
+
+Each certificate has a unique serial number
+
+Trainers may teach multiple courses
+
+Tables to Design (Normalized to 3NF):
+
+1. **students**
+
+   * `student_id (PK)`, `name`, `email`, `phone`
+
+2. **courses**
+
+   * `course_id (PK)`, `course_name`, `category`, `duration_days`
+
+3. **trainers**
+
+   * `trainer_id (PK)`, `trainer_name`, `expertise`
+
+4. **enrollments**
+
+   * `enrollment_id (PK)`, `student_id (FK)`, `course_id (FK)`, `enroll_date`
+
+5. **certificates**
+
+   * `certificate_id (PK)`, `enrollment_id (FK)`, `issue_date`, `serial_no`
+
+6. **course\_trainers** (Many-to-Many if needed)
+
+   * `course_id`, `trainer_id`
+
+---
+
+Phase 2: DDL & DML
+
+* Create all tables with appropriate constraints (PK, FK, UNIQUE, NOT NULL)
+* Insert sample data using `INSERT` statements
+* Create indexes on `student_id`, `email`, and `course_id`
+
+---
+
+Phase 3: SQL Joins Practice
+
+Write queries to:
+
+1. List students and the courses they enrolled in
+2. Show students who received certificates with trainer names
+3. Count number of students per course
+
+---
+
+Phase 4: Functions & Stored Procedures
+
+Function:
+
+Create `get_certified_students(course_id INT)`
+→ Returns a list of students who completed the given course and received certificates.
+
+Stored Procedure:
+
+Create `sp_enroll_student(p_student_id, p_course_id)`
+→ Inserts into `enrollments` and conditionally adds a certificate if completed (simulate with status flag).
+
+---
+
+Phase 5: Cursor
+
+Use a cursor to:
+
+* Loop through all students in a course
+* Print name and email of those who do not yet have certificates
+
+---
+
+Phase 6: Security & Roles
+
+1. Create a `readonly_user` role:
+
+   * Can run `SELECT` on `students`, `courses`, and `certificates`
+   * Cannot `INSERT`, `UPDATE`, or `DELETE`
+
+2. Create a `data_entry_user` role:
+
+   * Can `INSERT` into `students`, `enrollments`
+   * Cannot modify certificates directly
+
+---
+
+Phase 7: Transactions & Atomicity
+
+Write a transaction block that:
+
+* Enrolls a student
+* Issues a certificate
+* Fails if certificate generation fails (rollback)
+
+```sql
+BEGIN;
+-- insert into enrollments
+-- insert into certificates
+-- COMMIT or ROLLBACK on error
+```
+
+---
