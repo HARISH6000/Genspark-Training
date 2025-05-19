@@ -395,7 +395,7 @@ public class Program
         }
     }
 
-    public static string Encrypt(string message, int key)
+    static string Encrypt(string message, int key)
     {
         string encMsg ="";
         foreach (char c in message)
@@ -411,7 +411,7 @@ public class Program
         return encMsg;
     }
 
-    public static string Decrypt(string enc, int key)
+    static string Decrypt(string enc, int key)
     {
         string msg ="";
         foreach (char c in enc)
