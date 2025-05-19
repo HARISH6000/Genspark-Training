@@ -1,0 +1,15 @@
+C:\PresidioTraining\19thMay2025\Tasks\bin\Debug\net9.0\Tasks.exe
+C:\PresidioTraining\19thMay2025\Tasks\bin\Debug\net9.0\Tasks.deps.json
+C:\PresidioTraining\19thMay2025\Tasks\bin\Debug\net9.0\Tasks.runtimeconfig.json
+C:\PresidioTraining\19thMay2025\Tasks\bin\Debug\net9.0\Tasks.dll
+C:\PresidioTraining\19thMay2025\Tasks\bin\Debug\net9.0\Tasks.pdb
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\Tasks.GeneratedMSBuildEditorConfig.editorconfig
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\Tasks.AssemblyInfoInputs.cache
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\Tasks.AssemblyInfo.cs
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\Tasks.csproj.CoreCompileInputs.cache
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\Tasks.sourcelink.json
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\Tasks.dll
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\refint\Tasks.dll
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\Tasks.pdb
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\Tasks.genruntimeconfig.cache
+C:\PresidioTraining\19thMay2025\Tasks\obj\Debug\net9.0\ref\Tasks.dll
