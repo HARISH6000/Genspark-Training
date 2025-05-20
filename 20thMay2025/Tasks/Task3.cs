@@ -154,7 +154,7 @@ public class Task3
         string searchName = TaskHelper.getValidString("Enter the employee name to search for: ");
 
         var foundEmployees = employeesById.Values
-                                .Where(emp => emp.Name.Equals(searchName, StringComparison.OrdinalIgnoreCase))
+                                .Where(emp => emp.Name.Equals(searchName))
                                 .ToList();
 
         if (foundEmployees.Any())
