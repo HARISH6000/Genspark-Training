@@ -1,0 +1,15 @@
+C:\PresidioTraining\21stMay2025\AppointmentApp\bin\Debug\net9.0\AppointmentApp.exe
+C:\PresidioTraining\21stMay2025\AppointmentApp\bin\Debug\net9.0\AppointmentApp.deps.json
+C:\PresidioTraining\21stMay2025\AppointmentApp\bin\Debug\net9.0\AppointmentApp.runtimeconfig.json
+C:\PresidioTraining\21stMay2025\AppointmentApp\bin\Debug\net9.0\AppointmentApp.dll
+C:\PresidioTraining\21stMay2025\AppointmentApp\bin\Debug\net9.0\AppointmentApp.pdb
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\AppointmentApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\AppointmentApp.AssemblyInfoInputs.cache
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\AppointmentApp.AssemblyInfo.cs
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\AppointmentApp.csproj.CoreCompileInputs.cache
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\AppointmentApp.sourcelink.json
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\AppointmentApp.dll
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\refint\AppointmentApp.dll
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\AppointmentApp.pdb
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\AppointmentApp.genruntimeconfig.cache
+C:\PresidioTraining\21stMay2025\AppointmentApp\obj\Debug\net9.0\ref\AppointmentApp.dll

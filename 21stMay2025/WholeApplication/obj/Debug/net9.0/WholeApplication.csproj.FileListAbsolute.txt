@@ -1,0 +1,15 @@
+C:\PresidioTraining\21stMay2025\WholeApplication\bin\Debug\net9.0\WholeApplication.exe
+C:\PresidioTraining\21stMay2025\WholeApplication\bin\Debug\net9.0\WholeApplication.deps.json
+C:\PresidioTraining\21stMay2025\WholeApplication\bin\Debug\net9.0\WholeApplication.runtimeconfig.json
+C:\PresidioTraining\21stMay2025\WholeApplication\bin\Debug\net9.0\WholeApplication.dll
+C:\PresidioTraining\21stMay2025\WholeApplication\bin\Debug\net9.0\WholeApplication.pdb
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\WholeApplication.GeneratedMSBuildEditorConfig.editorconfig
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\WholeApplication.AssemblyInfoInputs.cache
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\WholeApplication.AssemblyInfo.cs
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\WholeApplication.csproj.CoreCompileInputs.cache
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\WholeApplication.sourcelink.json
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\WholeApplication.dll
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\refint\WholeApplication.dll
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\WholeApplication.pdb
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\WholeApplication.genruntimeconfig.cache
+C:\PresidioTraining\21stMay2025\WholeApplication\obj\Debug\net9.0\ref\WholeApplication.dll
