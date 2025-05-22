@@ -1,0 +1,15 @@
+C:\PresidioTraining\22ndMay2025\Solid\bin\Debug\net9.0\Solid.exe
+C:\PresidioTraining\22ndMay2025\Solid\bin\Debug\net9.0\Solid.deps.json
+C:\PresidioTraining\22ndMay2025\Solid\bin\Debug\net9.0\Solid.runtimeconfig.json
+C:\PresidioTraining\22ndMay2025\Solid\bin\Debug\net9.0\Solid.dll
+C:\PresidioTraining\22ndMay2025\Solid\bin\Debug\net9.0\Solid.pdb
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\Solid.GeneratedMSBuildEditorConfig.editorconfig
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\Solid.AssemblyInfoInputs.cache
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\Solid.AssemblyInfo.cs
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\Solid.csproj.CoreCompileInputs.cache
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\Solid.sourcelink.json
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\Solid.dll
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\refint\Solid.dll
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\Solid.pdb
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\Solid.genruntimeconfig.cache
+C:\PresidioTraining\22ndMay2025\Solid\obj\Debug\net9.0\ref\Solid.dll
