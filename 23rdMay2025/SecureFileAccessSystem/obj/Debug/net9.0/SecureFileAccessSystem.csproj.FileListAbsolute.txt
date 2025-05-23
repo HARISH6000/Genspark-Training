@@ -1,0 +1,15 @@
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\bin\Debug\net9.0\SecureFileAccessSystem.exe
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\bin\Debug\net9.0\SecureFileAccessSystem.deps.json
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\bin\Debug\net9.0\SecureFileAccessSystem.runtimeconfig.json
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\bin\Debug\net9.0\SecureFileAccessSystem.dll
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\bin\Debug\net9.0\SecureFileAccessSystem.pdb
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\SecureFileAccessSystem.GeneratedMSBuildEditorConfig.editorconfig
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\SecureFileAccessSystem.AssemblyInfoInputs.cache
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\SecureFileAccessSystem.AssemblyInfo.cs
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\SecureFileAccessSystem.csproj.CoreCompileInputs.cache
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\SecureFileAccessSystem.sourcelink.json
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\SecureFileAccessSystem.dll
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\refint\SecureFileAccessSystem.dll
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\SecureFileAccessSystem.pdb
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\SecureFileAccessSystem.genruntimeconfig.cache
+C:\PresidioTraining\23rdMay2025\SecureFileAccessSystem\obj\Debug\net9.0\ref\SecureFileAccessSystem.dll

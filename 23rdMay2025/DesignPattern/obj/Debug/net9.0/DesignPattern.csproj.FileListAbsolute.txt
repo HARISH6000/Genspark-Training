@@ -1,0 +1,15 @@
+C:\PresidioTraining\23rdMay2025\DesignPattern\bin\Debug\net9.0\DesignPattern.exe
+C:\PresidioTraining\23rdMay2025\DesignPattern\bin\Debug\net9.0\DesignPattern.deps.json
+C:\PresidioTraining\23rdMay2025\DesignPattern\bin\Debug\net9.0\DesignPattern.runtimeconfig.json
+C:\PresidioTraining\23rdMay2025\DesignPattern\bin\Debug\net9.0\DesignPattern.dll
+C:\PresidioTraining\23rdMay2025\DesignPattern\bin\Debug\net9.0\DesignPattern.pdb
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\DesignPattern.GeneratedMSBuildEditorConfig.editorconfig
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\DesignPattern.AssemblyInfoInputs.cache
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\DesignPattern.AssemblyInfo.cs
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\DesignPattern.csproj.CoreCompileInputs.cache
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\DesignPattern.sourcelink.json
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\DesignPattern.dll
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\refint\DesignPattern.dll
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\DesignPattern.pdb
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\DesignPattern.genruntimeconfig.cache
+C:\PresidioTraining\23rdMay2025\DesignPattern\obj\Debug\net9.0\ref\DesignPattern.dll
