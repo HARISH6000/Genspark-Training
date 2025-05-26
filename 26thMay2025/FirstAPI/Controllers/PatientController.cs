@@ -17,6 +17,7 @@ namespace FirstAPI.Controllers
             new Patient { Id = 2, Name = "Bob", DOB = new DateTime(2004, 01, 08), Phone = "1234567890" }
         };
 
+        private static int _count = 3;
         
         [HttpGet] 
         public ActionResult<IEnumerable<Patient>> GetAllPatients()
@@ -46,10 +47,8 @@ namespace FirstAPI.Controllers
                 return BadRequest(ModelState); 
             }
 
-            if (_patients.Any(p => p.Id == patient.Id))
-            {
-                patient.Id = _patients.Max(p => p.Id) + 1;
-            }
+            patient.Id = _count;
+            _count += 1;
 
             _patients.Add(patient); 
 
@@ -80,7 +79,7 @@ namespace FirstAPI.Controllers
             existingPatient.DOB = patient.DOB;
             existingPatient.Phone = patient.Phone;
 
-            return NoContent(); 
+            return Ok(existingPatient); 
         }
 
         
@@ -95,7 +94,7 @@ namespace FirstAPI.Controllers
 
             _patients.Remove(patientToRemove);
 
-            return NoContent();
+            return Ok("Successfully deleted patient");
         }
     }
 }

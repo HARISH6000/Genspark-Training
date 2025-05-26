@@ -5,8 +5,6 @@ namespace FirstAPI.Models
 {
     public class Patient
     {
-
-        [Required]
         public int Id { get; set; }
 
 
@@ -21,7 +19,7 @@ namespace FirstAPI.Models
 
         [Required(ErrorMessage = "Phone number is required.")]
         [Phone(ErrorMessage = "Invalid phone number format.")] 
-        [StringLength(20, MinimumLength = 7, ErrorMessage = "Phone number must be between 7 and 20 digits.")] 
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "Phone number must be 10 digits.")] 
         
         public string Phone { get; set; } = string.Empty; 
 
