@@ -1,0 +1,294 @@
+Explore ADO.net
+Create an application that will do basic banking transaction. Vizualize the endpoints
+In the same application add endpoints for creating an account.
+---------------------------------------------------------------
+
+create or replace function proc_GetDoctorsBySpeciality(spciality varchar(20))
+returns table(id int,dname text,yoe real)
+as 
+$$
+Begin
+   return query select distinct "Id","Name","YearsOfExperience" from public."Doctors"
+   where "Id" in(SELECT "DoctorId" FROM public."DoctorSpecialities" where "SpecialityId" in
+			  (select "Id" from public."Specialities" where "Name"=spciality));
+End;
+$$
+Language plpgsql;
+
+drop function proc_GetDoctorsBySpeciality(spciality varchar(20))
+
+SELECT * FROM public."Doctors"
+select * from public."Specialities" where "Name"='Cardiology'
+
+select * from proc_GetDoctorsBySpeciality('Cardiology')
+
+select distinct("Id","Name","YearsOfExperience") from public."Doctors"
+   where "Id" in(SELECT "DoctorId" FROM public."DoctorSpecialities" where "SpecialityId" in
+			  (select "Id" from public."Specialities" where "Name"='Cardiology'));
+--------------------------------------------------------------
+
+
+
+using FirstAPI.Models;
+using FirstAPI.Models.DTOs.DoctorSpecialities;
+
+namespace FirstAPI.Misc
+{
+    public class DoctorMapper
+    {
+        public Doctor? MapDoctorAddRequestDoctor(DoctorAddRequestDto addRequestDto)
+        {
+            Doctor doctor = new();
+            doctor.Name = addRequestDto.Name;
+            doctor.YearsOfExperience = addRequestDto.YearsOfExperience;
+            return doctor;
+        }
+    }
+}
+-----------------------------------
+using FirstAPI.Models;
+using FirstAPI.Models.DTOs.DoctorSpecialities;
+
+namespace FirstAPI.Misc
+{
+    public class SpecialityMapper
+    {
+        public Speciality? MapSpecialityAddRequestDoctor(SpecialityAddRequestDto addRequestDto)
+        {
+            Speciality speciality = new();
+            speciality.Name = addRequestDto.Name;
+            return speciality;
+        }
+
+        public DoctorSpeciality MapDoctorSpecility(int doctorId, int specialityId)
+        {
+            DoctorSpeciality doctorSpeciality = new();
+            doctorSpeciality.DoctorId = doctorId;
+            doctorSpeciality.SpecialityId = specialityId;
+            return doctorSpeciality;
+        }
+    }
+}
+------------------------------
+using FirstAPI.Models;
+using FirstAPI.Models.DTOs.DoctorSpecialities;
+
+namespace FirstAPI.Misc
+{
+    public class SpecialityMapper
+    {
+        public Speciality? MapSpecialityAddRequestDoctor(SpecialityAddRequestDto addRequestDto)
+        {
+            Speciality speciality = new();
+            speciality.Name = addRequestDto.Name;
+            return speciality;
+        }
+
+        public DoctorSpeciality MapDoctorSpecility(int doctorId, int specialityId)
+        {
+            DoctorSpeciality doctorSpeciality = new();
+            doctorSpeciality.DoctorId = doctorId;
+            doctorSpeciality.SpecialityId = specialityId;
+            return doctorSpeciality;
+        }
+    }
+}
+--------------------------------
+using System.Threading.Tasks;
+using FirstAPI.Interfaces;
+using FirstAPI.Misc;
+using FirstAPI.Models;
+using FirstAPI.Models.DTOs.DoctorSpecialities;
+using Microsoft.VisualBasic;
+
+namespace FirstAPI.Services
+{
+    public class DoctorService : IDoctorService
+    {
+        DoctorMapper doctorMapper ;
+        SpecialityMapper specialityMapper;
+        private readonly IRepository<int, Doctor> _doctorRepository;
+        private readonly IRepository<int, Speciality> _specialityRepository;
+        private readonly IRepository<int, DoctorSpeciality> _doctorSpecialityRepository;
+
+        public DoctorService(IRepository<int, Doctor> doctorRepository,
+                            IRepository<int, Speciality> specialityRepository,
+                            IRepository<int, DoctorSpeciality> doctorSpecialityRepository)
+        {
+            doctorMapper = new DoctorMapper();
+            specialityMapper = new();
+            _doctorRepository = doctorRepository;
+            _specialityRepository = specialityRepository;
+            _doctorSpecialityRepository = doctorSpecialityRepository;
+
+        }
+
+        public async Task<Doctor> AddDoctor(DoctorAddRequestDto doctor)
+        {
+            try
+            {
+                var newDoctor = doctorMapper.MapDoctorAddRequestDoctor(doctor);
+                newDoctor = await _doctorRepository.Add(newDoctor);
+                if (newDoctor == null)
+                    throw new Exception("Could not add doctor");
+                if (doctor.Specialities.Count() > 0)
+                {
+                    int[] specialities = await MapAndAddSpeciality(doctor);
+                    for (int i = 0; i < specialities.Length; i++)
+                    {
+                        var doctorSpeciality = specialityMapper.MapDoctorSpecility(newDoctor.Id, specialities[i]);
+                        doctorSpeciality = await _doctorSpecialityRepository.Add(doctorSpeciality);
+                    }
+                }
+                
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            
+        }
+
+        private async Task<int[]> MapAndAddSpeciality(DoctorAddRequestDto doctor)
+        {
+            int[] specialityIds = new int[doctor.Specialities.Count()];
+            IEnumerable<Speciality> existingSpecialities = null;
+            try
+            {
+                existingSpecialities = await _specialityRepository.GetAll();
+            }
+            catch (Exception e)
+            {
+
+            }
+            int count = 0;
+            foreach (var item in doctor.Specialities)
+            {
+                Speciality speciality = null;
+                if (existingSpecialities != null)
+                    speciality = existingSpecialities.FirstOrDefault(s => s.Name.ToLower() == item.Name.ToLower());
+                if (speciality == null)
+                {
+                    speciality = specialityMapper.MapSpecialityAddRequestDoctor(item);
+                    speciality = await _specialityRepository.Add(speciality);
+                }
+                specialityIds[count] = speciality.Id;
+                count++;
+            }
+            return specialityIds;
+        }
+
+        public Task<Doctor> GetDoctByName(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICollection<Doctor>> GetDoctorsBySpeciality(string speciality)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+
+
+using System.Threading.Tasks;
+using FirstAPI.Interfaces;
+using FirstAPI.Models;
+using FirstAPI.Models.DTOs.DoctorSpecialities;
+using FirstAPI.Services;
+using Microsoft.AspNetCore.Mvc;
+
+
+namespace FirstAPI.Controllers
+{
+
+
+    [ApiController]
+    [Route("/api/[controller]")]
+    public class DoctorController : ControllerBase
+    {
+        private readonly IDoctorService _doctorService;
+
+        public DoctorController(IDoctorService doctorService)
+        {
+            _doctorService = doctorService;
+        }
+
+        /*[HttpGet]
+        public ActionResult<IEnumerable<Doctor>> GetDoctors()
+        {
+            return Ok(doctors);
+        }*/
+        [HttpPost]
+        public async Task<ActionResult<Doctor>> PostDoctor([FromBody] DoctorAddRequestDto doctor)
+        {
+            try
+            {
+                var newDoctor = await _doctorService.AddDoctor(doctor);
+                if (newDoctor != null)
+                    return Created("", newDoctor);
+                return BadRequest("Unable to process request at this moment");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+    }
+}
+--------------------------------
+-------------------------------------
+using FirstAPI.Contexts;
+using FirstAPI.Interfaces;
+using FirstAPI.Models;
+using FirstAPI.Repositories;
+using FirstAPI.Services;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddControllers()
+                .AddJsonOptions(opts =>
+                {
+                    opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    opts.JsonSerializerOptions.WriteIndented = true;
+                });
+
+
+
+builder.Services.AddDbContext<ClinicContext>(opts =>
+{
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddTransient<IRepository<int, Doctor>, DoctorRepository>();
+builder.Services.AddTransient<IRepository<int, Patient>, PatinetRepository>();
+builder.Services.AddTransient<IRepository<int, Speciality>, SpecialityRepository>();
+builder.Services.AddTransient<IRepository<string, Appointmnet>, AppointmnetRepository>();
+builder.Services.AddTransient<IRepository<int, DoctorSpeciality>, DoctorSpecialityRepository>();
+
+builder.Services.AddTransient<IDoctorService, DoctorService>();
+
+
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+
+app.MapControllers();
+
+app.Run();
+
+
