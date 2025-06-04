@@ -10,8 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql.Replication.PgOutput.Messages;
-using FirstAPI.Authorization;
-using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +43,6 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
-
 builder.Services.AddControllers()
                 .AddJsonOptions(opts =>
                 {
@@ -71,7 +68,6 @@ builder.Services.AddTransient<IRepository<string, User>, UserRepository>();
 #region Services
 builder.Services.AddTransient<IDoctorService, DoctorService>();
 builder.Services.AddTransient<IPatientService, PatientService>();
-builder.Services.AddTransient<IAppointmnetService, AppointmnetService>();
 builder.Services.AddTransient<IOtherContextFunctionities, OtherFuncinalitiesImplementation>();
 builder.Services.AddTransient<IEncryptionService, EncryptionService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
@@ -92,19 +88,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     };
                 });
 #endregion
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("MinimumYearsOfExperience", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireRole("Doctor");
-        policy.AddRequirements(new MinimumExperienceRequirement(10)); 
-    });
-});
-
-
-builder.Services.AddScoped<IAuthorizationHandler, MinimumExperienceHandler>();
 
 #region  Misc
 builder.Services.AddAutoMapper(typeof(User));

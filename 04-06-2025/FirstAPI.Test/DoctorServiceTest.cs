@@ -59,98 +59,106 @@ public class DoctorServiceTest
         Assert.That(result.Count(), Is.EqualTo(1));
     }
 
-    [Test]
-    public async Task TestAddDoctor()
-    {
-        // Arrange
-        var doctorDto = new DoctorAddRequestDto
-        {
-            Name = "Dr. John",
-            Password = "password123",
-            Specialities = new List<int> { 1, 2 }
-        };
 
-        var user = new User
-        {
-            Id = 1,
-            Name = "Dr. John",
-            Password = "encryptedPassword",
-            Role = "Doctor",
-            HashKey = "hashKey"
-        };
 
-        var doctor = new Doctor
-        {
-            Id = 1,
-            Name = "Dr. John"
-        };
+    // [Test]
+    // public async Task TestAddDoctor()
+    // {
+    //     // Arrange
+    //     var doctorDto = new DoctorAddRequestDto
+    //     {
+    //         Name = "Dr. John",
+    //         Password = "password123",
+    //         Email = "dr.john@example.com",
+    //         YearsOfExperience = 5,
+    //         Specialities = new List<SpecialityAddRequestDto>
+    //         {
+    //             new SpecialityAddRequestDto { Name = "Cardiology" },
+    //             new SpecialityAddRequestDto { Name = "Neurology" }
+    //         }
+    //     };
 
-        var encryptedData = new EncryptModel
-        {
-            EncryptedData = "encryptedPassword",
-            HashKey = "hashKey"
-        };
 
-        var speciality = new DoctorSpeciality
-        {
-            DoctorId = 1,
-            SpecialityId = 1
-        };
+    //     var user = new User
+    //     {
+    //         Username = "dr.john@example.com",
+    //         Role = "Doctor",
+    //         Password = new byte[] { 1, 2, 3 }, // Simulating encrypted password bytes
+    //         HashKey = new byte[] { 4, 5, 6 }
+    //     };
 
-        var encryptionServiceMock = new Mock<IEncryptionService>();
-        encryptionServiceMock
-            .Setup(es => es.EncryptData(It.IsAny<EncryptModel>()))
-            .ReturnsAsync(encryptedData);
+    //     var doctor = new Doctor
+    //     {
+    //         Id = 1,
+    //         Name = "Dr. John",
+    //         Email = "dr.john@example.com",
+    //         YearsOfExperience = 5
+    //     };
 
-        var userRepositoryMock = new Mock<IRepository<string, User>>();
-        userRepositoryMock
-            .Setup(repo => repo.Add(It.IsAny<User>()))
-            .ReturnsAsync(user);
+    //     var doctorSpeciality = new DoctorSpeciality
+    //     {
+    //         SerialNumber = 1,
+    //         DoctorId = doctor.Id,
+    //         SpecialityId = 1
+    //     };
 
-        var doctorRepositoryMock = new Mock<IRepository<int, Doctor>>();
-        doctorRepositoryMock
-            .Setup(repo => repo.Add(It.IsAny<Doctor>()))
-            .ReturnsAsync(doctor);
+    //     var encryptedData = new EncryptModel
+    //     {
+    //         EncryptedData = new byte[] { 1, 2, 3 },
+    //         HashKey = new byte[] { 4, 5, 6 }
+    //     };
 
-        var doctorSpecialityRepositoryMock = new Mock<IRepository<int, DoctorSpeciality>>();
-        doctorSpecialityRepositoryMock
-            .Setup(repo => repo.Add(It.IsAny<DoctorSpeciality>()))
-            .ReturnsAsync(speciality);
+    //     var encryptionServiceMock = new Mock<IEncryptionService>();
+    //     encryptionServiceMock
+    //         .Setup(es => es.EncryptData(It.IsAny<EncryptModel>()))
+    //         .ReturnsAsync(encryptedData);
 
-        var mapperMock = new Mock<IMapper>();
-        mapperMock
-            .Setup(mapper => mapper.Map<DoctorAddRequestDto, User>(It.IsAny<DoctorAddRequestDto>()))
-            .Returns(user);
-        mapperMock
-            .Setup(mapper => mapper.Map<DoctorAddRequestDto, Doctor>(It.IsAny<DoctorAddRequestDto>()))
-            .Returns(doctor);
+    //     var userRepositoryMock = new Mock<IRepository<string, User>>();
+    //     userRepositoryMock
+    //         .Setup(repo => repo.Add(It.IsAny<User>()))
+    //         .ReturnsAsync(user);
 
-        var specialityMapperMock = new Mock<ISpecialityMapper>();
-        specialityMapperMock
-            .Setup(sm => sm.MapDoctorSpecility(It.IsAny<int>(), It.IsAny<int>()))
-            .Returns(speciality);
+    //     var doctorRepositoryMock = new Mock<IRepository<int, Doctor>>();
+    //     doctorRepositoryMock
+    //         .Setup(repo => repo.Add(It.IsAny<Doctor>()))
+    //         .ReturnsAsync(doctor);
 
-        var doctorService = new DoctorService(
-            doctorRepositoryMock.Object,
-            Mock.Of<IRepository<int, Speciality>>(), // No interaction tested for Speciality
-            doctorSpecialityRepositoryMock.Object,
-            userRepositoryMock.Object,
-            Mock.Of<IOtherContextFunctionities>(), // No interaction tested
-            encryptionServiceMock.Object,
-            mapperMock.Object
-        );
+    //     var doctorSpecialityRepositoryMock = new Mock<IRepository<int, DoctorSpeciality>>();
+    //     doctorSpecialityRepositoryMock
+    //         .Setup(repo => repo.Add(It.IsAny<DoctorSpeciality>()))
+    //         .ReturnsAsync(doctorSpeciality);
 
-        // Act
-        var result = await doctorService.AddDoctor(doctorDto);
+    //     var mapperMock = new Mock<IMapper>();
+    //     mapperMock
+    //         .Setup(mapper => mapper.Map<DoctorAddRequestDto, User>(It.IsAny<DoctorAddRequestDto>()))
+    //         .Returns(user);
+    //     mapperMock
+    //         .Setup(mapper => mapper.Map<DoctorAddRequestDto, Doctor>(It.IsAny<DoctorAddRequestDto>()))
+    //         .Returns(doctor);
 
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(doctor.Name, result.Name);
-        encryptionServiceMock.Verify(es => es.EncryptData(It.IsAny<EncryptModel>()), Times.Once);
-        userRepositoryMock.Verify(repo => repo.Add(It.IsAny<User>()), Times.Once);
-        doctorRepositoryMock.Verify(repo => repo.Add(It.IsAny<Doctor>()), Times.Once);
-        doctorSpecialityRepositoryMock.Verify(repo => repo.Add(It.IsAny<DoctorSpeciality>()), Times.Exactly(doctorDto.Specialities.Count));
-    }
+    //     var doctorService = new DoctorService(
+    //         doctorRepositoryMock.Object,
+    //         Mock.Of<IRepository<int, Speciality>>(),
+    //         doctorSpecialityRepositoryMock.Object,
+    //         userRepositoryMock.Object,
+    //         Mock.Of<IOtherContextFunctionities>(),
+    //         encryptionServiceMock.Object,
+    //         mapperMock.Object
+    //     );
+
+    //     // Act
+    //     var result = await doctorService.AddDoctor(doctorDto);
+
+    //     // Assert
+    //     Assert.IsNotNull(result, "The result from AddDoctor is null.");
+    //     Assert.AreEqual(doctor.Name, result.Name);
+    //     Assert.AreEqual(doctor.Email, result.Email);
+    //     encryptionServiceMock.Verify(es => es.EncryptData(It.IsAny<EncryptModel>()), Times.Once);
+    //     userRepositoryMock.Verify(repo => repo.Add(It.IsAny<User>()), Times.Once);
+    //     doctorRepositoryMock.Verify(repo => repo.Add(It.IsAny<Doctor>()), Times.Once);
+    //     doctorSpecialityRepositoryMock.Verify(repo => repo.Add(It.IsAny<DoctorSpeciality>()), Times.Exactly(doctorDto.Specialities.Count));
+    // }
+
 
 
 

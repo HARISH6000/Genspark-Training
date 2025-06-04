@@ -75,24 +75,6 @@ namespace FirstAPI.Services
             
         }
 
-        public async Task<Doctor> GetDoctorById(int key)
-        {
-            try
-            {
-                
-                var doctor = await _doctorRepository.Get(key);
-                if (doctor == null)
-                    throw new Exception("Could not get doctor");
-                
-                return doctor;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-            
-        }
-
         private async Task<int[]> MapAndAddSpeciality(DoctorAddRequestDto doctor)
         {
             int[] specialityIds = new int[doctor.Specialities.Count()];

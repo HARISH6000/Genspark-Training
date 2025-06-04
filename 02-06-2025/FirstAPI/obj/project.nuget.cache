@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OzZN42MQKMk=",
+  "dgSpecHash": "fvdj+1AOByQ=",
   "success": true,
-  "projectFilePath": "C:\\PresidioTraining\\02-06-2025\\FirstAPI\\FirstAPI.csproj",
+  "projectFilePath": "C:\\PresidioTraining\\01-06-2025\\FirstAPI\\FirstAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\harishg\\.nuget\\packages\\automapper\\14.0.0\\automapper.14.0.0.nupkg.sha512",
     "C:\\Users\\harishg\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
