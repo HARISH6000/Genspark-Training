@@ -1,0 +1,5 @@
+2025-06-04 16:14:29,646 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-04 16:14:29,683 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-04 16:14:29,686 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-04 16:14:29,686 [1] INFO Microsoft.Hosting.Lifetime - Content root path: C:\PresidioTraining\03-06-2025\FirstAPI
+2025-06-04 16:31:36,069 [3] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
