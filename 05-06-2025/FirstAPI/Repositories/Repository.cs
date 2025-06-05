@@ -1,7 +1,7 @@
-using FirstAPI.Contexts;
-using FirstAPI.Interfaces;
+using NotifyAPI.Contexts;
+using NotifyAPI.Interfaces;
 
-namespace FirstAPI.Repositories
+namespace NotifyAPI.Repositories
 {
     public  abstract class Repository<K, T> : IRepository<K, T> where T:class
     {

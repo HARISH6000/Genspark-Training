@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notify API Frontend</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      cursor: pointer;
+    }
+    .notification-container {
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #f9f9f9;
+      margin-top: 10px;
+    }
+    .notification-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 5px 0;
+    }
+    .dismiss-btn {
+      color: red;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .status {
+      color: #333;
+      font-size: 14px;
+    }
+    .disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>Notify API</h1>
+
+  <h2>Login</h2>
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+  </form>
+  <p id="loginStatus" class="status"></p>
+
+  <h2>Upload Document</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="file" required />
+    <button type="submit" disabled class="disabled">Upload</button>
+  </form>
+  <p id="uploadStatus" class="status"></p>
+
+  <h2>Notifications</h2>
+  <div id="notification" class="notification-container"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js" onload="console.log('SignalR loaded')" onerror="displayNotification('Failed to load SignalR library. Please check your network or CDN availability.'); console.error('SignalR load failed')"></script>
+  <script>
+    const baseUrl = 'http://localhost:5020/api';
+    let token = '';
+    let connection;
+
+    // Utility to enable/disable upload button based on login
+    function updateUIAfterLogin(loggedIn) {
+      const uploadButton = document.getElementById('uploadForm').querySelector('button');
+      uploadButton.disabled = !loggedIn;
+      uploadButton.classList.toggle('disabled', !loggedIn);
+    }
+
+    // Utility to display persistent notifications
+    function displayNotification(message) {
+      console.log('Displaying notification:', message);
+      const notifContainer = document.getElementById('notification');
+      if (!notifContainer) {
+        console.error('Notification container not found');
+        return;
+      }
+      const notifItem = document.createElement('div');
+      notifItem.className = 'notification-item';
+      notifItem.textContent = message;
+      const dismissBtn = document.createElement('span');
+      dismissBtn.textContent = '[Dismiss]';
+      dismissBtn.className = 'dismiss-btn';
+      dismissBtn.onclick = () => {
+        console.log('Dismissing notification:', message);
+        notifItem.remove();
+      };
+      notifItem.appendChild(dismissBtn);
+      notifContainer.appendChild(notifItem);
+    }
+
+    // Prevent accidental page reloads
+    window.addEventListener('beforeunload', (e) => {
+      console.log('beforeunload event triggered');
+      e.preventDefault();
+      e.returnValue = ''; // Prompt user before reloading
+    });
+
+    // SignalR setup function
+    async function setupSignalR() {
+      if (typeof signalR === 'undefined') {
+        console.error('SignalR is not defined. Ensure the SignalR library is loaded.');
+        displayNotification('Cannot connect to notifications: SignalR library not loaded.');
+        return;
+      }
+
+      if (connection) {
+        console.log('Stopping existing SignalR connection');
+        await connection.stop().catch(err => console.error('Error stopping SignalR:', err));
+      }
+      connection = new signalR.HubConnectionBuilder()
+        .withUrl('http://localhost:5020/documentHub', { accessTokenFactory: () => token })
+        .withAutomaticReconnect()
+        .build();
+
+      connection.on('DocumentAdded', (fileName) => {
+        try {
+          console.log('Received DocumentAdded event:', fileName);
+          displayNotification(`New document added: ${fileName}`);
+        } catch (err) {
+          console.error('Error in DocumentAdded handler:', err);
+          displayNotification('Error processing notification.');
+        }
+      });
+
+      connection.onclose((e) => {
+        console.log('SignalR connection closed:', e ? e : 'Cleanly');
+        displayNotification('SignalR connection closed.');
+      });
+
+      connection.onreconnecting((error) => {
+        console.log('SignalR reconnecting:', error);
+        displayNotification('SignalR reconnecting...');
+      });
+
+      connection.onreconnected((connectionId) => {
+        console.log('SignalR reconnected. Connection ID:', connectionId);
+        displayNotification('SignalR reconnected.');
+      });
+
+      try {
+        console.log('Starting SignalR connection');
+        await connection.start();
+        console.log('SignalR connected successfully');
+        displayNotification('SignalR connected successfully.');
+      } catch (err) {
+        console.error('SignalR connection error:', err);
+        displayNotification('SignalR connection failed.');
+      }
+    }
+
+    // Login handler
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      console.log('Login form submitted');
+      document.getElementById('loginStatus').textContent = 'Logging in...';
+
+      try {
+        const res = await fetch(`${baseUrl}/Authentication`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('Login failed:', errorText);
+          document.getElementById('loginStatus').textContent = `Login failed: ${errorText}`;
+          updateUIAfterLogin(false);
+          displayNotification(`Login failed: ${errorText}`);
+          return;
+        }
+
+        const data = await res.json();
+        token = data.token;
+        console.log('Login successful, token received');
+        document.getElementById('loginStatus').textContent = 'Login successful!';
+        updateUIAfterLogin(true);
+        await setupSignalR();
+      } catch (error) {
+        console.error('Login error:', error);
+        document.getElementById('loginStatus').textContent = 'Login error occurred.';
+        updateUIAfterLogin(false);
+        displayNotification('Login error occurred.');
+      }
+    });
+
+    // File upload handler
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('file');
+      if (!fileInput.files.length) {
+        console.warn('No file selected for upload');
+        document.getElementById('uploadStatus').textContent = 'No file selected.';
+        displayNotification('No file selected for upload.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      console.log('Upload form submitted');
+      document.getElementById('uploadStatus').textContent = 'Uploading...';
+
+      try {
+        const res = await fetch(`${baseUrl}/documents/upload`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('Upload failed:', errorText);
+          document.getElementById('uploadStatus').textContent = `Upload failed: ${errorText}`;
+          displayNotification(`Upload failed: ${errorText}`);
+          return;
+        }
+
+        const data = await res.json();
+        console.log('Upload successful:', data.message);
+        document.getElementById('uploadStatus').textContent = data.message;
+        fileInput.value = ''; // Reset file input
+        displayNotification(`Upload successful: ${data.message}`);
+      } catch (error) {
+        console.error('Upload error:', error);
+        document.getElementById('uploadStatus').textContent = 'Upload error.';
+        displayNotification('Upload error occurred.');
+      }
+    });
+  </script>
+</body>
+</html>
