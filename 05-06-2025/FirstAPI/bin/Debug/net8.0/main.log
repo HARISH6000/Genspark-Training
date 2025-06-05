@@ -202,3 +202,7 @@ Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate 
 2025-06-05 12:20:05,552 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
 2025-06-05 12:20:05,552 [1] INFO Microsoft.Hosting.Lifetime - Content root path: C:\PresidioTraining\05-06-2025\FirstAPI
 2025-06-05 12:24:03,086 [19] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-05 12:24:08,599 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-05 12:24:08,612 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-05 12:24:08,613 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-05 12:24:08,613 [1] INFO Microsoft.Hosting.Lifetime - Content root path: C:\PresidioTraining\05-06-2025\FirstAPI
