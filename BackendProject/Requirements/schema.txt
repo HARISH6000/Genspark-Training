@@ -1,0 +1,24 @@
+User: UserID, Username, PasswordHash, Email, Phone, ProfilePitureUrl, RoleID, isDeleted
+
+Role: RoleID, RoleName (Admin, Manager)
+
+Inventory: InventoryID, Location, Name , isDeleted
+
+Product: ProductID, SKU,ProductName, Description, UnitPrice , isDeleted
+
+InventoryProduct: InventoryID, ProductID, Quantity
+
+InventoryManager: InventoryID, ManagerId(UserID) 
+
+
+
+AuditLog Table:
+
+AuditLogID: Primary Key
+UserID: (FK to User.UserID) - Who made the change.
+Timestamp: When the change occurred.
+TableName: The table where the change happened (e.g., 'Product', 'InventoryProduct').
+RecordID: The primary key of the record that was changed in the TableName.
+ActionType: (e.g., 'INSERT', 'UPDATE', 'DELETE').
+OldValues: (Optional, JSON/Text) - Original data before the change.
+NewValues: (Optional, JSON/Text) - New data after the change.

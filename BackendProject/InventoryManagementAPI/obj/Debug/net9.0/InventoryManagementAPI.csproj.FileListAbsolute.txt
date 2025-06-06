@@ -1,0 +1,8 @@
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\obj\Debug\net9.0\InventoryManagementAPI.csproj.AssemblyReference.cache
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\obj\Debug\net9.0\InventoryManagementAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\obj\Debug\net9.0\InventoryManagementAPI.AssemblyInfoInputs.cache
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\obj\Debug\net9.0\InventoryManagementAPI.AssemblyInfo.cs
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\obj\Debug\net9.0\InventoryManagementAPI.csproj.CoreCompileInputs.cache
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\obj\Debug\net9.0\InventoryManagementAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\obj\Debug\net9.0\InventoryManagementAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\obj\Debug\net9.0\InventoryManagementAPI.sourcelink.json
