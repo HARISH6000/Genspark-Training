@@ -2,7 +2,7 @@ namespace InventoryManagementAPI.Models
 {
     public class User
     {
-        public int UserID { get; set; }
+        public int UserId { get; set; }
         public string Username { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -11,7 +11,8 @@ namespace InventoryManagementAPI.Models
         public int RoleID { get; set; }
         public bool IsDeleted { get; set; }
 
-        // Navigation property
+        // Navigation properties
         public Role? Role { get; set; }
+        public ICollection<InventoryManager>? ManagedInventories { get; set; }
     }
 }

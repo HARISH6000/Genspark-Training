@@ -2,7 +2,7 @@ namespace InventoryManagementAPI.Models
 {
     public class Role
     {
-        public int RoleID { get; set; }
+        public int RoleId { get; set; }
         public string RoleName { get; set; } = string.Empty;
 
         // Navigation property
