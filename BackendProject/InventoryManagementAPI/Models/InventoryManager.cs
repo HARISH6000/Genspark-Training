@@ -4,7 +4,7 @@ namespace InventoryManagementAPI.Models
     {
 
         public int Id { get; set; }
-        public int InventoryID { get; set; }
+        public int InventoryId { get; set; }
         public int ManagerId { get; set; } 
 
         // Navigation properties

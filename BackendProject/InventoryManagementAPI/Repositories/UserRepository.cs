@@ -13,18 +13,23 @@ namespace InventoryManagementAPI.Repositories
         }
         public override async Task<User> Get(int key)
         {
-            return await _applicationDbContext.Users.SingleOrDefaultAsync(u => u.UserId == key);
+            return await _applicationDbContext.Users.Include(u => u.Role).SingleOrDefaultAsync(u => u.UserId == key);
         }
 
         public override async Task<IEnumerable<User>> GetAll()
         {
-            return await _applicationDbContext.Users.ToListAsync();
+            return await _applicationDbContext.Users.Include(u => u.Role).ToListAsync();
         }
 
         public async Task<User> GetByUsername(string username)
         {
-            return await _applicationDbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
+            return await _applicationDbContext.Users.Include(u => u.Role).SingleOrDefaultAsync(u => u.Username == username);
         }
-            
+
+        public async Task<User?> GetByEmail(string email)
+        {
+            return await _applicationDbContext.Users.Include(u => u.Role).SingleOrDefaultAsync(u => u.Email == email);
+        }
+         
     }
 }

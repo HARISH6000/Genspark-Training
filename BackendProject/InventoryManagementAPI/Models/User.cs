@@ -8,7 +8,7 @@ namespace InventoryManagementAPI.Models
         public string Email { get; set; } = string.Empty;
         public string? Phone { get; set; }
         public string? ProfilePictureUrl { get; set; }
-        public int RoleID { get; set; }
+        public int RoleId { get; set; }
         public bool IsDeleted { get; set; }
 
         // Navigation properties

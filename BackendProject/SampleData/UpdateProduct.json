@@ -1,0 +1,8 @@
+{
+   "ProductId":1,
+  "sku": "GL01",
+  "productName": "Legion 3",
+  "description": "Gaming Laptop",
+  "unitPrice": 115000.0,
+  "categoryId": 1
+}

@@ -1,0 +1,8 @@
+{
+  "username": "Charlie",
+  "password": "pass123",
+  "email": "Charlie@example.com",
+  "phone": "1234567892",
+  "profilePictureUrl": "/assets/pic",
+  "roleId": 2
+}

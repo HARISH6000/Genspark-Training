@@ -3,8 +3,8 @@ namespace InventoryManagementAPI.Models
     public class InventoryProduct
     {
         public int Id { get; set; }
-        public int InventoryID { get; set; }
-        public int ProductID { get; set; }
+        public int InventoryId { get; set; }
+        public int ProductId { get; set; }
         public int Quantity { get; set; }
 
         // Navigation properties

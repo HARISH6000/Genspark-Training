@@ -16,6 +16,7 @@ namespace InventoryManagementAPI.Contexts
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<InventoryProduct> InventoryProducts { get; set; }
         public DbSet<InventoryManager> InventoryManagers { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,7 +42,19 @@ namespace InventoryManagementAPI.Contexts
             modelBuilder.Entity<Role>()
                 .Property(r => r.RoleName)
                 .IsRequired();
+            modelBuilder.Entity<Role>()
+                .HasIndex(r => r.RoleName)
+                .IsUnique();
 
+            //Category
+            //CategoryName
+            modelBuilder.Entity<Category>()
+                .Property(c => c.CategoryName)
+                .IsRequired();
+            modelBuilder.Entity<Category>()
+                .HasIndex(c => c.CategoryName)
+                .IsUnique();
+            
             //Product
             //SKU
             modelBuilder.Entity<Product>()
@@ -66,36 +79,64 @@ namespace InventoryManagementAPI.Contexts
             modelBuilder.Entity<Inventory>()
                 .Property(i => i.Name)
                 .IsRequired();
+            modelBuilder.Entity<Inventory>()
+                .HasIndex(i => i.Name)
+                .IsUnique();
+
+            //InventoryManager
+            modelBuilder.Entity<InventoryManager>()
+                .HasKey(im => im.Id);
+            modelBuilder.Entity<InventoryManager>()
+                .HasIndex(im => new { im.InventoryId, im.ManagerId })
+                .IsUnique();
+
+            //InventoryProduct
+            modelBuilder.Entity<InventoryProduct>()
+                .HasKey(ip => ip.Id);
+            modelBuilder.Entity<InventoryProduct>()
+                .HasIndex(ip => new { ip.InventoryId, ip.ProductId })
+                .IsUnique();
 
             //relationships
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
                 .WithMany(r => r.Users)
-                .HasForeignKey(u => u.RoleID);
+                .HasForeignKey(u => u.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<InventoryProduct>()
                 .HasOne(ip => ip.Inventory)
                 .WithMany(i => i.InventoryProducts)
-                .HasForeignKey(ip => ip.InventoryID);
+                .HasForeignKey(ip => ip.InventoryId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<InventoryProduct>()
                 .HasOne(ip => ip.Product)
                 .WithMany(p => p.InventoryProducts)
-                .HasForeignKey(ip => ip.ProductID);
+                .HasForeignKey(ip => ip.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<InventoryManager>()
                 .HasOne(im => im.Inventory)
                 .WithMany(i => i.InventoryManagers)
-                .HasForeignKey(im => im.InventoryID);
+                .HasForeignKey(im => im.InventoryId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<InventoryManager>()
                 .HasOne(im => im.Manager)
                 .WithMany(u => u.ManagedInventories)
-                .HasForeignKey(im => im.ManagerId); 
+                .HasForeignKey(im => im.ManagerId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

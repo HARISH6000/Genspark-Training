@@ -8,8 +8,10 @@ namespace InventoryManagementAPI.Models
         public string? Description { get; set; }
         public decimal UnitPrice { get; set; }
         public bool IsDeleted { get; set; }
+         public int CategoryId { get; set; }
 
         // Navigation property
+        public Category? Category { get; set; }
         public ICollection<InventoryProduct>? InventoryProducts { get; set; }
     }
 }
