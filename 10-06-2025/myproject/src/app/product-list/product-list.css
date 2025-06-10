@@ -1,0 +1,44 @@
+@import url('bootstrap-icons/font/bootstrap-icons.css');
+
+
+.product-container {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+
+.product-card {
+  border: 1px solid #eee;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+  display: inline-block; 
+  width: 300px; 
+  margin-right: 2%; 
+  vertical-align: top;
+}
+
+.product-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.cart-icon {
+  float: right;
+  font-size: 1.5em;
+  margin-right: 20px;
+  position: relative;
+}
+
+.badge {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 0.7em;
+  position: absolute;
+  top: -12px;
+  right: -12px;
+}

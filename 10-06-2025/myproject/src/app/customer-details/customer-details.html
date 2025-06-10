@@ -1,0 +1,13 @@
+<div>
+  <h3>Customer Information</h3>
+  <p>Name: {{ customerName }}</p>
+  <p>ID: {{ customerId }}</p>
+  <p>Email: {{ customerEmail }}</p>
+
+  <div class="feedback-section">
+    <i class="bi bi-hand-thumbs-up" (click)="incrementLike()"></i>
+    <span class="count">{{ likeCount }}</span>
+    <i class="bi bi-hand-thumbs-down" (click)="incrementDislike()"></i>
+    <span class="count">{{ dislikeCount }}</span>
+  </div>
+</div>
