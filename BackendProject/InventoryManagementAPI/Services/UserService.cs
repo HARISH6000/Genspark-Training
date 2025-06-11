@@ -13,18 +13,19 @@ namespace InventoryManagementAPI.Services
         private readonly IRepository<int, Role> _roleRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IInventoryManagerRepository _inventoryManagerRepository;
-        // private readonly IAuditLogService _auditLogService; // To be implemented later for audit logging
+        private readonly IAuditLogService _auditLogService;
 
         public UserService(IUserRepository userRepository,
                            IRepository<int, Role> roleRepository,
                            IPasswordHasher passwordHasher,
-                           IInventoryManagerRepository inventoryManagerRepository)
+                           IInventoryManagerRepository inventoryManagerRepository,
+                           IAuditLogService auditLogService)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _passwordHasher = passwordHasher;
             _inventoryManagerRepository = inventoryManagerRepository;
-            // _auditLogService = auditLogService;
+            _auditLogService = auditLogService;
         }
 
         public async Task<UserResponseDto> RegisterUserAsync(AddUserDto userDto)
@@ -154,6 +155,11 @@ namespace InventoryManagementAPI.Services
             userToDelete.IsDeleted = true; // Soft delete
             var deletedUser = await _userRepository.Update(userId, userToDelete);
             // _auditLogService.LogActionAsync(currentUserId, "User", userId, "DELETE", userToDelete, null);
+            var associatedAssignments = await _inventoryManagerRepository.GetAssignmentsByManagerId(userId);
+            foreach (var assignment in associatedAssignments)
+            {
+                await _inventoryManagerRepository.Delete(assignment.Id); // Hard delete the assignment record
+            }
             return UserMapper.ToUserResponseDto(deletedUser);
         }
 
