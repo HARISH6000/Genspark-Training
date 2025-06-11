@@ -1,0 +1,24 @@
+<div class="recipe-card">
+  
+  <img class="recipe-image"
+       [src]="recipe?.image"
+       alt="{{ recipe?.name }}"
+       loading="lazy">
+
+  
+  <div class="card-content">
+    <h3 class="recipe-name">{{ recipe?.name }}</h3>
+    <p class="recipe-detail">
+      <span class="detail-label">Cuisine:</span> {{ recipe?.cuisine }}
+    </p>
+    <p class="recipe-detail">
+      <span class="detail-label">Cooking Time:</span> {{ recipe?.cookTimeMinutes }} minutes
+    </p>
+    <div class="ingredients-section">
+      <p class="recipe-detail">
+        <span class="detail-label">Ingredients:</span>
+        <span class="ingredients-list">{{ recipe?.ingredients?.join(', ') }}</span>
+      </p>
+    </div>
+  </div>
+</div>
