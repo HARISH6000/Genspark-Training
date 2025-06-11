@@ -11,7 +11,7 @@ namespace InventoryManagementAPI.Repositories
         {
 
         }
-        public override async Task<User> Get(int key)
+        public override async Task<User?> Get(int key)
         {
             return await _applicationDbContext.Users.Include(u => u.Role).SingleOrDefaultAsync(u => u.UserId == key);
         }

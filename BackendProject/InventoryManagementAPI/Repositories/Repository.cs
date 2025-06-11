@@ -18,7 +18,7 @@ namespace InventoryManagementAPI.Repositories
             return item;
         }
 
-        public async Task<T> Delete(K key)
+        public async Task<T?> Delete(K key)
         {
             var item = await Get(key);
             if (item != null)

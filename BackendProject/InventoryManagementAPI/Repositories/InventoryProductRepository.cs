@@ -14,7 +14,7 @@ namespace InventoryManagementAPI.Repositories
         {
         }
 
-        public override async Task<InventoryProduct> Get(int key)
+        public override async Task<InventoryProduct?> Get(int key)
         {
             return await _applicationDbContext.InventoryProducts
                                               .Include(ip => ip.Inventory) 

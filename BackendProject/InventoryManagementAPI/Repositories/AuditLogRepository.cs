@@ -11,7 +11,7 @@ namespace InventoryManagementAPI.Repositories
         {
 
         }
-        public override async Task<AuditLog> Get(int key)
+        public override async Task<AuditLog?> Get(int key)
         {
             return await _applicationDbContext.AuditLogs.SingleOrDefaultAsync(al => al.AuditLogId == key);
         }

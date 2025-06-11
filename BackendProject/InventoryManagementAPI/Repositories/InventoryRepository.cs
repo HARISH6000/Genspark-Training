@@ -15,7 +15,7 @@ namespace InventoryManagementAPI.Repositories
         {
         }
 
-        public override async Task<Inventory> Get(int key)
+        public override async Task<Inventory?> Get(int key)
         {
             return await _applicationDbContext.Inventories.SingleOrDefaultAsync(i => i.InventoryId == key);
         }

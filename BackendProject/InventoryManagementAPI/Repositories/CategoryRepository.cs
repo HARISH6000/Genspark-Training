@@ -21,7 +21,7 @@ namespace InventoryManagementAPI.Repositories
         }
 
         
-        public override async Task<Category> Get(int key)
+        public override async Task<Category?> Get(int key)
         {
             
             return await _applicationDbContext.Categories

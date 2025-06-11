@@ -11,7 +11,7 @@ namespace InventoryManagementAPI.Repositories
         {
 
         }
-        public override async Task<Role> Get(int key)
+        public override async Task<Role?> Get(int key)
         {
             return await _applicationDbContext.Roles.SingleOrDefaultAsync(r => r.RoleId == key);
         }
