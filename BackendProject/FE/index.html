@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Low Stock Notifier</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #connectionStatus {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+        }
+        #connectionStatus.connected {
+            color: #28a745;
+            background-color: #d4edda;
+        }
+        #connectionStatus.disconnected {
+            color: #dc3545;
+            background-color: #f8d7da;
+        }
+        #notifications {
+            border: 1px solid #ddd;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fcfcfc;
+        }
+        .notification-item {
+            background-color: #ffeeba; /* Light yellow for alerts */
+            border: 1px solid #ffc107; /* Orange border */
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            word-wrap: break-word;
+        }
+        .notification-item:last-child {
+            margin-bottom: 0;
+        }
+        .notification-item strong {
+            color: #856404; /* Darker yellow/brown */
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .info {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SignalR Low Stock Notification Tester</h1>
+
+        <div id="connectionStatus" class="disconnected">
+            Connection Status: Disconnected
+        </div>
+        <button id="startButton">Start Connection</button>
+
+        <h2>Notifications:</h2>
+        <div id="notifications">
+            <p>Waiting for low stock notifications...</p>
+        </div>
+
+        <div class="info">
+            <p>Make sure your ASP.NET Core backend is running and the SignalR hub is mapped at <code>/lowstock-notifications</code>.</p>
+            <p>This page will automatically attempt to reconnect if the connection is lost.</p>
+        </div>
+    </div>
+
+    <script>
+        // Replace with your actual backend URL where SignalR is hosted
+        // For development, it's typically https://localhost:7XXX or http://localhost:5XXX
+        const SIGNALR_HUB_URL = "http://localhost:5085/lowstock-notifications"; 
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(SIGNALR_HUB_URL)
+            .withAutomaticReconnect({
+                // Attempt to reconnect every 0, 2, 10, and 30 seconds, then stop.
+                // Or you can customize this array for different intervals.
+                nextRetryDelayInMilliseconds: retryContext => {
+                    if (retryContext.elapsedMilliseconds < 60000) { // Try for 1 minute with increasing delays
+                        return [0, 2000, 10000, 30000][retryContext.previousRetryCount];
+                    }
+                    return null; // Stop reconnecting after 1 minute
+                }
+            })
+            .build();
+
+        const connectionStatusDiv = document.getElementById('connectionStatus');
+        const notificationsDiv = document.getElementById('notifications');
+        const startButton = document.getElementById('startButton');
+
+        function updateConnectionStatus(status) {
+            connectionStatusDiv.textContent = `Connection Status: ${status}`;
+            connectionStatusDiv.className = status.toLowerCase();
+            if (status === "Connected") {
+                startButton.style.display = 'none'; // Hide button when connected
+            } else {
+                startButton.style.display = 'block'; // Show button when disconnected
+            }
+        }
+
+        function addNotificationToDisplay(notification) {
+            const notificationItem = document.createElement('div');
+            notificationItem.className = 'notification-item';
+            const timestamp = new Date(notification.timestamp).toLocaleTimeString();
+            notificationItem.innerHTML = `
+                <strong>${timestamp} - Low Stock Alert!</strong><br>
+                Product: ${notification.productName} (SKU: ${notification.sku})<br>
+                Inventory: ${notification.inventoryName}<br>
+                Quantity: ${notification.currentQuantity} (Min: ${notification.minStockQuantity})<br>
+                Message: ${notification.message}
+            `;
+            // Add new notification to the top
+            if (notificationsDiv.firstChild instanceof HTMLParagraphElement && notificationsDiv.firstChild.textContent === 'Waiting for low stock notifications...') {
+                notificationsDiv.innerHTML = ''; // Clear initial message
+            }
+            notificationsDiv.prepend(notificationItem);
+        }
+
+        // Listener for incoming low stock notifications
+        connection.on("ReceiveLowStockNotification", (notification) => {
+            console.log("Low Stock Alert Received:", notification);
+            addNotificationToDisplay(notification);
+        });
+
+        // Event handler for successful connection
+        connection.onreconnected(() => {
+            console.log("SignalR Reconnected.");
+            updateConnectionStatus("Connected");
+        });
+
+        // Event handler for connection close
+        connection.onclose(async (error) => {
+            console.warn("SignalR Disconnected.", error);
+            updateConnectionStatus("Disconnected");
+            // Automatic reconnect logic is handled by withAutomaticReconnect
+        });
+
+        // Event handler for starting reconnection attempts
+        connection.onreconnecting((error) => {
+            console.log("SignalR Reconnecting...", error);
+            updateConnectionStatus("Reconnecting");
+        });
+
+        // Function to start the SignalR connection
+        async function startConnection() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected successfully.");
+                updateConnectionStatus("Connected");
+            } catch (err) {
+                console.error("Failed to connect to SignalR:", err);
+                updateConnectionStatus("Disconnected (Error)");
+            }
+        }
+
+        // Start connection automatically when the page loads
+        document.addEventListener('DOMContentLoaded', startConnection);
+
+        // Allow manual start if connection fails initially
+        startButton.addEventListener('click', startConnection);
+
+    </script>
+</body>
+</html>

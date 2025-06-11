@@ -11,5 +11,6 @@ namespace InventoryManagementAPI.Interfaces
         Task<IEnumerable<InventoryManager>> GetInventoriesManagedByManager(int managerId);
         Task<IEnumerable<InventoryManager>> GetAssignmentsByInventoryId(int inventoryId);
         Task<IEnumerable<InventoryManager>> GetAssignmentsByManagerId(int managerId);
+        Task<bool> IsUserManagerOfInventory(int userId, int inventoryId);
     }
 }

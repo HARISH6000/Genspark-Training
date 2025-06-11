@@ -7,6 +7,7 @@ using InventoryManagementAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json; 
 
 namespace InventoryManagementAPI.Services
 {
@@ -15,18 +16,21 @@ namespace InventoryManagementAPI.Services
         private readonly IInventoryManagerRepository _inventoryManagerRepository;
         private readonly IInventoryRepository _inventoryRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IAuditLogService _auditLogService; 
 
         public InventoryManagerService(
             IInventoryManagerRepository inventoryManagerRepository,
             IInventoryRepository inventoryRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IAuditLogService auditLogService)
         {
             _inventoryManagerRepository = inventoryManagerRepository;
             _inventoryRepository = inventoryRepository;
             _userRepository = userRepository;
+            _auditLogService = auditLogService; 
         }
 
-        public async Task<InventoryManagerResponseDto> AssignManagerToInventoryAsync(AssignRemoveInventoryManagerDto dto)
+        public async Task<InventoryManagerResponseDto> AssignManagerToInventoryAsync(AssignRemoveInventoryManagerDto dto, int? currentUserId)
         {
             var inventory = await _inventoryRepository.Get(dto.InventoryId);
             if (inventory == null || inventory.IsDeleted)
@@ -57,6 +61,17 @@ namespace InventoryManagementAPI.Services
             try
             {
                 var addedAssignment = await _inventoryManagerRepository.Add(newAssignment);
+                
+                // AUDIT LOGGING: INSERT Assignment
+                await _auditLogService.LogActionAsync(new AuditLogEntryDto
+                {
+                    UserId = currentUserId,
+                    TableName = "InventoryManagers",
+                    RecordId = addedAssignment.Id.ToString(),
+                    ActionType = "INSERT",
+                    NewValues = addedAssignment
+                });
+
                 return InventoryManagerMapper.ToInventoryManagerResponseDto(addedAssignment);
             }
             catch (DbUpdateException ex)
@@ -69,7 +84,7 @@ namespace InventoryManagementAPI.Services
             }
         }
 
-        public async Task<InventoryManagerResponseDto> RemoveManagerFromInventoryAsync(AssignRemoveInventoryManagerDto dto)
+        public async Task<InventoryManagerResponseDto> RemoveManagerFromInventoryAsync(AssignRemoveInventoryManagerDto dto, int? currentUserId)
         {
             var assignmentToDelete = await _inventoryManagerRepository.GetByInventoryAndManagerId(dto.InventoryId, dto.ManagerId);
             if (assignmentToDelete == null)
@@ -77,7 +92,22 @@ namespace InventoryManagementAPI.Services
                 throw new NotFoundException($"Assignment not found for Inventory ID {dto.InventoryId} and Manager ID {dto.ManagerId}.");
             }
 
+            // Capture old state before deletion
+            var oldAssignmentSnapshot = JsonSerializer.Deserialize<InventoryManager>(JsonSerializer.Serialize(assignmentToDelete));
+
             var deletedAssignment = await _inventoryManagerRepository.Delete(assignmentToDelete.Id);
+            
+            // AUDIT LOGGING: DELETE Assignment
+            await _auditLogService.LogActionAsync(new AuditLogEntryDto
+            {
+                UserId = currentUserId,
+                TableName = "InventoryManagers",
+                RecordId = deletedAssignment.Id.ToString(),
+                ActionType = "DELETE",
+                OldValues = oldAssignmentSnapshot,
+                NewValues = null // Record is being hard deleted
+            });
+
             return InventoryManagerMapper.ToInventoryManagerResponseDto(deletedAssignment);
         }
 
@@ -92,9 +122,8 @@ namespace InventoryManagementAPI.Services
             var assignments = await _inventoryManagerRepository.GetManagersForInventory(inventoryId);
 
             var activeManagers = assignments.Where(im => im.Manager != null && !im.Manager.IsDeleted)
-                                          .Select(im => im.Manager!)
-                                          .DistinctBy(u => u.UserId);
-
+                                            .Select(im => im.Manager!)
+                                            .DistinctBy(u => u.UserId);
             
             activeManagers = SortHelper.ApplySorting(activeManagers, sortBy);
 
@@ -114,7 +143,6 @@ namespace InventoryManagementAPI.Services
             var activeInventories = assignments.Where(im => im.Inventory != null && !im.Inventory.IsDeleted)
                                                .Select(im => im.Inventory!)
                                                .DistinctBy(i => i.InventoryId);
-
             
             activeInventories = SortHelper.ApplySorting(activeInventories, sortBy);
             

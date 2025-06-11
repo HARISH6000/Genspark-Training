@@ -27,7 +27,6 @@ namespace InventoryManagementAPI.Mappers
             product.Description = dto.Description;
             product.UnitPrice = dto.UnitPrice;
             product.CategoryId = dto.CategoryId;
-            product.IsDeleted = dto.IsDeleted;
         }
 
         

@@ -6,11 +6,14 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using InventoryManagementAPI.Utilities;
 
 namespace InventoryManagementAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")] 
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize]
     public class InventoryManagersController : ControllerBase
@@ -34,12 +37,12 @@ namespace InventoryManagementAPI.Controllers
         /// <param name="dto">The assignment details (Inventory ID and Manager User ID).</param>
         /// <returns>The created assignment record.</returns>
         [HttpPost("assign")]
-        // [Authorize(Roles = "Admin")] // Only Admin can assign managers
+        [Authorize(Roles = "Admin")] // Only Admin can assign managers
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(InventoryManagerResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)] // For invalid Inventory/Manager IDs
-        [ProducesResponseType(StatusCodes.Status409Conflict)] // For duplicate assignment
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)] // For invalid role
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AssignManagerToInventory([FromBody] AssignRemoveInventoryManagerDto dto)
         {
@@ -50,8 +53,8 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                var newAssignment = await _inventoryManagerService.AssignManagerToInventoryAsync(dto);
-                // For assign, there's no single ID to return, but we can return the DTO and a 201 status
+                var currentUserId = User.GetUserId(); // Get current user ID
+                var newAssignment = await _inventoryManagerService.AssignManagerToInventoryAsync(dto, currentUserId); // Pass currentUserId
                 return StatusCode(StatusCodes.Status201Created, newAssignment);
             }
             catch (NotFoundException ex)
@@ -64,7 +67,7 @@ namespace InventoryManagementAPI.Controllers
                 _logger.LogWarning(ex, "Assignment conflict: {Message}", ex.Message);
                 return Conflict(new { message = ex.Message });
             }
-            catch (InvalidOperationException ex) // For invalid role check
+            catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Assignment failed due to invalid role: {Message}", ex.Message);
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, new { message = ex.Message });
@@ -82,7 +85,7 @@ namespace InventoryManagementAPI.Controllers
         /// <param name="dto">The assignment details (Inventory ID and Manager User ID) to remove.</param>
         /// <returns>The removed assignment record.</returns>
         [HttpDelete("remove")]
-        // [Authorize(Roles = "Admin")] // Only Admin can remove managers
+        [Authorize(Roles = "Admin")] // Only Admin can remove managers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryManagerResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -96,7 +99,8 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                var removedAssignment = await _inventoryManagerService.RemoveManagerFromInventoryAsync(dto);
+                var currentUserId = User.GetUserId(); // Get current user ID
+                var removedAssignment = await _inventoryManagerService.RemoveManagerFromInventoryAsync(dto, currentUserId); // Pass currentUserId
                 return Ok(removedAssignment);
             }
             catch (NotFoundException ex)
@@ -106,7 +110,7 @@ namespace InventoryManagementAPI.Controllers
             }
             catch (Exception ex)
             {
-                    _logger.LogError(ex, "An error occurred during manager removal.");
+                _logger.LogError(ex, "An error occurred during manager removal.");
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred during manager removal." });
             }
         }
@@ -119,15 +123,14 @@ namespace InventoryManagementAPI.Controllers
         /// <param name="sortBy">Optional: Field to sort by (username, username_desc, id, id_desc).</param>
         /// <returns>A list of managers for the specified inventory.</returns>
         [HttpGet("by-inventory/{inventoryId}")]
-        // [Authorize(Roles = "Admin,Manager")] // Admin or Manager can view
+        [Authorize(Roles = "Admin,Manager")] // Admin or Manager can view
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ManagerForInventoryResponseDto>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)] // If inventory itself not found
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetManagersForInventory(int inventoryId, [FromQuery] string? sortBy = null)
         {
             try
             {
-                
                 var inventory = await _inventoryService.GetInventoryByIdAsync(inventoryId);
                 if (inventory == null || inventory.IsDeleted)
                 {
@@ -136,7 +139,7 @@ namespace InventoryManagementAPI.Controllers
                 var managers = await _inventoryManagerService.GetManagersForInventoryAsync(inventoryId, sortBy);
                 if (!managers.Any())
                 {
-                     return NotFound(new { message = $"Inventory with ID {inventoryId} has no assigned managers." });
+                    return NotFound(new { message = $"Inventory with ID {inventoryId} has no assigned managers." });
                 }
                 return Ok(managers);
             }
@@ -155,9 +158,9 @@ namespace InventoryManagementAPI.Controllers
         /// <param name="sortBy">Optional: Field to sort by (name, name_desc, location, location_desc, id, id_desc).</param>
         /// <returns>A list of inventories managed by the specified manager.</returns>
         [HttpGet("by-manager/{managerId}")]
-        // [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryManagedByManagerResponseDto>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)] // If manager not found
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetInventoriesManagedByManager(int managerId, [FromQuery] string? sortBy = null)
         {
@@ -169,13 +172,13 @@ namespace InventoryManagementAPI.Controllers
                     return NotFound(new { message = $"Manager with ID {managerId} not found or is deleted." });
                 }
                 var inventories = await _inventoryManagerService.GetInventoriesManagedByManagerAsync(managerId, sortBy);
-                 if (!inventories.Any()) 
+                if (!inventories.Any())
                 {
-                     return NotFound(new { message = $"Manager with ID {managerId} manages no active inventories." });
+                    return NotFound(new { message = $"Manager with ID {managerId} manages no active inventories." });
                 }
                 return Ok(inventories);
             }
-            catch (NotFoundException ex) 
+            catch (NotFoundException ex)
             {
                 _logger.LogWarning(ex, "Request for inventories by manager failed: {Message}", ex.Message);
                 return NotFound(new { message = ex.Message });
@@ -192,7 +195,7 @@ namespace InventoryManagementAPI.Controllers
         /// </summary>
         /// <returns>A list of all inventory-manager assignments.</returns>
         [HttpGet]
-        // [Authorize(Roles = "Admin")] // Only Admin can view all assignments
+        [Authorize(Roles = "Admin")] // Only Admin can view all assignments
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryManagerResponseDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllAssignments()

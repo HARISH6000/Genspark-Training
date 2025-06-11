@@ -17,6 +17,8 @@ namespace InventoryManagementAPI.Contexts
         public DbSet<InventoryProduct> InventoryProducts { get; set; }
         public DbSet<InventoryManager> InventoryManagers { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<RevokedToken> RevokedTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,7 +56,7 @@ namespace InventoryManagementAPI.Contexts
             modelBuilder.Entity<Category>()
                 .HasIndex(c => c.CategoryName)
                 .IsUnique();
-            
+
             //Product
             //SKU
             modelBuilder.Entity<Product>()
@@ -97,6 +99,36 @@ namespace InventoryManagementAPI.Contexts
                 .HasIndex(ip => new { ip.InventoryId, ip.ProductId })
                 .IsUnique();
 
+
+            //AuditLog
+            modelBuilder.Entity<AuditLog>()
+                .HasKey(al => al.AuditLogId);
+            modelBuilder.Entity<AuditLog>()
+                .Property(al => al.Timestamp)
+                .IsRequired();
+            modelBuilder.Entity<AuditLog>()
+                .Property(al => al.TableName)
+                .IsRequired();
+            modelBuilder.Entity<AuditLog>()
+                .Property(al => al.RecordId)
+                .IsRequired();
+            modelBuilder.Entity<AuditLog>()
+                .Property(al => al.ActionType)
+                .IsRequired();
+            modelBuilder.Entity<AuditLog>()
+                .Property(al => al.OldValues)
+                .IsRequired(false);
+            modelBuilder.Entity<AuditLog>()
+                .Property(al => al.NewValues)
+                .IsRequired(false);
+            modelBuilder.Entity<AuditLog>()
+                .Property(al => al.Changes)
+                .IsRequired(false);
+
+            //RevokedToken
+            modelBuilder.Entity<RevokedToken>()
+                .HasKey(rt => rt.Jti);
+
             //relationships
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
@@ -137,6 +169,13 @@ namespace InventoryManagementAPI.Contexts
                 .WithMany(u => u.ManagedInventories)
                 .HasForeignKey(im => im.ManagerId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<AuditLog>()
+                .HasOne(al => al.User)
+                .WithMany(u => u.AuditLogs)
+                .HasForeignKey(al => al.UserId)
+                .IsRequired(false) 
+                .OnDelete(DeleteBehavior.SetNull);
 
             base.OnModelCreating(modelBuilder);
         }

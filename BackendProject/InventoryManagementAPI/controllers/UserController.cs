@@ -2,17 +2,24 @@ using InventoryManagementAPI.DTOs;
 using InventoryManagementAPI.Interfaces;
 using InventoryManagementAPI.Exceptions; 
 using Microsoft.AspNetCore.Mvc;
-using InventoryManagementAPI.Models;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using InventoryManagementAPI.Utilities; 
 
 namespace InventoryManagementAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")] 
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ILogger<UsersController> _logger; // For logging errors
+        private readonly ILogger<UsersController> _logger;
 
         public UsersController(IUserService userService, ILogger<UsersController> logger)
         {
@@ -20,12 +27,13 @@ namespace InventoryManagementAPI.Controllers
             _logger = logger;
         }
 
-        
+       
         [HttpPost("register")]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RegisterUser([FromBody] AddUserDto userDto)
         {
@@ -36,8 +44,9 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                var newUser = await _userService.RegisterUserAsync(userDto);
-
+                // Use the new extension method:
+                var currentUserId = User.GetUserId(); // <--- UPDATED: Calling extension method
+                var newUser = await _userService.RegisterUserAsync(userDto, currentUserId);
                 return CreatedAtAction(nameof(GetUserById), new { userId = newUser.UserId }, newUser);
             }
             catch (ConflictException ex)
@@ -48,7 +57,7 @@ namespace InventoryManagementAPI.Controllers
             catch (NotFoundException ex)
             {
                 _logger.LogWarning(ex, "User registration failed due to missing resource: {Message}", ex.Message);
-                return BadRequest(new { message = ex.Message }); // Bad request because role ID was invalid
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -59,7 +68,8 @@ namespace InventoryManagementAPI.Controllers
 
         
         [HttpGet("{userId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Roles = "Admin,Manager")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserById(int userId)
@@ -81,5 +91,112 @@ namespace InventoryManagementAPI.Controllers
         }
 
         
+        [HttpGet("by-username/{username}")]
+        [Authorize(Roles = "Admin,Manager")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUserByUsername(string username)
+        {
+            try
+            {
+                var user = await _userService.GetUserByUsernameAsync(username);
+                if (user == null)
+                {
+                    return NotFound(new { message = $"User with username '{username}' not found." });
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting user by username {Username}.", username);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
+            }
+        }
+
+        
+        [HttpPut("{userId}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateUser(int userId, [FromBody] AddUserDto userDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                
+                var currentUserId = User.GetUserId(); 
+                var updatedUser = await _userService.UpdateUserAsync(userId, userDto, currentUserId);
+                return Ok(updatedUser);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "User update failed: {Message}", ex.Message);
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ConflictException ex)
+            {
+                _logger.LogWarning(ex, "User update conflict: {Message}", ex.Message);
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during user update.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred during user update." });
+            }
+        }
+
+        
+        [HttpDelete("{userId}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+            try
+            {
+                
+                var currentUserId = User.GetUserId(); 
+                var deletedUser = await _userService.DeleteUserAsync(userId, currentUserId);
+                return Ok(deletedUser);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "User soft delete failed: {Message}", ex.Message);
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during user soft delete for ID {UserId}.", userId);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred during soft deletion." });
+            }
+        }
+
+        
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _userService.GetAllUsersAsync();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving all users.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
+            }
+        }
     }
 }

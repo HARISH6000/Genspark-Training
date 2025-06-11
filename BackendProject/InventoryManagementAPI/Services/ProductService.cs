@@ -4,47 +4,56 @@ using InventoryManagementAPI.Models;
 using InventoryManagementAPI.Exceptions;
 using InventoryManagementAPI.Mappers;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Text.Json; 
 
 namespace InventoryManagementAPI.Services
 {
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        private readonly IRepository<int, Category> _categoryRepository;
-        // private readonly IAuditLogService _auditLogService;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IAuditLogService _auditLogService; 
 
-        public ProductService(IProductRepository productRepository, IRepository<int, Category> categoryRepository) 
+        public ProductService(IProductRepository productRepository, 
+                              ICategoryRepository categoryRepository,
+                              IAuditLogService auditLogService)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
-            // _auditLogService = auditLogService;
+            _auditLogService = auditLogService; 
         }
 
-        public async Task<ProductResponseDto> AddProductAsync(AddProductDto productDto)
+        public async Task<ProductResponseDto> AddProductAsync(AddProductDto productDto, int? currentUserId)
         {
-            // 1. Validate CategoryId
             var category = await _categoryRepository.Get(productDto.CategoryId);
             if (category == null)
             {
                 throw new NotFoundException($"Category with ID {productDto.CategoryId} not found.");
             }
 
-            // 2. Check for unique SKU
             var existingProduct = await _productRepository.GetBySKU(productDto.SKU);
             if (existingProduct != null)
             {
                 throw new ConflictException($"Product with SKU '{productDto.SKU}' already exists.");
             }
 
-            // 3. Map DTO to Product model and attach category
             var newProduct = ProductMapper.ToProduct(productDto);
-            newProduct.Category = category; // Attach category object for EF
+            newProduct.Category = category;
 
-            // 4. Add product to database
             try
             {
                 var addedProduct = await _productRepository.Add(newProduct);
-                // _auditLogService.LogActionAsync(currentUserId, "Product", addedProduct.ProductId, "INSERT", null, addedProduct);
+                
+                await _auditLogService.LogActionAsync(new AuditLogEntryDto
+                {
+                    UserId = currentUserId,
+                    TableName = "Products",
+                    RecordId = addedProduct.ProductId.ToString(),
+                    ActionType = "INSERT",
+                    NewValues = addedProduct
+                });
+                
                 return ProductMapper.ToProductResponseDto(addedProduct);
             }
             catch (DbUpdateException ex)
@@ -65,7 +74,6 @@ namespace InventoryManagementAPI.Services
             {
                 return null;
             }
-            // Category should be eager-loaded by the repository Get method, so it's available for mapping
             return ProductMapper.ToProductResponseDto(product);
         }
 
@@ -77,11 +85,10 @@ namespace InventoryManagementAPI.Services
             {
                 products = products.Where(p => !p.IsDeleted);
             }
-            // Categories should be eager-loaded by the repository GetAll method
             return products.Select(p => ProductMapper.ToProductResponseDto(p));
         }
 
-        public async Task<ProductResponseDto> UpdateProductAsync(UpdateProductDto productDto)
+        public async Task<ProductResponseDto> UpdateProductAsync(UpdateProductDto productDto, int? currentUserId)
         {
             var existingProduct = await _productRepository.Get(productDto.ProductId);
             if (existingProduct == null)
@@ -89,14 +96,14 @@ namespace InventoryManagementAPI.Services
                 throw new NotFoundException($"Product with ID {productDto.ProductId} not found.");
             }
 
-            // Validate CategoryId for update
+            var oldProductSnapshot = JsonSerializer.Deserialize<Product>(JsonSerializer.Serialize(existingProduct));
+
             var category = await _categoryRepository.Get(productDto.CategoryId);
             if (category == null)
             {
                 throw new NotFoundException($"Category with ID {productDto.CategoryId} not found for update.");
             }
 
-            // Check for SKU uniqueness if SKU is being changed
             if (existingProduct.SKU != productDto.SKU)
             {
                 var productWithSameSku = await _productRepository.GetBySKU(productDto.SKU);
@@ -106,14 +113,23 @@ namespace InventoryManagementAPI.Services
                 }
             }
 
-            // Map DTO properties to the existing product entity and update category
             ProductMapper.ToProduct(productDto, existingProduct);
-            existingProduct.Category = category; // Update navigation property
+            existingProduct.Category = category;
 
             try
             {
                 var updatedProduct = await _productRepository.Update(productDto.ProductId, existingProduct);
-                // _auditLogService.LogActionAsync(currentUserId, "Product", updatedProduct.ProductId, "UPDATE", oldValues, updatedProduct);
+                
+                await _auditLogService.LogActionAsync(new AuditLogEntryDto
+                {
+                    UserId = currentUserId,
+                    TableName = "Products",
+                    RecordId = updatedProduct.ProductId.ToString(),
+                    ActionType = "UPDATE",
+                    OldValues = oldProductSnapshot,
+                    NewValues = updatedProduct
+                });
+                
                 return ProductMapper.ToProductResponseDto(updatedProduct);
             }
             catch (DbUpdateException ex)
@@ -127,7 +143,7 @@ namespace InventoryManagementAPI.Services
             }
         }
 
-        public async Task<ProductResponseDto> SoftDeleteProductAsync(int productId)
+        public async Task<ProductResponseDto> SoftDeleteProductAsync(int productId, int? currentUserId)
         {
             var productToDelete = await _productRepository.Get(productId);
             if (productToDelete == null)
@@ -140,13 +156,25 @@ namespace InventoryManagementAPI.Services
                 return ProductMapper.ToProductResponseDto(productToDelete);
             }
 
+            var oldProductSnapshot = JsonSerializer.Deserialize<Product>(JsonSerializer.Serialize(productToDelete));
+
             productToDelete.IsDeleted = true;
             var deletedProduct = await _productRepository.Update(productId, productToDelete);
-            // _auditLogService.LogActionAsync(currentUserId, "Product", productId, "SOFT_DELETE", productToDelete, deletedProduct);
+            
+            await _auditLogService.LogActionAsync(new AuditLogEntryDto
+            {
+                UserId = currentUserId,
+                TableName = "Products",
+                RecordId = productId.ToString(),
+                ActionType = "SOFT_DELETE",
+                OldValues = oldProductSnapshot,
+                NewValues = deletedProduct
+            });
+            
             return ProductMapper.ToProductResponseDto(deletedProduct);
         }
 
-        public async Task<ProductResponseDto> HardDeleteProductAsync(int productId)
+        public async Task<ProductResponseDto> HardDeleteProductAsync(int productId, int? currentUserId)
         {
             var productToDelete = await _productRepository.Get(productId);
             if (productToDelete == null)
@@ -154,8 +182,20 @@ namespace InventoryManagementAPI.Services
                 throw new NotFoundException($"Product with ID {productId} not found.");
             }
 
+            var oldProductSnapshot = JsonSerializer.Deserialize<Product>(JsonSerializer.Serialize(productToDelete));
+
             var deletedProduct = await _productRepository.Delete(productId);
-            // _auditLogService.LogActionAsync(currentUserId, "Product", productId, "HARD_DELETE", productToDelete, null);
+            
+            await _auditLogService.LogActionAsync(new AuditLogEntryDto
+            {
+                UserId = currentUserId,
+                TableName = "Products",
+                RecordId = productId.ToString(),
+                ActionType = "HARD_DELETE",
+                OldValues = oldProductSnapshot,
+                NewValues = null
+            });
+            
             return ProductMapper.ToProductResponseDto(deletedProduct);
         }
     }

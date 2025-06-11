@@ -6,9 +6,12 @@ C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\Inven
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\InventoryManagementAPI.runtimeconfig.json
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\InventoryManagementAPI.dll
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\InventoryManagementAPI.pdb
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\AspNetCoreRateLimit.dll
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\BCrypt.Net-Next.dll
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\Humanizer.dll
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\Microsoft.AspNetCore.Mvc.Versioning.dll
+C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer.dll
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\Microsoft.AspNetCore.OpenApi.dll
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\PresidioTraining\BackendProject\InventoryManagementAPI\bin\Debug\net9.0\Microsoft.Build.Locator.dll

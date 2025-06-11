@@ -1,45 +1,56 @@
 using InventoryManagementAPI.DTOs;
 using InventoryManagementAPI.Interfaces;
 using InventoryManagementAPI.Models;
-using InventoryManagementAPI.Exceptions; // For custom exceptions
-using InventoryManagementAPI.Mappers; // For InventoryMapper
-using Microsoft.EntityFrameworkCore; // For DbUpdateException
+using InventoryManagementAPI.Exceptions;
+using InventoryManagementAPI.Mappers;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Linq;
 
 namespace InventoryManagementAPI.Services
 {
     public class InventoryService : IInventoryService
     {
         private readonly IInventoryRepository _inventoryRepository;
-        // private readonly IAuditLogService _auditLogService; // To be implemented later
+        private readonly IInventoryManagerRepository _inventoryManagerRepository;
+        private readonly IAuditLogService _auditLogService;
 
-        public InventoryService(IInventoryRepository inventoryRepository)
+        public InventoryService(IInventoryRepository inventoryRepository, 
+                                IInventoryManagerRepository inventoryManagerRepository,
+                                IAuditLogService auditLogService)
         {
             _inventoryRepository = inventoryRepository;
-            // _auditLogService = auditLogService;
+            _inventoryManagerRepository = inventoryManagerRepository;
+            _auditLogService = auditLogService;
         }
 
-        public async Task<InventoryResponseDto> AddInventoryAsync(AddInventoryDto inventoryDto)
+        public async Task<InventoryResponseDto> AddInventoryAsync(AddInventoryDto inventoryDto, int? currentUserId)
         {
-            
             var existingInventory = await _inventoryRepository.GetByName(inventoryDto.Name);
             if (existingInventory != null)
             {
                 throw new ConflictException($"Inventory with name '{inventoryDto.Name}' already exists.");
             }
-
             
             var newInventory = InventoryMapper.ToInventory(inventoryDto);
-
             
             try
             {
                 var addedInventory = await _inventoryRepository.Add(newInventory);
-                // _auditLogService.LogActionAsync(currentUserId, "Inventory", addedInventory.InventoryId, "INSERT", null, addedInventory);
+                
+                await _auditLogService.LogActionAsync(new AuditLogEntryDto
+                {
+                    UserId = currentUserId,
+                    TableName = "Inventories",
+                    RecordId = addedInventory.InventoryId.ToString(),
+                    ActionType = "INSERT",
+                    NewValues = addedInventory
+                });
+
                 return InventoryMapper.ToInventoryResponseDto(addedInventory);
             }
-            catch (DbUpdateException ex) // Catch potential database unique constraint violations
+            catch (DbUpdateException ex)
             {
-                
                 if (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true || ex.InnerException?.Message.Contains("duplicate key") == true)
                 {
                     if (ex.InnerException.Message.Contains("Name") || ex.InnerException.Message.Contains("name"))
@@ -71,7 +82,7 @@ namespace InventoryManagementAPI.Services
             return inventories.Select(i => InventoryMapper.ToInventoryResponseDto(i));
         }
 
-        public async Task<InventoryResponseDto> UpdateInventoryAsync(UpdateInventoryDto inventoryDto)
+        public async Task<InventoryResponseDto> UpdateInventoryAsync(UpdateInventoryDto inventoryDto, int? currentUserId)
         {
             var existingInventory = await _inventoryRepository.Get(inventoryDto.InventoryId);
             if (existingInventory == null)
@@ -79,7 +90,8 @@ namespace InventoryManagementAPI.Services
                 throw new NotFoundException($"Inventory with ID {inventoryDto.InventoryId} not found.");
             }
 
-            // Check for Name uniqueness if Name is being changed to an already existing one that's not its own
+            var oldInventorySnapshot = JsonSerializer.Deserialize<Inventory>(JsonSerializer.Serialize(existingInventory)); 
+
             if (existingInventory.Name != inventoryDto.Name)
             {
                 var inventoryWithSameName = await _inventoryRepository.GetByName(inventoryDto.Name);
@@ -88,14 +100,23 @@ namespace InventoryManagementAPI.Services
                     throw new ConflictException($"Inventory with name '{inventoryDto.Name}' already exists.");
                 }
             }
-
             
             InventoryMapper.ToInventory(inventoryDto, existingInventory);
 
             try
             {
                 var updatedInventory = await _inventoryRepository.Update(inventoryDto.InventoryId, existingInventory);
-                // _auditLogService.LogActionAsync(currentUserId, "Inventory", updatedInventory.InventoryId, "UPDATE", oldValues, updatedInventory);
+                
+                await _auditLogService.LogActionAsync(new AuditLogEntryDto
+                {
+                    UserId = currentUserId,
+                    TableName = "Inventories",
+                    RecordId = updatedInventory.InventoryId.ToString(),
+                    ActionType = "UPDATE",
+                    OldValues = oldInventorySnapshot,
+                    NewValues = updatedInventory
+                });
+
                 return InventoryMapper.ToInventoryResponseDto(updatedInventory);
             }
             catch (DbUpdateException ex)
@@ -109,7 +130,7 @@ namespace InventoryManagementAPI.Services
             }
         }
 
-        public async Task<InventoryResponseDto> SoftDeleteInventoryAsync(int inventoryId)
+        public async Task<InventoryResponseDto> SoftDeleteInventoryAsync(int inventoryId, int? currentUserId)
         {
             var inventoryToDelete = await _inventoryRepository.Get(inventoryId);
             if (inventoryToDelete == null)
@@ -122,23 +143,51 @@ namespace InventoryManagementAPI.Services
                 return InventoryMapper.ToInventoryResponseDto(inventoryToDelete); 
             }
 
+            var oldInventorySnapshot = JsonSerializer.Deserialize<Inventory>(JsonSerializer.Serialize(inventoryToDelete));
+
             inventoryToDelete.IsDeleted = true; // Set IsDeleted flag
             var deletedInventory = await _inventoryRepository.Update(inventoryId, inventoryToDelete);
-            // _auditLogService.LogActionAsync(currentUserId, "Inventory", inventoryId, "SOFT_DELETE", inventoryToDelete, deletedInventory);
+            
+            await _auditLogService.LogActionAsync(new AuditLogEntryDto
+            {
+                UserId = currentUserId,
+                TableName = "Inventories",
+                RecordId = inventoryId.ToString(),
+                ActionType = "SOFT_DELETE",
+                OldValues = oldInventorySnapshot,
+                NewValues = deletedInventory
+            });
+
+            var associatedAssignments = await _inventoryManagerRepository.GetAssignmentsByInventoryId(inventoryId);
+            foreach (var assignment in associatedAssignments)
+            {
+                await _inventoryManagerRepository.Delete(assignment.Id);
+            }
             return InventoryMapper.ToInventoryResponseDto(deletedInventory);
         }
 
-        public async Task<InventoryResponseDto> HardDeleteInventoryAsync(int inventoryId)
+        public async Task<InventoryResponseDto> HardDeleteInventoryAsync(int inventoryId, int? currentUserId)
         {
-            
             var inventoryToDelete = await _inventoryRepository.Get(inventoryId);
             if (inventoryToDelete == null)
             {
                 throw new NotFoundException($"Inventory with ID {inventoryId} not found.");
             }
 
+            var oldInventorySnapshot = JsonSerializer.Deserialize<Inventory>(JsonSerializer.Serialize(inventoryToDelete));
+
             var deletedInventory = await _inventoryRepository.Delete(inventoryId);
-            // _auditLogService.LogActionAsync(currentUserId, "Inventory", inventoryId, "HARD_DELETE", inventoryToDelete, null);
+            
+            await _auditLogService.LogActionAsync(new AuditLogEntryDto
+            {
+                UserId = currentUserId,
+                TableName = "Inventories",
+                RecordId = inventoryId.ToString(),
+                ActionType = "HARD_DELETE",
+                OldValues = oldInventorySnapshot, 
+                NewValues = null 
+            });
+            
             return InventoryMapper.ToInventoryResponseDto(deletedInventory);
         }
     }

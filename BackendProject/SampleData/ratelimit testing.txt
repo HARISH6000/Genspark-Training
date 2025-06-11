@@ -1,0 +1,4 @@
+FOR /L %i IN (1,1,15) DO (
+    curl -v -H "Authorization: Bearer YOUR_JWT_TOKEN" http://localhost:5085/api/products
+    timeout /t 0.1 /nobreak > NUL
+)

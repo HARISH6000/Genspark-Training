@@ -6,11 +6,14 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using InventoryManagementAPI.Utilities;
 
 namespace InventoryManagementAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")] 
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize]
     public class InventoriesController : ControllerBase
@@ -24,6 +27,7 @@ namespace InventoryManagementAPI.Controllers
             _logger = logger;
         }
 
+        
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(InventoryResponseDto))]
@@ -39,7 +43,8 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                var newInventory = await _inventoryService.AddInventoryAsync(inventoryDto);
+                var currentUserId = User.GetUserId(); // Get current user ID from extension method
+                var newInventory = await _inventoryService.AddInventoryAsync(inventoryDto, currentUserId); // Pass currentUserId
                 return CreatedAtAction(nameof(GetInventoryById), new { inventoryId = newInventory.InventoryId }, newInventory);
             }
             catch (ConflictException ex)
@@ -112,7 +117,8 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                var updatedInventory = await _inventoryService.UpdateInventoryAsync(inventoryDto);
+                var currentUserId = User.GetUserId(); // Get current user ID
+                var updatedInventory = await _inventoryService.UpdateInventoryAsync(inventoryDto, currentUserId); // Pass currentUserId
                 return Ok(updatedInventory);
             }
             catch (NotFoundException ex)
@@ -122,7 +128,7 @@ namespace InventoryManagementAPI.Controllers
             }
             catch (ConflictException ex)
             {
-                _logger.LogWarning(ex, "Inventory update conflict: {Message}", ex.Message);
+                    _logger.LogWarning(ex, "Inventory update conflict: {Message}", ex.Message);
                 return Conflict(new { message = ex.Message });
             }
             catch (Exception ex)
@@ -142,7 +148,8 @@ namespace InventoryManagementAPI.Controllers
         {
             try
             {
-                var inventory = await _inventoryService.SoftDeleteInventoryAsync(inventoryId);
+                var currentUserId = User.GetUserId(); // Get current user ID
+                var inventory = await _inventoryService.SoftDeleteInventoryAsync(inventoryId, currentUserId); // Pass currentUserId
                 return Ok(inventory);
             }
             catch (NotFoundException ex)
@@ -167,7 +174,8 @@ namespace InventoryManagementAPI.Controllers
         {
             try
             {
-                var inventory = await _inventoryService.HardDeleteInventoryAsync(inventoryId);
+                var currentUserId = User.GetUserId(); // Get current user ID
+                var inventory = await _inventoryService.HardDeleteInventoryAsync(inventoryId, currentUserId); // Pass currentUserId
                 return Ok(inventory);
             }
             catch (NotFoundException ex)

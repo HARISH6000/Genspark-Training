@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace InventoryManagementAPI.Models
 {
     public class Product
@@ -8,10 +10,11 @@ namespace InventoryManagementAPI.Models
         public string? Description { get; set; }
         public decimal UnitPrice { get; set; }
         public bool IsDeleted { get; set; }
-         public int CategoryId { get; set; }
+        public int CategoryId { get; set; }
 
         // Navigation property
         public Category? Category { get; set; }
+        [JsonIgnore]
         public ICollection<InventoryProduct>? InventoryProducts { get; set; }
     }
 }

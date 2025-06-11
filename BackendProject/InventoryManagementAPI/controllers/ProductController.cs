@@ -6,11 +6,14 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using System.Security.Claims; 
 using Microsoft.AspNetCore.Authorization;
+using InventoryManagementAPI.Utilities;
 
 namespace InventoryManagementAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")] 
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize]
     public class ProductsController : ControllerBase
@@ -40,13 +43,19 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                var newProduct = await _productService.AddProductAsync(productDto);
+                var currentUserId = User.GetUserId();
+                var newProduct = await _productService.AddProductAsync(productDto, currentUserId); // Pass currentUserId
                 return CreatedAtAction(nameof(GetProductById), new { productId = newProduct.ProductId }, newProduct);
             }
             catch (ConflictException ex)
             {
                 _logger.LogWarning(ex, "Product creation conflict: {Message}", ex.Message);
                 return Conflict(new { message = ex.Message });
+            }
+            catch (NotFoundException ex) // Added for category not found
+            {
+                _logger.LogWarning(ex, "Product creation failed: {Message}", ex.Message);
+                return NotFound(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -113,7 +122,8 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                var updatedProduct = await _productService.UpdateProductAsync(productDto);
+                var currentUserId = User.GetUserId(); // Get current user ID
+                var updatedProduct = await _productService.UpdateProductAsync(productDto, currentUserId); // Pass currentUserId
                 return Ok(updatedProduct);
             }
             catch (NotFoundException ex)
@@ -143,7 +153,8 @@ namespace InventoryManagementAPI.Controllers
         {
             try
             {
-                var product = await _productService.SoftDeleteProductAsync(productId);
+                var currentUserId = User.GetUserId(); // Get current user ID
+                var product = await _productService.SoftDeleteProductAsync(productId, currentUserId); // Pass currentUserId
                 return Ok(product);
             }
             catch (NotFoundException ex)
@@ -158,7 +169,11 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+        /// <summary>
+        /// Hard deletes a product from the database.
+        /// </summary>
+        /// <param name="productId">The ID of the product to hard delete.</param>
+        /// <returns>The hard-deleted product.</returns>
         [HttpDelete("harddelete/{productId}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponseDto))]
@@ -168,7 +183,9 @@ namespace InventoryManagementAPI.Controllers
         {
             try
             {
-                var product = await _productService.HardDeleteProductAsync(productId);
+                var currentUserId = User.GetUserId(); // Get current user ID
+                _logger.LogInformation("Attempting to hard delete product with ID {ProductId} by user {UserId}.", productId, currentUserId);
+                var product = await _productService.HardDeleteProductAsync(productId, currentUserId); // Pass currentUserId
                 return Ok(product);
             }
             catch (NotFoundException ex)

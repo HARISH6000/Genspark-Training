@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace InventoryManagementAPI.Models
 {
     public class User
@@ -13,6 +15,9 @@ namespace InventoryManagementAPI.Models
 
         // Navigation properties
         public Role? Role { get; set; }
+        [JsonIgnore]
         public ICollection<InventoryManager>? ManagedInventories { get; set; }
+        [JsonIgnore]
+        public ICollection<AuditLog>? AuditLogs { get; set; }
     }
 }

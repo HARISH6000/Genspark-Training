@@ -75,5 +75,11 @@ namespace InventoryManagementAPI.Repositories
                                               .Where(im => im.ManagerId == managerId)
                                               .ToListAsync();
         }
+
+        public async Task<bool> IsUserManagerOfInventory(int userId, int inventoryId)
+        {
+            return await _applicationDbContext.InventoryManagers
+                                             .AnyAsync(im => im.ManagerId == userId && im.InventoryId == inventoryId);
+        }
     }
 }

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace InventoryManagementAPI.Models
 {
     public class Category
@@ -7,6 +9,7 @@ namespace InventoryManagementAPI.Models
         public string? Description { get; set; }
 
         // Navigation property
+        [JsonIgnore]
         public ICollection<Product>? Products { get; set; }
     }
 }

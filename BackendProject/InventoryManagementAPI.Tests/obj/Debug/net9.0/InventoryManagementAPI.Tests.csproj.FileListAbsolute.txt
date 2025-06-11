@@ -1,0 +1,8 @@
+C:\PresidioTraining\BackendProject\InventoryManagementAPI.Tests\bin\Debug\net9.0\.msCoverageSourceRootsMapping_InventoryManagementAPI.Tests
+C:\PresidioTraining\BackendProject\InventoryManagementAPI.Tests\bin\Debug\net9.0\CoverletSourceRootsMapping_InventoryManagementAPI.Tests
+C:\PresidioTraining\BackendProject\InventoryManagementAPI.Tests\obj\Debug\net9.0\InventoryManagementAPI.Tests.csproj.AssemblyReference.cache
+C:\PresidioTraining\BackendProject\InventoryManagementAPI.Tests\obj\Debug\net9.0\InventoryManagementAPI.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\PresidioTraining\BackendProject\InventoryManagementAPI.Tests\obj\Debug\net9.0\InventoryManagementAPI.Tests.AssemblyInfoInputs.cache
+C:\PresidioTraining\BackendProject\InventoryManagementAPI.Tests\obj\Debug\net9.0\InventoryManagementAPI.Tests.AssemblyInfo.cs
+C:\PresidioTraining\BackendProject\InventoryManagementAPI.Tests\obj\Debug\net9.0\InventoryManagementAPI.Tests.csproj.CoreCompileInputs.cache
+C:\PresidioTraining\BackendProject\InventoryManagementAPI.Tests\obj\Debug\net9.0\InventoryManagementAPI.Tests.sourcelink.json

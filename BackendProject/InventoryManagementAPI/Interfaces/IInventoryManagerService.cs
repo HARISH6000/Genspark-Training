@@ -7,10 +7,10 @@ namespace InventoryManagementAPI.Interfaces
 {
     public interface IInventoryManagerService
     {
-        Task<InventoryManagerResponseDto> AssignManagerToInventoryAsync(AssignRemoveInventoryManagerDto dto);
-        Task<InventoryManagerResponseDto> RemoveManagerFromInventoryAsync(AssignRemoveInventoryManagerDto dto);
+        Task<InventoryManagerResponseDto> AssignManagerToInventoryAsync(AssignRemoveInventoryManagerDto dto, int? currentUserId);
+        Task<InventoryManagerResponseDto> RemoveManagerFromInventoryAsync(AssignRemoveInventoryManagerDto dto, int? currentUserId);
         Task<IEnumerable<ManagerForInventoryResponseDto>> GetManagersForInventoryAsync(int inventoryId, string? sortBy = null);
         Task<IEnumerable<InventoryManagedByManagerResponseDto>> GetInventoriesManagedByManagerAsync(int managerId, string? sortBy = null);
-        Task<IEnumerable<InventoryManagerResponseDto>> GetAllAssignmentsAsync(); // To list all assignments
+        Task<IEnumerable<InventoryManagerResponseDto>> GetAllAssignmentsAsync();
     }
 }
