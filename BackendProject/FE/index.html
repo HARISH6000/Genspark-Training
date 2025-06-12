@@ -86,7 +86,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>SignalR Low Stock Notification Tester</h1>
+        <h1>SignalR Low Stock Notification</h1>
 
         <div id="connectionStatus" class="disconnected">
             Connection Status: Disconnected
@@ -98,27 +98,22 @@
             <p>Waiting for low stock notifications...</p>
         </div>
 
-        <div class="info">
-            <p>Make sure your ASP.NET Core backend is running and the SignalR hub is mapped at <code>/lowstock-notifications</code>.</p>
-            <p>This page will automatically attempt to reconnect if the connection is lost.</p>
-        </div>
+        
     </div>
 
     <script>
-        // Replace with your actual backend URL where SignalR is hosted
-        // For development, it's typically https://localhost:7XXX or http://localhost:5XXX
+        
         const SIGNALR_HUB_URL = "http://localhost:5085/lowstock-notifications"; 
 
         const connection = new signalR.HubConnectionBuilder()
             .withUrl(SIGNALR_HUB_URL)
             .withAutomaticReconnect({
-                // Attempt to reconnect every 0, 2, 10, and 30 seconds, then stop.
-                // Or you can customize this array for different intervals.
+                
                 nextRetryDelayInMilliseconds: retryContext => {
-                    if (retryContext.elapsedMilliseconds < 60000) { // Try for 1 minute with increasing delays
+                    if (retryContext.elapsedMilliseconds < 60000) {
                         return [0, 2000, 10000, 30000][retryContext.previousRetryCount];
                     }
-                    return null; // Stop reconnecting after 1 minute
+                    return null;
                 }
             })
             .build();
@@ -131,9 +126,9 @@
             connectionStatusDiv.textContent = `Connection Status: ${status}`;
             connectionStatusDiv.className = status.toLowerCase();
             if (status === "Connected") {
-                startButton.style.display = 'none'; // Hide button when connected
+                startButton.style.display = 'none'; 
             } else {
-                startButton.style.display = 'block'; // Show button when disconnected
+                startButton.style.display = 'block'; 
             }
         }
 
@@ -148,39 +143,39 @@
                 Quantity: ${notification.currentQuantity} (Min: ${notification.minStockQuantity})<br>
                 Message: ${notification.message}
             `;
-            // Add new notification to the top
+            
             if (notificationsDiv.firstChild instanceof HTMLParagraphElement && notificationsDiv.firstChild.textContent === 'Waiting for low stock notifications...') {
-                notificationsDiv.innerHTML = ''; // Clear initial message
+                notificationsDiv.innerHTML = ''; 
             }
             notificationsDiv.prepend(notificationItem);
         }
 
-        // Listener for incoming low stock notifications
+        
         connection.on("ReceiveLowStockNotification", (notification) => {
             console.log("Low Stock Alert Received:", notification);
             addNotificationToDisplay(notification);
         });
 
-        // Event handler for successful connection
+        
         connection.onreconnected(() => {
             console.log("SignalR Reconnected.");
             updateConnectionStatus("Connected");
         });
 
-        // Event handler for connection close
+        
         connection.onclose(async (error) => {
             console.warn("SignalR Disconnected.", error);
             updateConnectionStatus("Disconnected");
-            // Automatic reconnect logic is handled by withAutomaticReconnect
+            
         });
 
-        // Event handler for starting reconnection attempts
+        
         connection.onreconnecting((error) => {
             console.log("SignalR Reconnecting...", error);
             updateConnectionStatus("Reconnecting");
         });
 
-        // Function to start the SignalR connection
+        
         async function startConnection() {
             try {
                 await connection.start();
@@ -192,10 +187,9 @@
             }
         }
 
-        // Start connection automatically when the page loads
+        
         document.addEventListener('DOMContentLoaded', startConnection);
 
-        // Allow manual start if connection fails initially
         startButton.addEventListener('click', startConnection);
 
     </script>

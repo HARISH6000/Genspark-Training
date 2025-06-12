@@ -53,11 +53,7 @@ namespace InventoryManagementAPI.Services
 
             var addedAuditLog = await _auditLogRepository.Add(auditLog);
             
-            // To return a DTO with username, we might need to fetch the added entry with its navigation property loaded
-            // Or ensure the Add method in the repository returns the entity with relationships.
-            // For simplicity, we'll fetch it again or manually populate Username if User was passed in entry.
-            // A more efficient way would be to extend IRepository.Add to allow eager loading on return.
-            // For now, let's just make sure the User nav property is available.
+            
             if (addedAuditLog.User == null && addedAuditLog.UserId.HasValue)
             {
                 addedAuditLog.User = await _userRepository.Get(addedAuditLog.UserId.Value);
@@ -100,16 +96,16 @@ namespace InventoryManagementAPI.Services
             }
             if (filter.EndDate.HasValue)
             {
-                // Add one day to EndDate to include all logs from that day
+                
                 query = query.Where(al => al.Timestamp <= filter.EndDate.Value.AddDays(1).ToUniversalTime());
             }
 
-            var responseDtos = query.Select(al => AuditLogMapper.ToAuditLogResponseDto(al)).ToList(); // ToList() to execute query before sorting
+            var responseDtos = query.Select(al => AuditLogMapper.ToAuditLogResponseDto(al)).ToList(); 
 
-            // Apply sorting using the common utility function
+            
             if (!string.IsNullOrEmpty(sortBy))
             {
-                responseDtos = SortHelper.ApplySorting(responseDtos, sortBy).ToList(); // .ToList() to make it concrete after sorting
+                responseDtos = SortHelper.ApplySorting(responseDtos, sortBy).ToList();
             }
             
             return responseDtos;

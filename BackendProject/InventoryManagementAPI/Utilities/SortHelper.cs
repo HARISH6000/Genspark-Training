@@ -6,14 +6,10 @@ namespace InventoryManagementAPI.Utilities
 {
     public static class SortHelper
     {
-        /// <summary>
-        /// Applies multi-level sorting to an IEnumerable collection dynamically based on a comma-separated sort string.
+        
         /// Example sortBy: "username_asc,id_desc" or "name,location_desc"
-        /// </summary>
-        /// <typeparam name="T">The type of elements in the collection.</typeparam>
-        /// <param name="collection">The IEnumerable collection to sort.</param>
-        /// <param name="sortBy">A comma-separated string of sort criteria (e.g., "FieldName_Direction").</param>
-        /// <returns>An IOrderedEnumerable<T> representing the sorted collection.</returns>
+        
+        ///"FieldName_Direction"
         public static IOrderedEnumerable<T> ApplySorting<T>(IEnumerable<T> collection, string? sortBy)
         {
             // If collection is null, empty, or no sorting criteria, return a trivially sorted collection (or original).

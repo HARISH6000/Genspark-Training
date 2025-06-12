@@ -1,6 +1,6 @@
 using InventoryManagementAPI.DTOs;
 using InventoryManagementAPI.Interfaces;
-using InventoryManagementAPI.Exceptions; 
+using InventoryManagementAPI.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using InventoryManagementAPI.Utilities; 
+using InventoryManagementAPI.Utilities;
 
 namespace InventoryManagementAPI.Controllers
 {
-    [ApiVersion("1.0")] 
+    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize]
@@ -27,7 +27,7 @@ namespace InventoryManagementAPI.Controllers
             _logger = logger;
         }
 
-       
+
         [HttpPost("register")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponseDto))]
@@ -44,8 +44,7 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                // Use the new extension method:
-                var currentUserId = User.GetUserId(); // <--- UPDATED: Calling extension method
+                var currentUserId = User.GetUserId();
                 var newUser = await _userService.RegisterUserAsync(userDto, currentUserId);
                 return CreatedAtAction(nameof(GetUserById), new { userId = newUser.UserId }, newUser);
             }
@@ -66,16 +65,26 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("{userId}")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserById(int userId)
         {
             try
             {
+                var currentUserId = User.GetUserId();
+
+                var currentUser = await _userService.GetUserByIdAsync(currentUserId ?? 0);
+                if (currentUser.RoleId != 1 && currentUser.UserId != userId)
+                {
+                    _logger.LogWarning("User {CurrentUserId} attempted to access details of user {UserId} without permission.", currentUserId, userId);
+                    return StatusCode(StatusCodes.Status403Forbidden, new { message = "You do not have permission to access this user's details." });
+                }
+
                 var user = await _userService.GetUserByIdAsync(userId);
                 if (user == null)
                 {
@@ -90,17 +99,28 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("by-username/{username}")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserByUsername(string username)
         {
             try
             {
+                var currentUserId = User.GetUserId();
+
+                var currentUser = await _userService.GetUserByIdAsync(currentUserId ?? 0);
                 var user = await _userService.GetUserByUsernameAsync(username);
+
+                if (currentUser.RoleId != 1 && currentUser.UserId != user.UserId)
+                {
+                    _logger.LogWarning("User {CurrentUserId} attempted to access details of user {UserId} without permission.", currentUserId, user.UserId);
+                    return StatusCode(StatusCodes.Status403Forbidden, new { message = "You do not have permission to access this user's details." });
+                }
+                
                 if (user == null)
                 {
                     return NotFound(new { message = $"User with username '{username}' not found." });
@@ -114,11 +134,12 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpPut("{userId}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -131,8 +152,14 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                
-                var currentUserId = User.GetUserId(); 
+
+                var currentUserId = User.GetUserId();
+                var currentUser = await _userService.GetUserByIdAsync(currentUserId ?? 0);
+                if (currentUser.RoleId != 1 && currentUser.UserId != userId)
+                {
+                    _logger.LogWarning("User {CurrentUserId} attempted to update user {UserId} without permission.", currentUserId, userId);
+                    return StatusCode(StatusCodes.Status403Forbidden, new { message = "You do not have permission to update this user's details." });
+                }
                 var updatedUser = await _userService.UpdateUserAsync(userId, userDto, currentUserId);
                 return Ok(updatedUser);
             }
@@ -153,7 +180,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpDelete("{userId}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
@@ -163,8 +190,8 @@ namespace InventoryManagementAPI.Controllers
         {
             try
             {
-                
-                var currentUserId = User.GetUserId(); 
+
+                var currentUserId = User.GetUserId();
                 var deletedUser = await _userService.DeleteUserAsync(userId, currentUserId);
                 return Ok(deletedUser);
             }
@@ -180,7 +207,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserResponseDto>))]

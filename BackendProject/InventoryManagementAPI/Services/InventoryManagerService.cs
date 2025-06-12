@@ -105,7 +105,7 @@ namespace InventoryManagementAPI.Services
                 RecordId = deletedAssignment.Id.ToString(),
                 ActionType = "DELETE",
                 OldValues = oldAssignmentSnapshot,
-                NewValues = null // Record is being hard deleted
+                NewValues = null 
             });
 
             return InventoryManagerMapper.ToInventoryManagerResponseDto(deletedAssignment);
@@ -124,10 +124,11 @@ namespace InventoryManagementAPI.Services
             var activeManagers = assignments.Where(im => im.Manager != null && !im.Manager.IsDeleted)
                                             .Select(im => im.Manager!)
                                             .DistinctBy(u => u.UserId);
-            
-            activeManagers = SortHelper.ApplySorting(activeManagers, sortBy);
 
-            return activeManagers.Select(m => InventoryManagerMapper.ToManagerForInventoryResponseDto(m));
+            var responseDto = activeManagers.Select(m => InventoryManagerMapper.ToManagerForInventoryResponseDto(m));
+            
+
+            return SortHelper.ApplySorting(responseDto, sortBy);
         }
 
         public async Task<IEnumerable<InventoryManagedByManagerResponseDto>> GetInventoriesManagedByManagerAsync(int managerId, string? sortBy = null)
@@ -143,10 +144,10 @@ namespace InventoryManagementAPI.Services
             var activeInventories = assignments.Where(im => im.Inventory != null && !im.Inventory.IsDeleted)
                                                .Select(im => im.Inventory!)
                                                .DistinctBy(i => i.InventoryId);
+
+            var responseDto = activeInventories.Select(i => InventoryManagerMapper.ToInventoryManagedByManagerResponseDto(i));
             
-            activeInventories = SortHelper.ApplySorting(activeInventories, sortBy);
-            
-            return activeInventories.Select(i => InventoryManagerMapper.ToInventoryManagedByManagerResponseDto(i));
+            return SortHelper.ApplySorting(responseDto, sortBy);
         }
 
         public async Task<IEnumerable<InventoryManagerResponseDto>> GetAllAssignmentsAsync()
