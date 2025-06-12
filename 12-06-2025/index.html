@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asynchronous JavaScript Demo (Simple)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Asynchronous JavaScript Demo</h1>
+        <br>
+        <br>
+        <div class="button-group">
+            <button id="promiseBtn" class="btn-promise">
+                Fetch with Promise
+            </button>
+            <button id="asyncAwaitBtn" class="btn-async-await">
+                Fetch with Async/Await
+            </button>
+            <button id="callbackBtn" class="btn-callback">
+                Fetch with Callback
+            </button>
+        </div>
+
+        <div id="result" class="result-box">
+            <p>Results will appear here...</p>
+        </div>
+    </div>
+
+    <script>
+        
+        const promiseBtn = document.getElementById('promiseBtn');
+        const asyncAwaitBtn = document.getElementById('asyncAwaitBtn');
+        const callbackBtn = document.getElementById('callbackBtn');
+        const resultDiv = document.getElementById('result');
+
+        
+        function simulateFetchUserDetails(userId) {
+            
+            const delay = 1000; 
+
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    
+                    if (userId === 1) {
+                        resolve({
+                            id: 1,
+                            name: 'Alice Johnson',
+                            email: 'alice.j@example.com',
+                            username: 'alice_j'
+                        });
+                    } else if (userId === 2) {
+                        resolve({
+                            id: 2,
+                            name: 'Bob Williams',
+                            email: 'bob.w@example.com',
+                            username: 'bob_w'
+                        });
+                    } else if (userId === 3) {
+                        
+                        reject(new Error('User with ID 3 not found.'));
+                    } else {
+                        reject(new Error('Failed to fetch user details.'));
+                    }
+                }, delay);
+            });
+        }
+
+        
+        function displayResult(userData) {
+            resultDiv.innerHTML = `
+                <p><strong>Name:</strong> ${userData.name}</p>
+                <p><strong>ID:</strong> ${userData.id}</p>
+                <p><strong>Username:</strong> ${userData.username}</p>
+                <p><strong>Email:</strong> ${userData.email}</p>
+            `;
+            resultDiv.classList.add('success');
+            resultDiv.classList.remove('error');
+            console.log('Success:', userData);
+        }
+
+        
+        function displayError(error) {
+            resultDiv.innerHTML = `
+                <p><strong>Error:</strong> ${error.message}</p>
+            `;
+            resultDiv.classList.add('error');
+            resultDiv.classList.remove('success');
+            console.error('Error:', error);
+        }
+
+        
+        function resetResultDiv() {
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            resultDiv.classList.remove('success', 'error');
+        }
+
+        
+        promiseBtn.addEventListener('click', () => {
+            resetResultDiv();
+            console.log('Fetching user with Promise...');
+            simulateFetchUserDetails(1)
+                .then(userData => {
+                    displayResult(userData);
+                })
+                .catch(error => {
+                    displayError(error);
+                });
+        });
+
+       
+        asyncAwaitBtn.addEventListener('click', async () => {
+            resetResultDiv();
+            console.log('Fetching user with Async/Await...');
+            try {
+                const userData = await simulateFetchUserDetails(2); 
+                displayResult(userData);
+            } catch (error) {
+                displayError(error);
+            }
+        });
+
+        // --- 3. Callback Demonstration ---
+        /**
+         * A version of the fetch function designed to accept a callback.
+         * @param {number} userId - The ID of the user to fetch.
+         * @param {function(Error|null, object|null)} callback - The callback function to be called with (error, data).
+         */
+        function fetchUserDetailsWithCallback(userId, callback) {
+            const delay = 1000;
+
+            setTimeout(() => {
+                if (userId === 1 || userId === 2) {
+                    const userData = userId === 1 ? {
+                        id: 1,
+                        name: 'Alice Johnson',
+                        email: 'alice.j@example.com',
+                        username: 'alice_j'
+                    } : {
+                        id: 2,
+                        name: 'Bob Williams',
+                        email: 'bob.w@example.com',
+                        username: 'bob_w'
+                    };
+                    callback(null, userData);
+                } else if (userId === 3) {
+                    callback(new Error('User with ID 3 not found.'), null);
+                } else {
+                    callback(new Error('Failed to fetch user details (callback version).'), null);
+                }
+            }, delay);
+        }
+
+        callbackBtn.addEventListener('click', () => {
+            resetResultDiv();
+            console.log('Fetching user with Callback...');
+            fetchUserDetailsWithCallback(1, (error, userData) => {
+                if (error) {
+                    displayError(error);
+                } else {
+                    displayResult(userData);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
