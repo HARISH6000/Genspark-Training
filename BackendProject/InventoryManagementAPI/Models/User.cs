@@ -19,5 +19,7 @@ namespace InventoryManagementAPI.Models
         public ICollection<InventoryManager>? ManagedInventories { get; set; }
         [JsonIgnore]
         public ICollection<AuditLog>? AuditLogs { get; set; }
+        [JsonIgnore]
+        public ICollection<RefreshToken>? RefreshTokens { get; set; }
     }
 }

@@ -4775,31 +4775,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\harishg\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/presidio/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\PresidioTraining\\BackendProject\\InventoryManagementAPI\\InventoryManagementAPI.csproj",
+      "projectUniqueName": "/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/InventoryManagementAPI.csproj",
       "projectName": "InventoryManagementAPI",
-      "projectPath": "C:\\PresidioTraining\\BackendProject\\InventoryManagementAPI\\InventoryManagementAPI.csproj",
-      "packagesPath": "C:\\Users\\harishg\\.nuget\\packages\\",
-      "outputPath": "C:\\PresidioTraining\\BackendProject\\InventoryManagementAPI\\obj\\",
+      "projectPath": "/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/InventoryManagementAPI.csproj",
+      "packagesPath": "/Users/presidio/.nuget/packages/",
+      "outputPath": "/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\harishg\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/presidio/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4890,7 +4883,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.301/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

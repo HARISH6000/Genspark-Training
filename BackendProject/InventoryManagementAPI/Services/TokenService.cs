@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace InventoryManagementAPI.Services
 {
@@ -19,12 +20,11 @@ namespace InventoryManagementAPI.Services
             _configuration = configuration;
         }
 
-        private string GenerateToken(IEnumerable<Claim> claims)
+        private string GenerateToken(IEnumerable<Claim> claims, int expirationMinutes)
         {
             var jwtSecret = _configuration["Jwt:Secret"];
             var jwtIssuer = _configuration["Jwt:Issuer"];
             var jwtAudience = _configuration["Jwt:Audience"];
-            var jwtExpirationMinutes = _configuration.GetValue<int>("Jwt:ExpirationMinutes");
 
             if (string.IsNullOrEmpty(jwtSecret) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
             {
@@ -38,7 +38,7 @@ namespace InventoryManagementAPI.Services
                 issuer: jwtIssuer,
                 audience: jwtAudience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(jwtExpirationMinutes),
+                expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -46,6 +46,7 @@ namespace InventoryManagementAPI.Services
 
         public string GenerateJwtToken(User user)
         {
+            var jwtExpirationMinutes = _configuration.GetValue<int>("Jwt:ExpirationMinutes");
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
@@ -54,18 +55,56 @@ namespace InventoryManagementAPI.Services
                 new Claim("Username", user.Username),
                 new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "User")
             };
-            return GenerateToken(claims);
+            return GenerateToken(claims, jwtExpirationMinutes);
         }
 
-        
         public string GenerateJwtToken(IEnumerable<Claim> claims)
         {
+            var jwtExpirationMinutes = _configuration.GetValue<int>("Jwt:ExpirationMinutes");
             // Filter out Jti and exp claims to generate a new one
             var newClaims = claims.Where(c => c.Type != JwtRegisteredClaimNames.Jti && c.Type != JwtRegisteredClaimNames.Exp);
             // Add a new Jti claim for the new token
             newClaims = newClaims.Append(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
-            return GenerateToken(newClaims);
+            return GenerateToken(newClaims, jwtExpirationMinutes);
+        }
+
+        public string GenerateRefreshToken(User user)
+        {
+            var refreshTokenExpirationMinutes = _configuration.GetValue<int>("Jwt:RefreshTokenExpirationMinutes", 10080); // 7 days
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique ID for the refresh token
+                new Claim("UserID", user.UserId.ToString()),
+                new Claim("TokenType", "RefreshToken") // Custom claim to identify it as a refresh token
+            };
+            return GenerateToken(claims, refreshTokenExpirationMinutes);
+        }
+
+        public ClaimsPrincipal GetPrincipalFromToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                ValidAudience = _configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]))
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token.");
+            }
+
+            return principal;
         }
     }
 }

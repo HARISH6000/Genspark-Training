@@ -210,6 +210,38 @@ namespace InventoryManagementAPI.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("InventoryManagementAPI.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Jti")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("InventoryManagementAPI.Models.RevokedToken", b =>
                 {
                     b.Property<string>("Jti")
@@ -347,6 +379,17 @@ namespace InventoryManagementAPI.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("InventoryManagementAPI.Models.RefreshToken", b =>
+                {
+                    b.HasOne("InventoryManagementAPI.Models.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("InventoryManagementAPI.Models.User", b =>
                 {
                     b.HasOne("InventoryManagementAPI.Models.Role", "Role")
@@ -385,6 +428,8 @@ namespace InventoryManagementAPI.Migrations
                     b.Navigation("AuditLogs");
 
                     b.Navigation("ManagedInventories");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

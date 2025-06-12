@@ -15,7 +15,7 @@ namespace InventoryManagementAPI.Utilities
             // If collection is null, empty, or no sorting criteria, return a trivially sorted collection (or original).
             if (collection == null || !collection.Any() || string.IsNullOrWhiteSpace(sortBy))
             {
-                return collection.OrderBy(x => 1); // Apply a default, non-disruptive order
+                return collection.OrderBy(x => 1);
             }
 
             IOrderedEnumerable<T> sortedCollection = null;

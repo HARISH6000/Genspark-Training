@@ -1,5 +1,6 @@
 using InventoryManagementAPI.Models;
 using System.Security.Claims;
+using System.Collections.Generic; // Add this
 
 namespace InventoryManagementAPI.Interfaces
 {
@@ -7,5 +8,7 @@ namespace InventoryManagementAPI.Interfaces
     {
         public string GenerateJwtToken(User user);
         string GenerateJwtToken(IEnumerable<Claim> claims);
+        string GenerateRefreshToken(User user);
+        ClaimsPrincipal GetPrincipalFromToken(string token); 
     }
 }

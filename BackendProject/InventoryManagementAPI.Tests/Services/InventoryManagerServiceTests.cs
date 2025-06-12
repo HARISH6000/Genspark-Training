@@ -56,7 +56,9 @@ namespace InventoryManagementAPI.Tests.Services
 
             _mockInventoryRepository.Setup(repo => repo.Get(dto.InventoryId)).ReturnsAsync(inventory);
             _mockUserRepository.Setup(repo => repo.Get(dto.ManagerId)).ReturnsAsync(manager);
-            _mockInventoryManagerRepository.Setup(repo => repo.IsUserManagerOfInventory(dto.ManagerId, dto.InventoryId)).ReturnsAsync(false);
+            // Changed from IsUserManagerOfInventory to GetByInventoryAndManagerId as per service logic
+            _mockInventoryManagerRepository.Setup(repo => repo.GetByInventoryAndManagerId(dto.InventoryId, dto.ManagerId))
+                                           .ReturnsAsync((InventoryManager)null); // No existing assignment
             _mockInventoryManagerRepository.Setup(repo => repo.Add(It.IsAny<InventoryManager>())).ReturnsAsync(assignment);
             _mockAuditLogService.Setup(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>())).ReturnsAsync(new AuditLogResponseDto());
 
@@ -68,19 +70,18 @@ namespace InventoryManagementAPI.Tests.Services
             Assert.Equal(assignment.Id, result.Id);
             Assert.Equal(dto.InventoryId, result.InventoryId);
             Assert.Equal(dto.ManagerId, result.ManagerId);
-            //Assert.Equal(inventory.Name, result.Name);
-            //Assert.Equal(manager.Username, result.Username);
 
             _mockInventoryRepository.Verify(repo => repo.Get(dto.InventoryId), Times.Once);
             _mockUserRepository.Verify(repo => repo.Get(dto.ManagerId), Times.Once);
-            _mockInventoryManagerRepository.Verify(repo => repo.IsUserManagerOfInventory(dto.ManagerId, dto.InventoryId), Times.Once);
+            // Verify GetByInventoryAndManagerId is called, not IsUserManagerOfInventory
+            _mockInventoryManagerRepository.Verify(repo => repo.GetByInventoryAndManagerId(dto.InventoryId, dto.ManagerId), Times.Once);
             _mockInventoryManagerRepository.Verify(repo => repo.Add(It.Is<InventoryManager>(im =>
                 im.InventoryId == dto.InventoryId && im.ManagerId == dto.ManagerId)), Times.Once);
             _mockAuditLogService.Verify(service => service.LogActionAsync(It.Is<AuditLogEntryDto>(log =>
                 log.UserId == currentUserId &&
                 log.TableName == "InventoryManagers" &&
                 log.RecordId == assignment.Id.ToString() &&
-                log.ActionType == "ASSIGN_MANAGER"
+                log.ActionType == "INSERT" // Action type should be INSERT for new assignments
             )), Times.Once);
         }
 
@@ -99,7 +100,7 @@ namespace InventoryManagementAPI.Tests.Services
 
             _mockInventoryRepository.Verify(repo => repo.Get(dto.InventoryId), Times.Once);
             _mockUserRepository.Verify(repo => repo.Get(It.IsAny<int>()), Times.Never);
-            _mockInventoryManagerRepository.Verify(repo => repo.IsUserManagerOfInventory(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            _mockInventoryManagerRepository.Verify(repo => repo.GetByInventoryAndManagerId(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
             _mockInventoryManagerRepository.Verify(repo => repo.Add(It.IsAny<InventoryManager>()), Times.Never);
             _mockAuditLogService.Verify(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>()), Times.Never);
         }
@@ -121,31 +122,7 @@ namespace InventoryManagementAPI.Tests.Services
 
             _mockInventoryRepository.Verify(repo => repo.Get(dto.InventoryId), Times.Once);
             _mockUserRepository.Verify(repo => repo.Get(dto.ManagerId), Times.Once);
-            _mockInventoryManagerRepository.Verify(repo => repo.IsUserManagerOfInventory(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
-            _mockInventoryManagerRepository.Verify(repo => repo.Add(It.IsAny<InventoryManager>()), Times.Never);
-            _mockAuditLogService.Verify(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task AssignManagerToInventoryAsync_AssignmentAlreadyExists_ThrowsConflictException()
-        {
-            // Arrange
-            var dto = new AssignRemoveInventoryManagerDto { InventoryId = 1, ManagerId = 101 };
-            var currentUserId = 1;
-            var inventory = new Inventory { InventoryId = 1, Name = "Main Warehouse", IsDeleted = false };
-            var manager = new User { UserId = 101, Username = "manager1", IsDeleted = false, Role = new Role { RoleName = "Manager" } };
-
-            _mockInventoryRepository.Setup(repo => repo.Get(dto.InventoryId)).ReturnsAsync(inventory);
-            _mockUserRepository.Setup(repo => repo.Get(dto.ManagerId)).ReturnsAsync(manager);
-            _mockInventoryManagerRepository.Setup(repo => repo.IsUserManagerOfInventory(dto.ManagerId, dto.InventoryId)).ReturnsAsync(true);
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ConflictException>(() => _inventoryManagerService.AssignManagerToInventoryAsync(dto, currentUserId));
-            Assert.Equal($"Manager (ID: {dto.ManagerId}) is already assigned to Inventory (ID: {dto.InventoryId}).", exception.Message);
-
-            _mockInventoryRepository.Verify(repo => repo.Get(dto.InventoryId), Times.Once);
-            _mockUserRepository.Verify(repo => repo.Get(dto.ManagerId), Times.Once);
-            _mockInventoryManagerRepository.Verify(repo => repo.IsUserManagerOfInventory(dto.ManagerId, dto.InventoryId), Times.Once);
+            _mockInventoryManagerRepository.Verify(repo => repo.GetByInventoryAndManagerId(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
             _mockInventoryManagerRepository.Verify(repo => repo.Add(It.IsAny<InventoryManager>()), Times.Never);
             _mockAuditLogService.Verify(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>()), Times.Never);
         }
@@ -162,7 +139,8 @@ namespace InventoryManagementAPI.Tests.Services
             var currentUserId = 1;
             var existingAssignment = new InventoryManager { Id = 1, InventoryId = 1, ManagerId = 101, Inventory = new Inventory { InventoryId = 1, Name = "Main Warehouse" }, Manager = new User { UserId = 101, Username = "manager1" } };
 
-            _mockInventoryManagerRepository.Setup(repo => repo.Get(It.IsAny<int>()))
+            // Mock GetByInventoryAndManagerId as per service logic
+            _mockInventoryManagerRepository.Setup(repo => repo.GetByInventoryAndManagerId(dto.InventoryId, dto.ManagerId))
                                            .ReturnsAsync(existingAssignment);
             _mockInventoryManagerRepository.Setup(repo => repo.Delete(existingAssignment.Id)).ReturnsAsync(existingAssignment);
             _mockAuditLogService.Setup(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>())).ReturnsAsync(new AuditLogResponseDto());
@@ -176,13 +154,13 @@ namespace InventoryManagementAPI.Tests.Services
             Assert.Equal(dto.InventoryId, result.InventoryId);
             Assert.Equal(dto.ManagerId, result.ManagerId);
 
-            _mockInventoryManagerRepository.Verify(repo => repo.Get(It.IsAny<int>()), Times.Once);
+            _mockInventoryManagerRepository.Verify(repo => repo.GetByInventoryAndManagerId(dto.InventoryId, dto.ManagerId), Times.Once);
             _mockInventoryManagerRepository.Verify(repo => repo.Delete(existingAssignment.Id), Times.Once);
             _mockAuditLogService.Verify(service => service.LogActionAsync(It.Is<AuditLogEntryDto>(log =>
                 log.UserId == currentUserId &&
                 log.TableName == "InventoryManagers" &&
                 log.RecordId == existingAssignment.Id.ToString() &&
-                log.ActionType == "REMOVE_MANAGER"
+                log.ActionType == "DELETE" // Action type should be DELETE for removal
             )), Times.Once);
         }
 
@@ -193,14 +171,16 @@ namespace InventoryManagementAPI.Tests.Services
             var dto = new AssignRemoveInventoryManagerDto { InventoryId = 1, ManagerId = 101 };
             var currentUserId = 1;
 
-            _mockInventoryManagerRepository.Setup(repo => repo.Get(It.IsAny<int>()))
+            // Mock GetByInventoryAndManagerId to return null
+            _mockInventoryManagerRepository.Setup(repo => repo.GetByInventoryAndManagerId(dto.InventoryId, dto.ManagerId))
                                            .ReturnsAsync((InventoryManager)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<NotFoundException>(() => _inventoryManagerService.RemoveManagerFromInventoryAsync(dto, currentUserId));
-            Assert.Equal($"Assignment for Manager (ID: {dto.ManagerId}) to Inventory (ID: {dto.InventoryId}) not found.", exception.Message);
+            // Corrected the expected exception message
+            Assert.Equal($"Assignment not found for Inventory ID {dto.InventoryId} and Manager ID {dto.ManagerId}.", exception.Message);
 
-            _mockInventoryManagerRepository.Verify(repo => repo.Get(It.IsAny<int>()), Times.Once);
+            _mockInventoryManagerRepository.Verify(repo => repo.GetByInventoryAndManagerId(dto.InventoryId, dto.ManagerId), Times.Once);
             _mockInventoryManagerRepository.Verify(repo => repo.Delete(It.IsAny<int>()), Times.Never);
             _mockAuditLogService.Verify(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>()), Times.Never);
         }

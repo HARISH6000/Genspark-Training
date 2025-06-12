@@ -19,6 +19,7 @@ namespace InventoryManagementAPI.Contexts
         public DbSet<Category> Categories { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<RevokedToken> RevokedTokens { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -169,13 +170,19 @@ namespace InventoryManagementAPI.Contexts
                 .WithMany(u => u.ManagedInventories)
                 .HasForeignKey(im => im.ManagerId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             modelBuilder.Entity<AuditLog>()
                 .HasOne(al => al.User)
                 .WithMany(u => u.AuditLogs)
                 .HasForeignKey(al => al.UserId)
-                .IsRequired(false) 
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+                
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.RefreshTokens)
+                .WithOne(rt => rt.User)
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

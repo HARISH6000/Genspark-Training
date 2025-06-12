@@ -91,6 +91,7 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IInventoryManagerRepository, InventoryManagerRepository>();
 builder.Services.AddScoped<IInventoryProductRepository, InventoryProductRepository>();
 builder.Services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 // Register services
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
