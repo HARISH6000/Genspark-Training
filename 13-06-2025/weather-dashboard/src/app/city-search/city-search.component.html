@@ -1,0 +1,11 @@
+<div class="search-container">
+  <input 
+    type="text" 
+    [(ngModel)]="city" 
+    placeholder="Enter city name" 
+    (keyup.enter)="onSearch()"
+  >
+  <button (click)="onSearch()">
+    <i class="fas fa-search"></i> Search
+  </button>
+</div>

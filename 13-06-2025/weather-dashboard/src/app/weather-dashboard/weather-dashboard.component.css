@@ -1,0 +1,17 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6b7280, #3b82f6);
+  padding: 20px;
+}
+
+.error-message {
+  color: #fee2e2;
+  background-color: #dc2626;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-size: 1.1em;
+}

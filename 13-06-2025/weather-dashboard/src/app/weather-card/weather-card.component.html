@@ -1,0 +1,10 @@
+<div class="weather-card">
+  <h2>{{ weather.city }}</h2>
+  <i class="{{ weather.icon }} weather-icon"></i>
+  <div class="temperature">{{ weather.temperature }}°C</div>
+  <div class="condition">{{ weather.condition }}</div>
+  <div class="details">
+    <div><i class="fas fa-tint"></i> Humidity: {{ weather.humidity }}%</div>
+    <div><i class="fas fa-wind"></i> Wind: {{ weather.windSpeed }} km/h</div>
+  </div>
+</div>
