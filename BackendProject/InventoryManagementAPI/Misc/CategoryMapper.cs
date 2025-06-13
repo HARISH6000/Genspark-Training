@@ -1,4 +1,3 @@
-// Mappers/CategoryMapper.cs
 using InventoryManagementAPI.DTOs;
 using InventoryManagementAPI.Models;
 

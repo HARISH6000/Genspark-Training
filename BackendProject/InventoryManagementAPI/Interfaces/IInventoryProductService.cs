@@ -1,4 +1,3 @@
-// Interfaces/IInventoryProductService.cs
 using InventoryManagementAPI.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;

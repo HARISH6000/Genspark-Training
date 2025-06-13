@@ -44,7 +44,7 @@ namespace InventoryManagementAPI.Controllers
             try
             {
                 var currentUserId = User.GetUserId(); // Get current user ID from extension method
-                var newInventory = await _inventoryService.AddInventoryAsync(inventoryDto, currentUserId); // Pass currentUserId
+                var newInventory = await _inventoryService.AddInventoryAsync(inventoryDto, currentUserId); 
                 return CreatedAtAction(nameof(GetInventoryById), new { inventoryId = newInventory.InventoryId }, newInventory);
             }
             catch (ConflictException ex)
@@ -117,8 +117,8 @@ namespace InventoryManagementAPI.Controllers
 
             try
             {
-                var currentUserId = User.GetUserId(); // Get current user ID
-                var updatedInventory = await _inventoryService.UpdateInventoryAsync(inventoryDto, currentUserId); // Pass currentUserId
+                var currentUserId = User.GetUserId(); 
+                var updatedInventory = await _inventoryService.UpdateInventoryAsync(inventoryDto, currentUserId);
                 return Ok(updatedInventory);
             }
             catch (NotFoundException ex)
@@ -148,8 +148,8 @@ namespace InventoryManagementAPI.Controllers
         {
             try
             {
-                var currentUserId = User.GetUserId(); // Get current user ID
-                var inventory = await _inventoryService.SoftDeleteInventoryAsync(inventoryId, currentUserId); // Pass currentUserId
+                var currentUserId = User.GetUserId(); 
+                var inventory = await _inventoryService.SoftDeleteInventoryAsync(inventoryId, currentUserId); 
                 return Ok(inventory);
             }
             catch (NotFoundException ex)
@@ -174,8 +174,8 @@ namespace InventoryManagementAPI.Controllers
         {
             try
             {
-                var currentUserId = User.GetUserId(); // Get current user ID
-                var inventory = await _inventoryService.HardDeleteInventoryAsync(inventoryId, currentUserId); // Pass currentUserId
+                var currentUserId = User.GetUserId();
+                var inventory = await _inventoryService.HardDeleteInventoryAsync(inventoryId, currentUserId);
                 return Ok(inventory);
             }
             catch (NotFoundException ex)

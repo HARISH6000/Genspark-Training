@@ -48,7 +48,7 @@ namespace InventoryManagementAPI.Services
             {
                 if (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true || ex.InnerException?.Message.Contains("duplicate key") == true)
                 {
-                    if (ex.InnerException.Message.Contains("Name") || ex.InnerException.Message.Contains("name")) // Assuming a unique constraint on CategoryName
+                    if (ex.InnerException.Message.Contains("Name") || ex.InnerException.Message.Contains("name")) 
                         throw new ConflictException($"Category with name '{categoryDto.CategoryName}' already exists. (Database constraint)");
                 }
                 throw;

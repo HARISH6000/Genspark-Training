@@ -17,7 +17,7 @@ namespace InventoryManagementAPI.Mappers
 
         public static void ToInventory(UpdateInventoryDto dto, Inventory inventory)
         {
-            // InventoryId is handled by the service and not directly mapped here
+            
             inventory.Name = dto.Name;
             inventory.Location = dto.Location;
         }

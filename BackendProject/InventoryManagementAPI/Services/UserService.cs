@@ -5,7 +5,7 @@ using InventoryManagementAPI.Exceptions;
 using InventoryManagementAPI.Mappers; 
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Text.Json;
+using System.Text.Json; // For JsonSerializer
 
 namespace InventoryManagementAPI.Services
 {
@@ -16,21 +16,24 @@ namespace InventoryManagementAPI.Services
         private readonly IPasswordHasher _passwordHasher;
         private readonly IInventoryManagerRepository _inventoryManagerRepository;
         private readonly IAuditLogService _auditLogService;
+        private readonly IFileStorageService _fileStorageService; // Inject file storage service
 
         public UserService(IUserRepository userRepository,
                            IRepository<int, Role> roleRepository,
                            IPasswordHasher passwordHasher,
                            IInventoryManagerRepository inventoryManagerRepository,
-                           IAuditLogService auditLogService)
+                           IAuditLogService auditLogService,
+                           IFileStorageService fileStorageService) // Add to constructor
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _passwordHasher = passwordHasher;
             _inventoryManagerRepository = inventoryManagerRepository;
             _auditLogService = auditLogService;
+            _fileStorageService = fileStorageService; // Initialize
         }
 
-        public async Task<UserResponseDto> RegisterUserAsync(AddUserDto userDto, int? currentUserId) // <--- ADDED currentUserId
+        public async Task<UserResponseDto> RegisterUserAsync(AddUserDto userDto, int? currentUserId)
         {
             var role = await _roleRepository.Get(userDto.RoleId);
             if (role == null)
@@ -99,7 +102,7 @@ namespace InventoryManagementAPI.Services
             return UserMapper.ToUserResponseDto(user);
         }
 
-        public async Task<UserResponseDto?> UpdateUserAsync(int userId, AddUserDto userDto, int? currentUserId) // <--- ADDED currentUserId
+        public async Task<UserResponseDto?> UpdateUserAsync(int userId, AddUserDto userDto, int? currentUserId)
         {
             var existingUser = await _userRepository.Get(userId);
             if (existingUser == null)
@@ -136,7 +139,6 @@ namespace InventoryManagementAPI.Services
             existingUser.Username = userDto.Username;
             existingUser.Email = userDto.Email;
             existingUser.Phone = userDto.Phone;
-            existingUser.ProfilePictureUrl = userDto.ProfilePictureUrl;
             existingUser.RoleId = userDto.RoleId;
             existingUser.Role = role;
 
@@ -192,6 +194,13 @@ namespace InventoryManagementAPI.Services
             {
                 await _inventoryManagerRepository.Delete(assignment.Id); // Hard delete the assignment record
             }
+            
+            // If the user had a profile picture, delete the old file
+            if (!string.IsNullOrEmpty(userToDelete.ProfilePictureUrl))
+            {
+                _fileStorageService.DeleteFile(userToDelete.ProfilePictureUrl);
+            }
+
             return UserMapper.ToUserResponseDto(deletedUser);
         }
 
@@ -199,6 +208,46 @@ namespace InventoryManagementAPI.Services
         {
             var users = await _userRepository.GetAll();
             return users.Select(u => UserMapper.ToUserResponseDto(u));
+        }
+
+        // New method to upload profile picture
+        public async Task<UserResponseDto> UploadProfilePictureAsync(int userId, byte[] fileBytes, string fileName, string contentType, int? currentUserId)
+        {
+            var user = await _userRepository.Get(userId);
+            if (user == null)
+            {
+                throw new NotFoundException($"User with ID {userId} not found.");
+            }
+
+            var oldUserSnapshot = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize(user));
+
+            // Delete existing profile picture if any
+            if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+            {
+                _fileStorageService.DeleteFile(user.ProfilePictureUrl);
+            }
+
+            // Save the new file
+            var newFileName = await _fileStorageService.SaveFileAsync(fileBytes, fileName, contentType);
+            
+            // Update the user's ProfilePictureUrl with the new file name
+            user.ProfilePictureUrl = newFileName; // Store only the file name, not the full path
+
+            var updatedUser = await _userRepository.Update(userId, user);
+
+            // --- AUDIT LOGGING: UPDATE OPERATION for Profile Picture ---
+            await _auditLogService.LogActionAsync(new AuditLogEntryDto
+            {
+                UserId = currentUserId,
+                TableName = "Users",
+                RecordId = updatedUser.UserId.ToString(),
+                ActionType = "UPDATE_PROFILE_PICTURE",
+                OldValues = oldUserSnapshot,
+                NewValues = updatedUser
+            });
+            // --- END AUDIT LOGGING ---
+
+            return UserMapper.ToUserResponseDto(updatedUser);
         }
     }
 }

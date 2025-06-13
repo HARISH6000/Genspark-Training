@@ -18,7 +18,6 @@ namespace InventoryManagementAPI.DTOs
 
         
         public string? Phone { get; set; }
-        public string? ProfilePictureUrl { get; set; }
 
         [Required(ErrorMessage = "Role ID is required.")]
         [Range(1, int.MaxValue, ErrorMessage = "Role ID must be a positive integer.")]

@@ -28,11 +28,7 @@ namespace InventoryManagementAPI.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Adds a new product category.
-        /// </summary>
-        /// <param name="categoryDto">The category data to add.</param>
-        /// <returns>The newly created category.</returns>
+        
         [HttpPost]
         [Authorize(Roles = "Admin")] // Only Admin can add categories
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CategoryResponseDto))]
@@ -64,11 +60,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves a category by its ID.
-        /// </summary>
-        /// <param name="categoryId">The ID of the category.</param>
-        /// <returns>The category details.</returns>
+        
         [HttpGet("{categoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -91,11 +83,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
         
-        /// <summary>
-        /// Retrieves a category by its name.
-        /// </summary>
-        /// <param name="categoryName">The name of the category.</param>
-        /// <returns>The category details.</returns>
+        
         [HttpGet("by-name/{categoryName}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -119,10 +107,7 @@ namespace InventoryManagementAPI.Controllers
         }
 
 
-        /// <summary>
-        /// Retrieves all product categories.
-        /// </summary>
-        /// <returns>A list of all categories.</returns>
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CategoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -140,13 +125,9 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Updates an existing product category.
-        /// </summary>
-        /// <param name="categoryDto">The updated category data.</param>
-        /// <returns>The updated category.</returns>
+        
         [HttpPut]
-        [Authorize(Roles = "Admin")] // Only Admin can update categories
+        [Authorize(Roles = "Admin")] 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -182,14 +163,9 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Deletes a product category by its ID.
-        /// Note: This will likely fail if products are still associated with this category due to foreign key constraints.
-        /// </summary>
-        /// <param name="categoryId">The ID of the category to delete.</param>
-        /// <returns>The deleted category.</returns>
+        
         [HttpDelete("{categoryId}")]
-        [Authorize(Roles = "Admin")] // Only Admin can delete categories
+        [Authorize(Roles = "Admin")] 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)] // For FK violation

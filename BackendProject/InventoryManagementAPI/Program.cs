@@ -105,6 +105,13 @@ builder.Services.AddScoped<IInventoryProductService, InventoryProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
+builder.Services.AddScoped<IFileStorageService>(provider =>
+{
+    var uploadBasePath = builder.Configuration["UploadSettings:BasePath"];
+    var auditLogService = provider.GetRequiredService<IAuditLogService>();
+    return new LocalFileStorageService(uploadBasePath, auditLogService);
+});
+
 
 // --- Configure JWT Authentication ---
 builder.Services.AddAuthentication(options =>

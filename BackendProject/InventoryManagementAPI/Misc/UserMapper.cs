@@ -13,7 +13,6 @@ namespace InventoryManagementAPI.Mappers
                 PasswordHash = hashedPassword,
                 Email = dto.Email,
                 Phone = dto.Phone,
-                ProfilePictureUrl = dto.ProfilePictureUrl,
                 RoleId = dto.RoleId,
                 IsDeleted = false
             };
@@ -27,7 +26,6 @@ namespace InventoryManagementAPI.Mappers
                 Username = user.Username,
                 Email = user.Email,
                 Phone = user.Phone,
-                ProfilePictureUrl = user.ProfilePictureUrl,
                 RoleId = user.RoleId,
                 RoleName = user.Role?.RoleName ?? "Unknown",
                 IsDeleted = user.IsDeleted

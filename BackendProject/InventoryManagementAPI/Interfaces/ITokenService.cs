@@ -1,6 +1,6 @@
 using InventoryManagementAPI.Models;
 using System.Security.Claims;
-using System.Collections.Generic; // Add this
+using System.Collections.Generic;
 
 namespace InventoryManagementAPI.Interfaces
 {

@@ -9,6 +9,7 @@ using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using InventoryManagementAPI.Utilities;
+using Microsoft.AspNetCore.Http;
 
 namespace InventoryManagementAPI.Controllers
 {
@@ -120,7 +121,7 @@ namespace InventoryManagementAPI.Controllers
                     _logger.LogWarning("User {CurrentUserId} attempted to access details of user {UserId} without permission.", currentUserId, user.UserId);
                     return StatusCode(StatusCodes.Status403Forbidden, new { message = "You do not have permission to access this user's details." });
                 }
-                
+
                 if (user == null)
                 {
                     return NotFound(new { message = $"User with username '{username}' not found." });
@@ -223,6 +224,51 @@ namespace InventoryManagementAPI.Controllers
             {
                 _logger.LogError(ex, "An error occurred while retrieving all users.");
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpPut("/profile-picture")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+            var currentUserId = User.GetUserId()??0;
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                var fileBytes = memoryStream.ToArray();
+
+                try
+                {
+                    var userResponse = await _userService.UploadProfilePictureAsync(
+                        currentUserId,
+                        fileBytes,
+                        file.FileName,
+                        file.ContentType,
+                        currentUserId
+                    );
+                    return Ok(new {message="Profile picture uploaded successfully"});
+                }
+                catch (NotFoundException ex)
+                {
+                    return NotFound(new { message = ex.Message });
+                }
+                catch (UnsupportedMediaTypeException ex)
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new { message = "An error occurred while uploading the profile picture.", error = ex.Message });
+                }
             }
         }
     }

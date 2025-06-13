@@ -169,11 +169,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Hard deletes a product from the database.
-        /// </summary>
-        /// <param name="productId">The ID of the product to hard delete.</param>
-        /// <returns>The hard-deleted product.</returns>
+        
         [HttpDelete("harddelete/{productId}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponseDto))]

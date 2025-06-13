@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BCrypt.Net;
 using System.Linq;
-using System.Collections.Generic; // Add this
+using System.Collections.Generic; 
 
 namespace InventoryManagementAPI.Services
 {
@@ -21,20 +21,20 @@ namespace InventoryManagementAPI.Services
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenService _tokenService;
         private readonly ITokenBlacklistService _tokenBlacklistService;
-        private readonly IRefreshTokenRepository _refreshTokenRepository; // Inject new refresh token repository
+        private readonly IRefreshTokenRepository _refreshTokenRepository; 
 
         public AuthService(
             IUserRepository userRepository,
             IPasswordHasher passwordHasher,
             ITokenService tokenService,
             ITokenBlacklistService tokenBlacklistService,
-            IRefreshTokenRepository refreshTokenRepository) // Inject
+            IRefreshTokenRepository refreshTokenRepository)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _tokenService = tokenService;
             _tokenBlacklistService = tokenBlacklistService;
-            _refreshTokenRepository = refreshTokenRepository; // Initialize
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<LoginResponseDto> Login(UserLoginDto userLoginDto)
@@ -72,17 +72,17 @@ namespace InventoryManagementAPI.Services
 
             var refreshTokenExpiryDate = DateTimeOffset.FromUnixTimeSeconds(unixExpiry).UtcDateTime;
 
-            // Create and store the new RefreshToken entry
+            
             var newRefreshTokenEntry = new RefreshToken
             {
-                TokenHash = _passwordHasher.HashPassword(refreshTokenString), // Hash the refresh token
+                TokenHash = _passwordHasher.HashPassword(refreshTokenString), // Hashing the refresh token
                 UserId = user.UserId,
                 ExpiryDate = refreshTokenExpiryDate,
                 IsRevoked = false,
-                Jti = refreshJti // Store JTI for potential blacklisting if needed
+                Jti = refreshJti // Storing JTI for potential blacklisting if needed
             };
 
-            await _refreshTokenRepository.Add(newRefreshTokenEntry); // Add to database
+            await _refreshTokenRepository.Add(newRefreshTokenEntry); 
 
             return new LoginResponseDto
             {
@@ -133,9 +133,8 @@ namespace InventoryManagementAPI.Services
             // Check if refresh token is expired
             if (storedRefreshToken.ExpiryDate <= DateTime.UtcNow)
             {
-                // Mark as revoked and delete if expired
                 storedRefreshToken.IsRevoked = true;
-                await _refreshTokenRepository.Delete(storedRefreshToken.Id); // Or simply update to revoked
+                await _refreshTokenRepository.Delete(storedRefreshToken.Id);
                 throw new UnauthorizedAccessException("Refresh token has expired.");
             }
 
@@ -150,7 +149,7 @@ namespace InventoryManagementAPI.Services
 
             // Implement Refresh Token Rotation: Invalidate the old refresh token and generate a new one
             storedRefreshToken.IsRevoked = true;
-            await _refreshTokenRepository.Update(storedRefreshToken.Id,storedRefreshToken); // Update the old token as revoked
+            await _refreshTokenRepository.Update(storedRefreshToken.Id,storedRefreshToken); 
 
             var newRefreshTokenString = _tokenService.GenerateRefreshToken(user);
 
@@ -185,7 +184,7 @@ namespace InventoryManagementAPI.Services
             };
         }
 
-        // Method to handle logout and revoke refresh token
+        
         public async Task Logout(string userIdString, string accessTokenString, string refreshTokenString)
         {
             if (!int.TryParse(userIdString, out int userId))

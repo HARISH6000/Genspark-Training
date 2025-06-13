@@ -5,7 +5,7 @@ namespace InventoryManagementAPI.Mappers
 {
     public static class ProductMapper
     {
-        // Maps an AddProductDto to a new Product model.
+        
         public static Product ToProduct(AddProductDto dto)
         {
             return new Product
@@ -19,7 +19,7 @@ namespace InventoryManagementAPI.Mappers
             };
         }
 
-        // Maps an UpdateProductDto to an existing Product model.        
+      
         public static void ToProduct(UpdateProductDto dto, Product product)
         {
             product.SKU = dto.SKU;
@@ -30,7 +30,7 @@ namespace InventoryManagementAPI.Mappers
         }
 
         
-        // Maps a Product model to a ProductResponseDto.
+
         public static ProductResponseDto ToProductResponseDto(Product product)
         {
             return new ProductResponseDto

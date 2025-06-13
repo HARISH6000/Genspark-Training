@@ -5,9 +5,7 @@ namespace InventoryManagementAPI.Mappers
 {
     public static class InventoryManagerMapper
     {
-        /// <summary>
-        /// Maps an AssignRemoveInventoryManagerDto to a new InventoryManager model.
-        /// </summary>
+        
         public static InventoryManager ToInventoryManager(AssignRemoveInventoryManagerDto dto)
         {
             return new InventoryManager
@@ -17,10 +15,7 @@ namespace InventoryManagementAPI.Mappers
             };
         }
 
-        /// <summary>
-        /// Maps an InventoryManager model to an InventoryManagerResponseDto.
-        /// Requires Inventory and Manager navigation properties to be loaded.
-        /// </summary>
+        
         public static InventoryManagerResponseDto ToInventoryManagerResponseDto(InventoryManager inventoryManager)
         {
             return new InventoryManagerResponseDto
@@ -35,10 +30,7 @@ namespace InventoryManagementAPI.Mappers
             };
         }
 
-        /// <summary>
-        /// Maps a User model (acting as a Manager) to a ManagerForInventoryResponseDto.
-        /// Requires Role navigation property to be loaded.
-        /// </summary>
+        
         public static ManagerForInventoryResponseDto ToManagerForInventoryResponseDto(User manager)
         {
             return new ManagerForInventoryResponseDto
@@ -52,9 +44,7 @@ namespace InventoryManagementAPI.Mappers
             };
         }
 
-        /// <summary>
-        /// Maps an Inventory model to an InventoryManagedByManagerResponseDto.
-        /// </summary>
+        
         public static InventoryManagedByManagerResponseDto ToInventoryManagedByManagerResponseDto(Inventory inventory)
         {
             return new InventoryManagedByManagerResponseDto

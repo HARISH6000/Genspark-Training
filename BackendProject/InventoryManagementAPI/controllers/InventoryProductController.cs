@@ -27,11 +27,7 @@ namespace InventoryManagementAPI.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Adds a product to an inventory with a specified quantity.
-        /// </summary>
-        /// <param name="dto">The inventory product details (Inventory ID, Product ID, Quantity).</param>
-        /// <returns>The created inventory product entry.</returns>
+        
         [HttpPost]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(InventoryProductResponseDto))]
@@ -79,11 +75,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Increases the quantity of a specific product in an inventory.
-        /// </summary>
-        /// <param name="dto">The adjustment details (Inventory ID, Product ID, Quantity to increase).</param>
-        /// <returns>The updated inventory product entry.</returns>
+        
         [HttpPut("increase-quantity")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
@@ -98,7 +90,7 @@ namespace InventoryManagementAPI.Controllers
             }
             try
             {
-                var currentUserId = User.GetUserId(); // Get current user ID
+                var currentUserId = User.GetUserId(); 
                 var updatedEntry = await _inventoryProductService.IncreaseProductQuantityAsync(dto, currentUserId); // Pass currentUserId
                 return Ok(updatedEntry);
             }
@@ -124,17 +116,13 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Decreases the quantity of a specific product in an inventory.
-        /// </summary>
-        /// <param name="dto">The adjustment details (Inventory ID, Product ID, Quantity to decrease).</param>
-        /// <returns>The updated inventory product entry.</returns>
+        
         [HttpPut("decrease-quantity")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)] // For quantity going below zero
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)] 
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DecreaseProductQuantity([FromBody] AdjustProductQuantityDto dto)
         {
@@ -145,7 +133,7 @@ namespace InventoryManagementAPI.Controllers
             try
             {
                 var currentUserId = User.GetUserId(); // Get current user ID
-                var updatedEntry = await _inventoryProductService.DecreaseProductQuantityAsync(dto, currentUserId); // Pass currentUserId
+                var updatedEntry = await _inventoryProductService.DecreaseProductQuantityAsync(dto, currentUserId); 
                 return Ok(updatedEntry);
             }
             catch (NotFoundException ex)
@@ -175,11 +163,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Sets the quantity of a specific product in an inventory to a new value.
-        /// </summary>
-        /// <param name="dto">The new quantity details (Inventory ID, Product ID, New Quantity).</param>
-        /// <returns>The updated inventory product entry.</returns>
+        
         [HttpPut("set-quantity")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
@@ -255,11 +239,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Deletes an inventory product entry by its unique ID.
-        /// </summary>
-        /// <param name="inventoryProductId">The unique ID of the inventory product entry.</param>
-        /// <returns>The deleted inventory product entry.</returns>
+        
         [HttpDelete("{inventoryProductId}")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
@@ -290,11 +270,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves an inventory product entry by its unique ID.
-        /// </summary>
-        /// <param name="inventoryProductId">The unique ID of the inventory product entry.</param>
-        /// <returns>The inventory product details.</returns>
+        
         [HttpGet("{inventoryProductId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -317,12 +293,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves an inventory product entry by its Inventory ID and Product ID.
-        /// </summary>
-        /// <param name="inventoryId">The ID of the inventory.</param>
-        /// <param name="productId">The ID of the product.</param>
-        /// <returns>The inventory product details.</returns>
+        
         [HttpGet("by-inventory/{inventoryId}/product/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -345,11 +316,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves all inventory product entries.
-        /// </summary>
-        /// <param name="sortBy">Optional: Field to sort by (e.g., InventoryId, ProductId, Quantity, Quantity_desc).</param>
-        /// <returns>A list of all inventory product entries.</returns>
+        
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryProductResponseDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -367,13 +334,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves all products within a specific inventory.
-        /// Filters out soft-deleted products.
-        /// </summary>
-        /// <param name="inventoryId">The ID of the inventory.</param>
-        /// <param name="sortBy">Optional: Field to sort by (ProductName, SKU, Quantity, Quantity_desc).</param>
-        /// <returns>A list of products in the specified inventory.</returns>
+        
         [HttpGet("products-in-inventory/{inventoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductInInventoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -387,7 +348,7 @@ namespace InventoryManagementAPI.Controllers
                 {
                     // This might be a valid scenario (inventory exists but has no products)
                     // Consider returning 200 OK with empty list, or 404 if inventory itself is not found by GetProductsInInventoryAsync
-                    return Ok(products); // Returning empty list with 200 OK
+                    return Ok(products);
                 }
                 return Ok(products);
             }
@@ -403,14 +364,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves products of a specific category within an inventory.
-        /// Filters out soft-deleted products.
-        /// </summary>
-        /// <param name="inventoryId">The ID of the inventory.</param>
-        /// <param name="categoryId">The ID of the category.</param>
-        /// <param name="sortBy">Optional: Field to sort by (ProductName, SKU, Quantity, Quantity_desc).</param>
-        /// <returns>A list of products in the specified inventory and category.</returns>
+        
         [HttpGet("products-in-inventory/{inventoryId}/by-category/{categoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductInInventoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -422,7 +376,7 @@ namespace InventoryManagementAPI.Controllers
                 var products = await _inventoryProductService.GetProductsInInventoryByCategoryAsync(inventoryId, categoryId, sortBy);
                 if (!products.Any())
                 {
-                    return Ok(products); // Returning empty list with 200 OK
+                    return Ok(products); 
                 }
                 return Ok(products);
             }
@@ -438,13 +392,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves all inventories where a specific product is stocked.
-        /// Filters out soft-deleted inventories.
-        /// </summary>
-        /// <param name="productId">The ID of the product.</param>
-        /// <param name="sortBy">Optional: Field to sort by (InventoryName, Location, Quantity, Quantity_desc).</param>
-        /// <returns>A list of inventories stocking the specified product.</returns>
+        
         [HttpGet("inventories-for-product/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryForProductResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -456,7 +404,7 @@ namespace InventoryManagementAPI.Controllers
                 var inventories = await _inventoryProductService.GetInventoriesForProductAsync(productId, sortBy);
                 if (!inventories.Any())
                 {
-                    return Ok(inventories); // Returning empty list with 200 OK
+                    return Ok(inventories); 
                 }
                 return Ok(inventories);
             }
@@ -472,13 +420,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves all inventories where a product (identified by SKU) is stocked.
-        /// Filters out soft-deleted inventories.
-        /// </summary>
-        /// <param name="sku">The SKU of the product.</param>
-        /// <param name="sortBy">Optional: Field to sort by (InventoryName, Location, Quantity, Quantity_desc).</param>
-        /// <returns>A list of inventories stocking the specified product.</returns>
+        
         [HttpGet("inventories-for-product-by-sku/{sku}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryForProductResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -490,7 +432,7 @@ namespace InventoryManagementAPI.Controllers
                 var inventories = await _inventoryProductService.GetInventoriesForProductBySKUAsync(sku, sortBy);
                 if (!inventories.Any())
                 {
-                    return Ok(inventories); // Returning empty list with 200 OK
+                    return Ok(inventories);
                 }
                 return Ok(inventories);
             }
@@ -506,14 +448,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Retrieves products in a specific inventory that are below a given stock threshold.
-        /// Filters out soft-deleted products.
-        /// </summary>
-        /// <param name="inventoryId">The ID of the inventory.</param>
-        /// <param name="threshold">The stock quantity threshold.</param>
-        /// <param name="sortBy">Optional: Field to sort by (ProductName, SKU, Quantity, Quantity_desc).</param>
-        /// <returns>A list of low stock products in the specified inventory.</returns>
+        
         [HttpGet("low-stock/{inventoryId}/{threshold}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductInInventoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -525,7 +460,7 @@ namespace InventoryManagementAPI.Controllers
                 var products = await _inventoryProductService.GetLowStockProductsInInventoryAsync(inventoryId, threshold, sortBy);
                 if (!products.Any())
                 {
-                    return Ok(products); // Returning empty list with 200 OK
+                    return Ok(products); 
                 }
                 return Ok(products);
             }
