@@ -1,7 +1,7 @@
 using InventoryManagementAPI.DTOs;
 using InventoryManagementAPI.Interfaces;
 using InventoryManagementAPI.Models;
-using InventoryManagementAPI.Repositories; // Assuming IUserRepository is here
+using InventoryManagementAPI.Repositories; 
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;

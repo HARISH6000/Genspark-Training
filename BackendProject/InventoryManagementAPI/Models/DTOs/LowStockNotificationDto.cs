@@ -1,4 +1,3 @@
-// DTOs/LowStockNotificationDto.cs
 namespace InventoryManagementAPI.DTOs
 {
     public class LowStockNotificationDto

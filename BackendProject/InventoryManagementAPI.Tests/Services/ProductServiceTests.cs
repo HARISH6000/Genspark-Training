@@ -23,7 +23,7 @@ namespace InventoryManagementAPI.Tests.Services
         private readonly Mock<IAuditLogService> _mockAuditLogService;
         private readonly ProductService _productService;
 
-        // Define JsonSerializerOptions once to avoid CS0854 errors in expression trees
+        
         private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
         {
             WriteIndented = false,
@@ -57,11 +57,11 @@ namespace InventoryManagementAPI.Tests.Services
             _mockCategoryRepository.Setup(repo => repo.Get(addProductDto.CategoryId))
                                    .ReturnsAsync((Category?)category);
             _mockProductRepository.Setup(repo => repo.GetBySKU(addProductDto.SKU))
-                                  .ReturnsAsync((Product?)null); // No existing product with this SKU
+                                  .ReturnsAsync((Product?)null); 
             _mockProductRepository.Setup(repo => repo.Add(It.IsAny<Product>()))
-                                  .ReturnsAsync((Product?)newProduct); // Simulate successful addition
+                                  .ReturnsAsync((Product?)newProduct); 
             _mockAuditLogService.Setup(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>()))
-                                .ReturnsAsync(new AuditLogResponseDto()); // Mock audit log
+                                .ReturnsAsync(new AuditLogResponseDto()); 
 
             // Act
             var result = await _productService.AddProductAsync(addProductDto, currentUserId);
@@ -89,11 +89,11 @@ namespace InventoryManagementAPI.Tests.Services
         public async Task AddProductAsync_CategoryNotFound_ThrowsNotFoundException()
         {
             // Arrange
-            var addProductDto = new AddProductDto { SKU = "SKU001", ProductName = "Laptop", UnitPrice = 1200.00m, CategoryId = 99 }; // Non-existent category
+            var addProductDto = new AddProductDto { SKU = "SKU001", ProductName = "Laptop", UnitPrice = 1200.00m, CategoryId = 99 }; 
             var currentUserId = 1;
 
             _mockCategoryRepository.Setup(repo => repo.Get(addProductDto.CategoryId))
-                                   .ReturnsAsync((Category?)null); // Category not found
+                                   .ReturnsAsync((Category?)null); 
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<NotFoundException>(() => _productService.AddProductAsync(addProductDto, currentUserId));
@@ -117,7 +117,7 @@ namespace InventoryManagementAPI.Tests.Services
             _mockCategoryRepository.Setup(repo => repo.Get(addProductDto.CategoryId))
                                    .ReturnsAsync((Category?)category);
             _mockProductRepository.Setup(repo => repo.GetBySKU(addProductDto.SKU))
-                                  .ReturnsAsync(existingProduct); // Simulate existing product with same SKU
+                                  .ReturnsAsync(existingProduct); 
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ConflictException>(() => _productService.AddProductAsync(addProductDto, currentUserId));
@@ -285,7 +285,7 @@ namespace InventoryManagementAPI.Tests.Services
             _mockCategoryRepository.Setup(repo => repo.Get(updateDto.CategoryId))
                                    .ReturnsAsync((Category?)category);
             _mockProductRepository.Setup(repo => repo.GetBySKU(updateDto.SKU))
-                                  .ReturnsAsync((Product?)null); // No conflict with new SKU
+                                  .ReturnsAsync((Product?)null); 
             _mockProductRepository.Setup(repo => repo.Update(updateDto.ProductId, It.IsAny<Product>()))
                                   .ReturnsAsync((Product?)updatedProduct);
             _mockAuditLogService.Setup(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>()))
@@ -301,7 +301,7 @@ namespace InventoryManagementAPI.Tests.Services
 
             _mockProductRepository.Verify(repo => repo.Get(updateDto.ProductId), Times.Once);
             _mockCategoryRepository.Verify(repo => repo.Get(updateDto.CategoryId), Times.Once);
-            _mockProductRepository.Verify(repo => repo.GetBySKU(updateDto.SKU), Times.Once); // Called because SKU changed
+            _mockProductRepository.Verify(repo => repo.GetBySKU(updateDto.SKU), Times.Once); 
             _mockProductRepository.Verify(repo => repo.Update(updateDto.ProductId, It.Is<Product>(p => p.SKU == updateDto.SKU)), Times.Once);
             _mockAuditLogService.Verify(service => service.LogActionAsync(It.Is<AuditLogEntryDto>(dto =>
                 dto.UserId == currentUserId &&
@@ -344,7 +344,7 @@ namespace InventoryManagementAPI.Tests.Services
             _mockProductRepository.Setup(repo => repo.Get(updateDto.ProductId))
                                   .ReturnsAsync((Product?)existingProduct);
             _mockCategoryRepository.Setup(repo => repo.Get(updateDto.CategoryId))
-                                   .ReturnsAsync((Category?)null); // Category not found for update
+                                   .ReturnsAsync((Category?)null); 
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<NotFoundException>(() => _productService.UpdateProductAsync(updateDto, currentUserId));
@@ -371,7 +371,7 @@ namespace InventoryManagementAPI.Tests.Services
             _mockCategoryRepository.Setup(repo => repo.Get(updateDto.CategoryId))
                                    .ReturnsAsync((Category?)category);
             _mockProductRepository.Setup(repo => repo.GetBySKU(updateDto.SKU))
-                                  .ReturnsAsync(conflictingProduct); // SKU already exists for another product
+                                  .ReturnsAsync(conflictingProduct); 
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ConflictException>(() => _productService.UpdateProductAsync(updateDto, currentUserId));
@@ -402,7 +402,7 @@ namespace InventoryManagementAPI.Tests.Services
                                   .ReturnsAsync((Product?)existingProduct);
             _mockCategoryRepository.Setup(repo => repo.Get(updateDto.CategoryId))
                                    .ReturnsAsync((Category?)category);
-            // GetBySKU should NOT be called if SKU doesn't change
+            
             _mockProductRepository.Setup(repo => repo.Update(updateDto.ProductId, It.IsAny<Product>()))
                                   .ReturnsAsync((Product?)updatedProduct);
             _mockAuditLogService.Setup(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>()))
@@ -418,7 +418,7 @@ namespace InventoryManagementAPI.Tests.Services
 
             _mockProductRepository.Verify(repo => repo.Get(updateDto.ProductId), Times.Once);
             _mockCategoryRepository.Verify(repo => repo.Get(updateDto.CategoryId), Times.Once);
-            _mockProductRepository.Verify(repo => repo.GetBySKU(It.IsAny<string>()), Times.Never); // No SKU conflict check
+            _mockProductRepository.Verify(repo => repo.GetBySKU(It.IsAny<string>()), Times.Never); 
             _mockProductRepository.Verify(repo => repo.Update(updateDto.ProductId, It.Is<Product>(p => p.SKU == updateDto.SKU)), Times.Once);
             _mockAuditLogService.Verify(service => service.LogActionAsync(It.Is<AuditLogEntryDto>(dto =>
                 dto.UserId == currentUserId &&
@@ -535,7 +535,7 @@ namespace InventoryManagementAPI.Tests.Services
             _mockProductRepository.Setup(repo => repo.Get(productId))
                                   .ReturnsAsync((Product?)existingProduct);
             _mockProductRepository.Setup(repo => repo.Delete(productId))
-                                  .ReturnsAsync((Product?)existingProduct); // Simulate successful hard delete
+                                  .ReturnsAsync((Product?)existingProduct); 
             _mockAuditLogService.Setup(service => service.LogActionAsync(It.IsAny<AuditLogEntryDto>()))
                                 .ReturnsAsync(new AuditLogResponseDto());
 

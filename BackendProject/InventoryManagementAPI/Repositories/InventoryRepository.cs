@@ -1,7 +1,3 @@
-// Interfaces/IInventoryRepository.cs (as provided above in section 3)
-// No changes here, just reminding it needs the GetByName method declaration.
-
-// Repositories/InventoryRepository.cs
 using InventoryManagementAPI.Contexts;
 using InventoryManagementAPI.Interfaces;
 using InventoryManagementAPI.Models;

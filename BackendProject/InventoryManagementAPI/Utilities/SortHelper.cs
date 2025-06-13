@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection; // Required for PropertyInfo and GetProperty
+using System.Reflection;
 
 namespace InventoryManagementAPI.Utilities
 {
@@ -35,8 +35,7 @@ namespace InventoryManagementAPI.Utilities
 
                 if (propertyInfo == null)
                 {
-                    // Log a warning or throw an exception if the sort field is invalid
-                    // For now, we'll skip this criterion if the property does not exist on the type T.
+                    // skip this criterion if the property does not exist on the type T.
                     continue;
                 }
 

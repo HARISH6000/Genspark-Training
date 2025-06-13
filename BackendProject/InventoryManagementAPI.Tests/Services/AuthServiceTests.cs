@@ -266,7 +266,7 @@ namespace InventoryManagementAPI.Tests.Services
             _mockPasswordHasher.Setup(hasher => hasher.VerifyPassword(expiredRefreshTokenString, expiredRefreshTokenHash))
                                .Returns(true);
             _mockRefreshTokenRepository.Setup(repo => repo.Delete(storedRefreshToken.Id))
-                                       .ReturnsAsync(storedRefreshToken); // Simulate deletion
+                                       .ReturnsAsync(storedRefreshToken); 
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _authService.RefreshToken(expiredRefreshTokenString));
@@ -305,11 +305,11 @@ namespace InventoryManagementAPI.Tests.Services
             }, "AccessTokenAuth"));
 
             var user = new User { UserId = userId, Username = "testuser", IsDeleted = false };
-            // FIX: Provide a pre-hashed string for TokenHash instead of calling _passwordHasher directly.
+            
             var storedRefreshToken = new RefreshToken
             {
                 Id = 101,
-                TokenHash = "pre_hashed_valid_refresh_token", // Corrected line
+                TokenHash = "pre_hashed_valid_refresh_token", 
                 UserId = userId,
                 ExpiryDate = DateTime.UtcNow.AddDays(7),
                 IsRevoked = false
@@ -323,7 +323,7 @@ namespace InventoryManagementAPI.Tests.Services
                                .ReturnsAsync(user);
             _mockRefreshTokenRepository.Setup(repo => repo.GetUserRefreshTokens(userId))
                                        .ReturnsAsync(new List<RefreshToken> { storedRefreshToken });
-            // Setup VerifyPassword to return true for the given refresh token string and its pre-hashed version
+            
             _mockPasswordHasher.Setup(hasher => hasher.VerifyPassword(refreshTokenString, "pre_hashed_valid_refresh_token"))
                                .Returns(true);
             _mockRefreshTokenRepository.Setup(repo => repo.Update(storedRefreshToken.Id, It.IsAny<RefreshToken>()))

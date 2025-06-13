@@ -53,7 +53,7 @@ namespace InventoryManagementAPI.configurations
             {
                 Title = "Inventory Management API",
                 Version = desc.ApiVersion.ToString(),
-                Description = "An API for managing inventory, users, and audit logs." // You can add more detailed description here
+                Description = "An API for managing inventory, users, and audit logs." 
             };
 
             if (desc.IsDeprecated)

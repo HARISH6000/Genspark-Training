@@ -145,7 +145,7 @@ namespace InventoryManagementAPI.Services
 
             var oldInventorySnapshot = JsonSerializer.Deserialize<Inventory>(JsonSerializer.Serialize(inventoryToDelete));
 
-            inventoryToDelete.IsDeleted = true; // Set IsDeleted flag
+            inventoryToDelete.IsDeleted = true; 
             var deletedInventory = await _inventoryRepository.Update(inventoryId, inventoryToDelete);
             
             await _auditLogService.LogActionAsync(new AuditLogEntryDto

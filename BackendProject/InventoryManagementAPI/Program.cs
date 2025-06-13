@@ -20,7 +20,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
 
@@ -61,7 +61,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure Swagger to recognize versions
-// This line replaces the manual c.SwaggerDoc("v1", new OpenApiInfo { ... }) call
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 builder.Services.AddSignalR();
@@ -145,15 +144,15 @@ builder.Services.AddAuthentication(options =>
                 return;
             }
 
-            // Existing claims logic (ensure User.GetUserId() is an accessible extension method)
+            
             var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
             if (claimsIdentity != null)
             {
-                var userId = context.Principal.GetUserId(); // Assuming you have this extension method
+                var userId = context.Principal.GetUserId(); 
                 if (userId.HasValue)
                 {
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId.Value.ToString()));
-                    claimsIdentity.AddClaim(new Claim("clientid", userId.Value.ToString())); // For rate limiting
+                    claimsIdentity.AddClaim(new Claim("clientid", userId.Value.ToString())); 
                 }
             }
         },

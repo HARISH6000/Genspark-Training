@@ -137,7 +137,7 @@ namespace InventoryManagementAPI.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(2, result.Count()); // Only active inventories should be returned by default
+            Assert.Equal(2, result.Count()); 
             Assert.DoesNotContain(result, i => i.Name == "Deleted Warehouse");
         }
 
@@ -158,7 +158,7 @@ namespace InventoryManagementAPI.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(3, result.Count()); // All inventories, including deleted
+            Assert.Equal(3, result.Count()); 
             Assert.Contains(result, i => i.Name == "Deleted Warehouse");
         }
 

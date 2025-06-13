@@ -227,7 +227,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        [HttpPut("/profile-picture")]
+        [HttpPut("profile-picture")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

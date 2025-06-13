@@ -5,7 +5,7 @@ using InventoryManagementAPI.Exceptions;
 using InventoryManagementAPI.Mappers; 
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Text.Json; // For JsonSerializer
+using System.Text.Json; 
 
 namespace InventoryManagementAPI.Services
 {
@@ -16,21 +16,21 @@ namespace InventoryManagementAPI.Services
         private readonly IPasswordHasher _passwordHasher;
         private readonly IInventoryManagerRepository _inventoryManagerRepository;
         private readonly IAuditLogService _auditLogService;
-        private readonly IFileStorageService _fileStorageService; // Inject file storage service
+        private readonly IFileStorageService _fileStorageService; 
 
         public UserService(IUserRepository userRepository,
                            IRepository<int, Role> roleRepository,
                            IPasswordHasher passwordHasher,
                            IInventoryManagerRepository inventoryManagerRepository,
                            IAuditLogService auditLogService,
-                           IFileStorageService fileStorageService) // Add to constructor
+                           IFileStorageService fileStorageService) 
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _passwordHasher = passwordHasher;
             _inventoryManagerRepository = inventoryManagerRepository;
             _auditLogService = auditLogService;
-            _fileStorageService = fileStorageService; // Initialize
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<UserResponseDto> RegisterUserAsync(AddUserDto userDto, int? currentUserId)
@@ -210,7 +210,7 @@ namespace InventoryManagementAPI.Services
             return users.Select(u => UserMapper.ToUserResponseDto(u));
         }
 
-        // New method to upload profile picture
+        
         public async Task<UserResponseDto> UploadProfilePictureAsync(int userId, byte[] fileBytes, string fileName, string contentType, int? currentUserId)
         {
             var user = await _userRepository.Get(userId);
@@ -227,7 +227,7 @@ namespace InventoryManagementAPI.Services
                 _fileStorageService.DeleteFile(user.ProfilePictureUrl);
             }
 
-            // Save the new file
+            
             var newFileName = await _fileStorageService.SaveFileAsync(fileBytes, fileName, contentType);
             
             // Update the user's ProfilePictureUrl with the new file name
