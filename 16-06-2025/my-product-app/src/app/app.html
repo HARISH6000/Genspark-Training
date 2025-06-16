@@ -1,0 +1,13 @@
+<nav class="navbar">
+  <div class="container">
+    <a routerLink="/home" class="nav-brand">{{ title }}</a>
+    <div class="nav-links">
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/about" routerLinkActive="active">About</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container main-content">
+  <router-outlet></router-outlet>
+</div>

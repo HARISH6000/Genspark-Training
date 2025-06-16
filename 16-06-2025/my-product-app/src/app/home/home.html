@@ -1,0 +1,38 @@
+<div class="home-container">
+  <h2>Product Listing</h2>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Search products..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearchInputChange()"
+      class="search-input"
+    >
+  </div>
+
+  <div *ngIf="loading && products.length === 0" class="loader"></div>
+
+  <div class="product-grid">
+    <div *ngFor="let product of products" class="product-card">
+      <img [src]="product.thumbnail" alt="{{ product.title }}" class="product-thumbnail">
+      <h3 class="product-title">{{ product.title }}</h3>
+      <p class="product-price">${{ product.price }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading && products.length > 0" class="loader"></div>
+
+  <div *ngIf="!loading && products.length === 0 && searchTerm !== ''" class="no-results">
+    No products found for "{{ searchTerm }}".
+  </div>
+
+  <div *ngIf="!loading && products.length === totalProducts && totalProducts > 0" class="end-message">
+    You've reached the end of the product list.
+  </div>
+
+ 
+  <button id="backToTopBtn" class="back-to-top-button button" (click)="scrollToTop()">
+    Back to Top
+  </button>
+</div>
