@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { ProductService } from '../product';
+import { ProductService } from '../services/product';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CommonModule, NgIf, NgFor } from '@angular/common'; 
