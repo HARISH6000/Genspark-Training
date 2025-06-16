@@ -169,6 +169,15 @@ namespace InventoryManagementAPI.Services
         public async Task<InventoryProductResponseDto> IncreaseProductQuantityAsync(AdjustProductQuantityDto dto, int? currentUserId)
         {
             await CheckInventoryManagerAccess(dto.InventoryId, currentUserId);
+            var product = await _productRepository.Get(dto.ProductId);
+            if (product==null || product.IsDeleted) {
+                throw new NotFoundException($"Product ID {dto.ProductId} is not found or is deleted.");
+            }
+            var inventory = await _inventoryRepository.Get(dto.InventoryId);
+            if (inventory == null || inventory.IsDeleted)
+            {
+                throw new NotFoundException($"Inventory with ID {dto.InventoryId} not found or is deleted.");
+            }
             if (dto.QuantityChange <= 0)
             {
                 throw new ArgumentException("QuantityChange must be positive for increasing stock.");
@@ -207,6 +216,15 @@ namespace InventoryManagementAPI.Services
         public async Task<InventoryProductResponseDto> DecreaseProductQuantityAsync(AdjustProductQuantityDto dto, int? currentUserId)
         {
             await CheckInventoryManagerAccess(dto.InventoryId, currentUserId);
+            var product = await _productRepository.Get(dto.ProductId);
+            if (product==null || product.IsDeleted) {
+                throw new NotFoundException($"Product ID {dto.ProductId} is not found or is deleted.");
+            }
+            var inventory = await _inventoryRepository.Get(dto.InventoryId);
+            if (inventory == null || inventory.IsDeleted)
+            {
+                throw new NotFoundException($"Inventory with ID {dto.InventoryId} not found or is deleted.");
+            }
             if (dto.QuantityChange <= 0)
             {
                 throw new ArgumentException("QuantityChange must be positive for decreasing stock.");
@@ -251,6 +269,15 @@ namespace InventoryManagementAPI.Services
         public async Task<InventoryProductResponseDto> SetProductQuantityAsync(SetProductQuantityDto dto, int? currentUserId)
         {
             await CheckInventoryManagerAccess(dto.InventoryId, currentUserId);
+            var product = await _productRepository.Get(dto.ProductId);
+            if (product==null || product.IsDeleted) {
+                throw new NotFoundException($"Product ID {dto.ProductId} is not found or is deleted.");
+            }
+            var inventory = await _inventoryRepository.Get(dto.InventoryId);
+            if (inventory == null || inventory.IsDeleted)
+            {
+                throw new NotFoundException($"Inventory with ID {dto.InventoryId} not found or is deleted.");
+            }
             if (dto.NewQuantity < 0)
             {
                 throw new ArgumentException("NewQuantity cannot be negative.");
@@ -318,6 +345,15 @@ namespace InventoryManagementAPI.Services
         public async Task<InventoryProductResponseDto> UpdateMinStockQuantityAsync(UpdateInventoryProductMinStockDto dto, int? currentUserId)
         {
             await CheckInventoryManagerAccess(dto.InventoryId, currentUserId);
+            var product = await _productRepository.Get(dto.ProductId);
+            if (product==null || product.IsDeleted) {
+                throw new NotFoundException($"Product ID {dto.ProductId} is not found or is deleted.");
+            }
+            var inventory = await _inventoryRepository.Get(dto.InventoryId);
+            if (inventory == null || inventory.IsDeleted)
+            {
+                throw new NotFoundException($"Inventory with ID {dto.InventoryId} not found or is deleted.");
+            }
             var entryToUpdate = await _inventoryProductRepository.GetByInventoryAndProductId(dto.InventoryId, dto.ProductId);
             if (entryToUpdate == null)
             {
