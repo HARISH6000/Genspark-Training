@@ -12,8 +12,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  username = 'kminchelle'; 
-  password = '0lelplR'; 
+  username = ''; 
+  password = ''; 
   errorMessage: string | null = null; 
   loading: boolean = false;
 
