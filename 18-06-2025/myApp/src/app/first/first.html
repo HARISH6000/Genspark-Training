@@ -1,0 +1,12 @@
+<p>first works!</p>
+<h2>
+    <!-- interpolation -->
+    Hello {{name}}
+</h2>
+<!-- Property Binding -->
+<input type="text" #uname [value]="name"/>
+<!-- Two-way Binding -->
+<input type="text" #uname [(ngModel)]="name"/>
+<i [class]="className" (click)="toggleLike()"></i>
+<!-- Event Binding -->
+<button (click)="onButtonClick(uname.value)">Click Me</button>

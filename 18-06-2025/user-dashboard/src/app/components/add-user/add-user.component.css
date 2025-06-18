@@ -1,0 +1,36 @@
+.chart-container {
+  padding: 15px;
+}
+
+.user-avatar {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 15px auto 0 auto;
+  display: block;
+  border: 2px solid #ddd;
+}
+
+.card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.card-text {
+  font-size: 0.95rem;
+}
+
+.card-header {
+  font-weight: bold;
+}

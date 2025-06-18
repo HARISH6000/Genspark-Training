@@ -1,0 +1,71 @@
+<div class="container-fluid my-4">
+  <h2 class="text-center mb-4">User Dashboard</h2>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <app-gender-pie-chart [users]="filteredUsers"></app-gender-pie-chart>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <app-role-bar-chart [users]="filteredUsers"></app-role-bar-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-info text-white">
+      Filter Users
+    </div>
+    <div class="card-body">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-4">
+          <label for="filterRole" class="form-label">Filter by Role:</label>
+          <select class="form-select" id="filterRole" [(ngModel)]="selectedRole" (change)="applyFilters()">
+            <option value="">All Roles</option>
+            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="filterGender" class="form-label">Filter by Gender:</label>
+          <select class="form-select" id="filterGender" [(ngModel)]="selectedGender" (change)="applyFilters()">
+            <option value="">All Genders</option>
+            <option *ngFor="let gender of genders" [value]="gender">{{ gender }}</option>
+          </select>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end">
+          <button class="btn btn-secondary me-2" (click)="clearFilters()">Clear Filters</button>
+          <button class="btn btn-primary" (click)="applyFilters()">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="mt-4 mb-3 text-center">All Users ({{ filteredUsers.length }})</h3>
+  <div class="row">
+    <ng-container *ngIf="filteredUsers.length > 0; else noUsers">
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let user of filteredUsers">
+        <div class="card h-100 shadow-sm">
+          <img [src]="user.image || 'https://via.placeholder.com/150'" class="card-img-top user-avatar" alt="User Avatar">
+          <div class="card-body">
+            <h5 class="card-title">{{ user.firstName }} {{ user.lastName }}</h5>
+            <p class="card-text mb-1"><strong>Gender:</strong> {{ user.gender }}</p>
+            <p class="card-text mb-1"><strong>Age:</strong> {{ user.age }}</p>
+            <p class="card-text mb-1"><strong>Role:</strong> {{ user.role }}</p>
+            <p class="card-text"><strong>State:</strong> {{ user.address.state || 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #noUsers>
+      <div class="col-12 text-center text-muted">
+        <p>No users found matching your criteria.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

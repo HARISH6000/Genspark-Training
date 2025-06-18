@@ -1,0 +1,43 @@
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-primary text-white">
+        Add New User
+    </div>
+    <div class="card-body">
+        <form (ngSubmit)="addUser()" class="row g-3">
+            <div class="col-md-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstName" [(ngModel)]="newUser.firstName" name="firstName"
+                    required>
+            </div>
+            <div class="col-md-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastName" [(ngModel)]="newUser.lastName" name="lastName"
+                    required>
+            </div>
+            <div class="col-md-2">
+                <label for="age" class="form-label">Age</label>
+                <input type="number" class="form-control" id="age" [(ngModel)]="newUser.age" name="age" required>
+            </div>
+            <div class="col-md-2">
+                <label for="gender" class="form-label">Gender</label>
+                <select class="form-select" id="gender" [(ngModel)]="newUser.gender" name="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="role" class="form-label">Role</label>
+                <input type="text" class="form-control" id="role" [(ngModel)]="newUser.role" name="role" required>
+            </div>
+            <div class="col-md-2">
+                <label for="state" class="form-label">State</label>
+                <input type="text" class="form-control" id="state" [(ngModel)]="newUser.address!.state" name="state"
+                    required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Add User</button>
+            </div>
+        </form>
+    </div>
+</div>
