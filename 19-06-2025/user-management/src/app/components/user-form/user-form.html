@@ -1,0 +1,67 @@
+<div class="form-container">
+  <h2 class="form-title">Create New User</h2>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="form-layout">
+    <div class="form-group">
+      <label for="username" class="form-label">Username</label>
+      <input id="username" type="text" formControlName="username"
+             class="form-input"
+             [class.is-invalid]="f['username'].invalid && (f['username'].dirty || f['username'].touched)">
+      <div *ngIf="f['username'].invalid && (f['username'].dirty || f['username'].touched)" class="validation-message">
+        <div *ngIf="f['username'].errors?.['required']">Username is required.</div>
+        <div *ngIf="f['username'].errors?.['bannedWord']">Username contains a banned word (e.g., 'admin', 'root').</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email" class="form-label">Email</label>
+      <input id="email" type="email" formControlName="email"
+             class="form-input"
+             [class.is-invalid]="f['email'].invalid && (f['email'].dirty || f['email'].touched)">
+      <div *ngIf="f['email'].invalid && (f['email'].dirty || f['email'].touched)" class="validation-message">
+        <div *ngIf="f['email'].errors?.['required']">Email is required.</div>
+        <div *ngIf="f['email'].errors?.['email']">Enter a valid email address.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <input id="password" type="password" formControlName="password"
+             class="form-input"
+             [class.is-invalid]="f['password'].invalid && (f['password'].dirty || f['password'].touched)">
+      <div *ngIf="f['password'].invalid && (f['password'].dirty || f['password'].touched)" class="validation-message">
+        <div *ngIf="f['password'].errors?.['required']">Password is required.</div>
+        <div *ngIf="f['password'].errors?.['minlength']">Password must be at least 8 characters long.</div>
+        <div *ngIf="f['password'].errors?.['passwordStrength']">Password must contain at least one number and one symbol.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword" class="form-label">Confirm Password</label>
+      <input id="confirmPassword" type="password" formControlName="confirmPassword"
+             class="form-input"
+             [class.is-invalid]="f['confirmPassword'].invalid && (f['confirmPassword'].dirty || f['confirmPassword'].touched)">
+      <div *ngIf="f['confirmPassword'].invalid && (f['confirmPassword'].dirty || f['confirmPassword'].touched)" class="validation-message">
+        <div *ngIf="f['confirmPassword'].errors?.['required']">Confirm Password is required.</div>
+        <div *ngIf="userForm.errors?.['mismatch'] && f['confirmPassword'].touched" class="validation-message">Passwords do not match.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="role" class="form-label">Role</label>
+      <select id="role" formControlName="role"
+              class="form-input"
+              [class.is-invalid]="f['role'].invalid && (f['role'].dirty || f['role'].touched)">
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+      <div *ngIf="f['role'].invalid && (f['role'].dirty || f['role'].touched)" class="validation-message">
+        <div *ngIf="f['role'].errors?.['required']">Role is required.</div>
+      </div>
+    </div>
+
+    <button type="submit"
+            class="submit-button"
+            [disabled]="userForm.invalid">
+      Add User
+    </button>
+  </form>
+</div>

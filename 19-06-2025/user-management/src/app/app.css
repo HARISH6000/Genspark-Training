@@ -1,0 +1,41 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background-color: #f3f4f6;
+}
+
+.app-container {
+  min-height: 100vh;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.app-nav {
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  border-radius: 6px;
+  color: #4338ca;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+.nav-link.active-link {
+  background-color: #4f46e5;
+  color: #ffffff;
+}

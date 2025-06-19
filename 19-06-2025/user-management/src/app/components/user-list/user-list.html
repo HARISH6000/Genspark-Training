@@ -1,0 +1,47 @@
+<div class="list-container">
+  <h2 class="list-title">User List</h2>
+
+  <div class="filter-controls">
+    <div class="search-input-wrapper">
+      <label for="search" class="sr-only">Search Users</label>
+      <input id="search" type="text" [formControl]="searchControl" placeholder="Search by username or role..."
+             class="search-input">
+    </div>
+    <div class="role-filter-wrapper">
+      <label for="roleFilter" class="sr-only">Filter by Role</label>
+      <select id="roleFilter" [formControl]="roleFilterControl"
+              class="role-filter-select">
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="user-table-wrapper">
+    <div *ngIf="(filteredUsers$ | async) as users; else loadingOrEmpty">
+      <div *ngIf="users.length > 0; else noUsers">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th scope="col" class="table-header">Username</th>
+              <th scope="col" class="table-header">Email</th>
+              <th scope="col" class="table-header">Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td class="table-data font-medium">{{ user.username }}</td>
+              <td class="table-data">{{ user.email }}</td>
+              <td class="table-data">{{ user.role }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noUsers>
+        <p class="no-users-message">No users found matching your criteria.</p>
+      </ng-template>
+    </div>
+    <ng-template #loadingOrEmpty>
+      <p class="loading-message">Loading users...</p>
+    </ng-template>
+  </div>
+</div>
