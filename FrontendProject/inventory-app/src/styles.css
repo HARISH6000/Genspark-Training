@@ -1,0 +1,78 @@
+/* Global styles for the Inventory Stock Management Application */
+
+/* Import Bootstrap utilities if you want to use them directly in styles.css
+   Note: Bootstrap's main CSS is already imported via angular.json
+   @import 'bootstrap/scss/functions';
+   @import 'bootstrap/scss/variables';
+   @import 'bootstrap/scss/mixins';
+   @import 'bootstrap/scss/utilities';
+*/
+
+:root {
+  /* Primary and Background Colors */
+  --color-primary-bg: #F8F9FA; /* Very light gray, almost off-white */
+  --color-content-bg: #FFFFFF; /* Pure white for cards, modals, etc. */
+
+  /* Text Colors */
+  --color-primary-text: #343A40; /* Dark charcoal gray for main text */
+  --color-secondary-text: #6C757D; /* Medium gray for subtle text */
+
+  /* Accent and Interactive Colors */
+  --color-accent: #007BFF; /* Professional blue for buttons, links, active states */
+
+  /* Borders and Dividers */
+  --color-border: #DEE2E6; /* Light gray for subtle separation */
+
+  /* Feedback Colors */
+  --color-success: #28A745; /* Green for success messages/states */
+  --color-danger: #DC3545; /* Red for errors/danger actions */
+  --color-warning: #FFC107; /* Yellow/Orange for warnings */
+
+  /* Spacing (optional, based on Bootstrap's default spacing scale if desired) */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 3rem;
+}
+
+/* Basic body styling */
+body {
+  font-family: Arial, sans-serif; /* Or your preferred font-family */
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary-text);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh; /* Ensure body takes full viewport height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Example of how to use a custom color: */
+/*
+.btn-custom-primary {
+  background-color: var(--color-accent);
+  color: var(--color-content-bg);
+  border-color: var(--color-accent);
+}
+
+.btn-custom-primary:hover {
+  background-color: darken(var(--color-accent), 10%); // Note: 'darken' needs SCSS, for plain CSS use a slightly different hex
+  border-color: darken(var(--color-accent), 10%);
+}
+*/
+
+/* Overriding Bootstrap variables (if needed for deeper customization) */
+/*
+:root {
+    --bs-primary: var(--color-accent);
+    --bs-light: var(--color-primary-bg);
+    --bs-dark: var(--color-primary-text);
+    --bs-success: var(--color-success);
+    --bs-danger: var(--color-danger);
+    --bs-warning: var(--color-warning);
+    --bs-body-bg: var(--color-primary-bg);
+    --bs-body-color: var(--color-primary-text);
+    --bs-border-color: var(--color-border);
+}
+*/

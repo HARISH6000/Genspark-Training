@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center align-items-center min-vh-100" style="background-color: var(--color-primary-bg);">
+  <div class="card p-4 shadow-sm" style="width: 100%; max-width: 400px; background-color: var(--color-content-bg); border-radius: 0.5rem;">
+    <div class="card-body">
+      <h3 class="card-title text-center mb-4" style="color: var(--color-primary-text);">Login to Inventory App</h3>
+
+      <form (ngSubmit)="onLogin()">
+        <div class="mb-3">
+          <label for="username" class="form-label" style="color: var(--color-primary-text);">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            [(ngModel)]="loginRequest.username"
+            required
+            autocomplete="username"
+          >
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label" style="color: var(--color-primary-text);">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            [(ngModel)]="loginRequest.password"
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger" style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+          {{ error }}
+        </div>
+
+        <button
+          type="submit"
+          class="btn w-100"
+          [disabled]="loading"
+          style="background-color: var(--color-accent); color: var(--color-content-bg); border-color: var(--color-accent);"
+        >
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ loading ? 'Logging in...' : 'Login' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
