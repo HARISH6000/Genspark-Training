@@ -7,6 +7,10 @@ Role-based feature segregation
 
 
 
+
+
+
+
 API Technical Specification Document
 1. Overview
 -* API Type: RESTful API
@@ -22,7 +26,7 @@ The API must support the following high-level features:
 -* User Authentication (Login, Logout, Token Refresh)
 -* Role-Based Access Control
 -* CRUD operations on core entities
-* File Upload support (e.g., profile picture, attachments)
+-* File Upload support (e.g., profile picture, attachments)
 -* Search, Filter, Sort, and Pagination
 -* Audit Logging of all data changes(Selection based on requirement)
 -* Optional: Real-time update notifications (SignalR/WebSockets)

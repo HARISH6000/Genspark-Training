@@ -288,3 +288,12 @@ C:/PresidioTraining/BackendProject/InventoryManagementAPI/obj/Debug/net9.0/ref/I
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/obj/Debug/net9.0/InventoryManagementAPI.pdb
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/obj/Debug/net9.0/InventoryManagementAPI.genruntimeconfig.cache
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/obj/Debug/net9.0/ref/InventoryManagementAPI.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.AspNetCore.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Extensions.Hosting.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Extensions.Logging.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Formatting.Compact.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Settings.Configuration.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Sinks.Console.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Sinks.Debug.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Sinks.File.dll

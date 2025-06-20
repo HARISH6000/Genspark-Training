@@ -1,0 +1,18 @@
+2025-06-18 23:21:18.831 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 78.7322 ms
+2025-06-18 23:21:19.676 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 283.0603 ms
+2025-06-18 23:21:36.537 +05:30 [WRN] Failed to determine the https port for redirect.
+2025-06-18 23:21:38.605 +05:30 [INF] HTTP POST /api/v1/Auth/login responded 200 in 2073.9353 ms
+2025-06-18 23:22:50.364 +05:30 [INF] HTTP GET /api/v1/Categories responded 200 in 123.8396 ms
+2025-06-18 23:23:27.165 +05:30 [WRN] Authentication failed for user 'bob': Invalid username or password.
+System.UnauthorizedAccessException: Invalid username or password.
+   at InventoryManagementAPI.Services.AuthService.Login(UserLoginDto userLoginDto) in /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/Services/AuthService.cs:line 52
+   at InventoryManagementAPI.Controllers.AuthController.Login(UserLoginDto userLoginDto) in /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/controllers/AuthController.cs:line 45
+2025-06-18 23:23:27.178 +05:30 [INF] HTTP POST /api/v1/Auth/login responded 401 in 368.6523 ms
+2025-06-18 23:32:58.281 +05:30 [WRN] Failed to determine the https port for redirect.
+2025-06-18 23:33:00.029 +05:30 [WRN] Authentication failed for user 'bob': Invalid username or password.
+System.UnauthorizedAccessException: Invalid username or password.
+   at InventoryManagementAPI.Services.AuthService.Login(UserLoginDto userLoginDto) in /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/Services/AuthService.cs:line 52
+   at InventoryManagementAPI.Controllers.AuthController.Login(UserLoginDto userLoginDto) in /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/controllers/AuthController.cs:line 45
+2025-06-18 23:33:00.053 +05:30 [INF] HTTP POST /api/v1/Auth/login responded 401 in 1789.3559 ms
+2025-06-18 23:33:36.570 +05:30 [INF] HTTP POST /api/v1/Auth/login responded 200 in 688.2681 ms
+2025-06-18 23:33:56.116 +05:30 [INF] HTTP GET /api/v1/Categories responded 200 in 99.7474 ms

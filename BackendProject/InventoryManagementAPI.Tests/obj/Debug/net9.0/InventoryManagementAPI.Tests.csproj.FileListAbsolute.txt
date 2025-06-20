@@ -283,3 +283,13 @@ C:/PresidioTraining/BackendProject/InventoryManagementAPI.Tests/obj/Debug/net9.0
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/obj/Debug/net9.0/InventoryManagementAPI.Tests.pdb
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/obj/Debug/net9.0/InventoryManagementAPI.Tests.genruntimeconfig.cache
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/obj/Debug/net9.0/ref/InventoryManagementAPI.Tests.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Microsoft.Extensions.DependencyModel.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.AspNetCore.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.Extensions.Hosting.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.Extensions.Logging.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.Formatting.Compact.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.Settings.Configuration.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.Sinks.Console.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.Sinks.Debug.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI.Tests/bin/Debug/net9.0/Serilog.Sinks.File.dll

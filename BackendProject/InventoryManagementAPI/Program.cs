@@ -17,8 +17,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning; 
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.IdentityModel.Tokens.Jwt;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// builder.Host.UseSerilog((context, services, configuration) => configuration
+//     .ReadFrom.Configuration(context.Configuration)
+//     .ReadFrom.Services(services)
+//     .Enrich.FromLogContext()
+// );
 
 
 builder.Services.AddControllers();
@@ -49,7 +56,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAllOrigins",
         builder =>
         {
-            builder.WithOrigins("http://127.0.0.1:5500", "http://localhost:5085")
+            builder.WithOrigins("http://127.0.0.1:5500", "http://localhost:5085","http://127.0.0.1:4200","http://localhost:4200")
                    .AllowAnyMethod()
                    .AllowAnyHeader()
                    .AllowCredentials();
@@ -169,6 +176,8 @@ builder.Services.AddAuthentication(options =>
 
 
 var app = builder.Build();
+
+//app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
