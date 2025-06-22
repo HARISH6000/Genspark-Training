@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `<div class="p-4">
                <h2 class="text-center" style="color: var(--color-primary-text);">Admin Dashboard</h2>
-               <p class="text-center" style="color: var(--color-secondary-text);">Welcome, Admin! This is your dashboard.</p>
+               <p class="text-center" style="color: var(--color-secondary-text);">Welcome, Admin! This is your dashboard!</p>
              </div>`,
   styles: [`
     :host {
