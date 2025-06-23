@@ -1,0 +1,120 @@
+2025-06-04 12:25:06,370 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-04 12:25:06,385 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-04 12:25:06,385 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-04 12:25:06,385 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-04 12:25:42,535 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-04 12:54:11,198 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-04 12:54:11,213 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-04 12:54:11,213 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-04 12:54:11,213 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-04 12:54:24,590 [.NET TP Worker] INFO Microsoft.EntityFrameworkCore.Database.Command - Executed DbCommand (25ms) [Parameters=[@__key_0='?'], CommandType='Text', CommandTimeout='30']
+SELECT u."Username", u."HashKey", u."Password", u."Role"
+FROM "Users" AS u
+WHERE u."Username" = @__key_0
+LIMIT 2
+2025-06-04 12:54:33,053 [.NET TP Worker] INFO Microsoft.EntityFrameworkCore.Database.Command - Executed DbCommand (3ms) [Parameters=[@__key_0='?'], CommandType='Text', CommandTimeout='30']
+SELECT u."Username", u."HashKey", u."Password", u."Role"
+FROM "Users" AS u
+WHERE u."Username" = @__key_0
+LIMIT 2
+2025-06-04 12:54:33,054 [.NET TP Worker] ERROR FirstAPI.Services.AuthenticationService - Invalid login attempt
+2025-06-05 10:41:42,964 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-05 11:54:15,379 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-05 11:54:15,394 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-05 11:54:15,394 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-05 11:54:15,394 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-05 11:57:42,460 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-05 11:58:02,160 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-05 11:58:02,175 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-05 11:58:02,175 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-05 11:58:02,175 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-05 12:46:58,053 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-05 12:47:18,466 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-05 12:47:18,482 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-05 12:47:18,483 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-05 12:47:18,483 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-19 09:59:19,187 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-19 09:59:19,203 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-19 09:59:19,203 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-19 09:59:19,203 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-19 10:07:23,591 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-19 10:07:30,001 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-19 10:07:30,016 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-19 10:07:30,017 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-19 10:07:30,017 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-19 10:08:44,687 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-19 10:08:49,233 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-19 10:08:49,247 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-19 10:08:49,248 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-19 10:08:49,248 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-19 10:09:35,274 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-19 10:11:31,734 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-19 10:11:31,760 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-19 10:11:31,760 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-19 10:11:31,760 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-19 10:14:00,190 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-19 10:14:12,471 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-19 10:14:12,485 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-19 10:14:12,486 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-19 10:14:12,486 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-19 10:17:42,085 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-19 10:17:44,807 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-19 10:17:44,821 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-19 10:17:44,821 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-19 10:17:44,821 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-19 19:36:41,887 [Kestrel Timer] WARN Microsoft.AspNetCore.Server.Kestrel - As of "06/19/2025 14:06:41 +00:00", the heartbeat has been running for "00:00:01.7596127" which is longer than "00:00:01". This could be caused by thread pool starvation.
+2025-06-21 23:34:44,331 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-21 23:34:53,068 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-21 23:34:53,082 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-21 23:34:53,082 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-21 23:34:53,082 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-21 23:41:30,737 [.NET TP Worker] ERROR Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware - An unhandled exception has occurred while executing the request.
+Npgsql.PostgresException (0x80004005): 42809: process_csv(text) is not a procedure
+
+POSITION: 6
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at SampleController.BulkInsertFromCsv(CsvUploadDto input) in /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI/Controllers/SampleController.cs:line 44
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42809
+    MessageText: process_csv(text) is not a procedure
+    Hint: To call a function, use SELECT.
+    Position: 6
+    File: parse_func.c
+    Line: 292
+    Routine: ParseFuncOrColumn
+2025-06-21 23:44:02,423 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-21 23:44:09,508 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-21 23:44:09,524 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-21 23:44:09,524 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-21 23:44:09,524 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-22 08:47:31,092 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-22 08:47:38,657 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-22 08:47:38,676 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-22 08:47:38,677 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-22 08:47:38,677 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-22 08:49:37,751 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-22 10:20:17,406 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-22 10:20:17,421 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-22 10:20:17,421 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-22 10:20:17,422 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
