@@ -1,0 +1,16 @@
+<div class="recipe-container">
+  <h2 class="recipe-list-title">Recipes</h2>
+  
+  <!-- Loading Indicator -->
+  <div *ngIf="loading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p class="loading-text">Loading recipes...</p>
+  </div>
+
+  <!-- Recipe Cards Grid -->
+  <div *ngIf="!loading" class="recipe-grid">
+    <div *ngFor="let recipe of recipes" class="recipe-grid-item">
+      <app-recipe-card [recipe]="recipe"></app-recipe-card>
+    </div>
+  </div>
+</div>

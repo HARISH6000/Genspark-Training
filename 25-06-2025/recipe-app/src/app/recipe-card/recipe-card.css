@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+
+.recipe-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.recipe-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: scale(1.03);
+}
+
+.recipe-card-image {
+  width: 100%;
+  height: 192px;
+  object-fit: cover;
+}
+
+.recipe-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.recipe-card-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 12px;
+}
+
+.recipe-card-ingredients {
+  margin-bottom: 16px;
+}
+
+.ingredients-label {
+  display: block;
+  color: #4a5568;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.ingredient-icon {
+  width: 16px;
+  height: 16px;
+  color: #22c55e;
+  margin-right: 8px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.recipe-card-description {
+  color: #4a5568;
+  font-size: 16px;
+  line-height: 1.625;
+  flex-grow: 1;
+}

@@ -1,0 +1,28 @@
+<div class="recipe-card">
+  <!-- Recipe Image -->
+  <img
+    [src]="recipe.image"
+    class="recipe-card-image"
+    alt="{{ recipe.title }}"
+  />
+  <div class="recipe-card-body">
+    <!-- Recipe Title -->
+    <h5 class="recipe-card-title">{{ recipe.title }}</h5>
+    
+    <!-- Ingredients Section -->
+    <div class="recipe-card-ingredients">
+      <strong class="ingredients-label">Ingredients:</strong>
+      <ul class="ingredients-list">
+        <li *ngFor="let ingredient of recipe.ingredients" class="ingredient-item">
+          <svg class="ingredient-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+          <span>{{ ingredient }}</span>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Recipe Description -->
+    <p class="recipe-card-description">{{ recipe.description }}</p>
+  </div>
+</div>
