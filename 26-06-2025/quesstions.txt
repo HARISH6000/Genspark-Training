@@ -1,0 +1,44 @@
+1. You have a file with permissions -rw-r--r--, and you run chmod +x file.sh. What happens?
+
+-rwxr-xr-x
+
+
+2. What is the difference between chmod 744 file.txt and chmod u=rwx,go=r file.txt?
+
+Both achieve the same,
+-rwxr--r--
+
+
+3. What is the sticky bit, and when should you use it?
+
+The sticky bit is a special permission that ensures only the file owner, the directory owner, or the root user can delete or modify files within a directory.
+chmod +t directory_name
+the output permission is like: drwxr-xr-t
+
+
+4. You are told to give the owner full access, group only execute, and others no permissions. What symbolic command achieves this?
+
+chmod u=rwx,g=x,o= directory_name
+
+
+5. What is umask, and why is it important?
+
+It subtracts permissions from the system’s default permissions.
+
+
+6. If the umask is 022, what are the default permissions for a new file and a new directory?
+
+Files: 666 - 022 = 644 (rw-r--r--).
+
+Directories: 777 - 022 = 755 (rwxr-xr-x).
+
+
+7. Why is umask often set to 002 in development environments but 027 or 077 in production?
+
+Default permissions allow group write access (775 for directories, 664 for files).
+Facilitates collaboration among developers by allowing the group to edit files.
+
+umask 027: Group: Read-only access, Others: No access.
+umask 077: Group: No access, Others: No access.
+
+8.  adduser provides a more interactive and user-friendly interface for creating user accounts, useradd directly modifies system files (like /etc/passwd, /etc/shadow) to create a new user.
