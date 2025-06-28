@@ -1,0 +1,116 @@
+<div class="container-fluid py-4" style="background-color: var(--color-primary-bg); min-height: 100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-9">
+      <h2 class="mb-4 text-center" style="color: var(--color-primary-text);">User Management</h2>
+
+      <div class="card p-3 mb-4 shadow-sm" style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-4 col-lg-3">
+            <label for="searchFilter" class="form-label mb-0" style="color: var(--color-primary-text);">Search</label>
+            <input
+              type="text"
+              class="form-control"
+              id="searchFilter"
+              [formControl]="searchControl"
+              placeholder="e.g., Alice"
+            >
+          </div>
+
+          
+          <div class="col-md-3 col-lg-2">
+            <label for="searchFilter" class="form-label mb-0" style="color: var(--color-primary-text);">Role</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="selectedRole"
+                  (ngModelChange)="onRoleChange()"
+                >
+                  <option value="0">All Roles</option>
+                  <option *ngFor="let role of roles" [value]="role.roleId">{{ role.roleName }}</option>
+                </select>
+          </div>
+
+          <div class="col-md-5 col-lg-7">
+            <h6 class="mb-2" style="color: var(--color-primary-text);">Multi-level Sort Options:</h6>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <div *ngFor="let criterion of sortCriteria; let i = index" class="d-flex align-items-center gap-2">
+                <select
+                  class="form-select"
+                  [(ngModel)]="criterion.field"
+                  (ngModelChange)="onSortChange()"
+                  [name]="'sortField_' + i"
+                >
+                  <option value="">Select Field</option>
+                  <option *ngFor="let field of sortFields" [value]="field.value">{{ field.name }}</option>
+                </select>
+                <select
+                  class="form-select"
+                  [(ngModel)]="criterion.order"
+                  (ngModelChange)="onSortChange()"
+                  [name]="'sortOrder_' + i"
+                >
+                  <option value="asc">Ascending</option>
+                  <option value="desc">Descending</option>
+                </select>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-danger"
+                  (click)="removeSortCriterion(i)"
+                  *ngIf="sortCriteria.length > 1 || (sortCriteria.length === 1 && criterion.field !== '')"
+                >
+                  X
+                </button>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-sm add-sort-btn"
+                (click)="addSortCriterion()"
+              >
+                <i class="bi bi-plus"></i> </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+          <span class="visually-hidden">Loading users...</span>
+        </div>
+        <p class="mt-2" style="color: var(--color-secondary-text);">Loading users...</p>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="alert alert-danger text-center">
+        {{ errorMessage }}
+      </div>
+
+      <!-- No Users Found Message -->
+      <div *ngIf="!loading && !errorMessage && users.length === 0" class="alert alert-info text-center">
+        No users found or available.
+      </div>
+
+      <!-- User Cards Grid -->
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" *ngFor="let user of filteredUsers">
+          <div class="card h-100 shadow-sm user-card" (click)="viewUserInfo(user)" style="cursor: pointer;">
+            <div class="card-body text-center">
+              <img
+                [src]="getProfilePictureUrl(user)"
+                class="rounded-circle mb-3 user-profile-picture"
+                alt="User Profile Picture"
+              >
+              <h5 class="card-title mb-1">{{ user.username || 'N/A' }}</h5>
+              <p class="card-text text-muted mb-0">User ID: {{ user.userId || 'N/A' }}</p>
+              <p class="card-text text-muted">Role: {{ user.roleName || 'N/A' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <div>
+      <app-pagination [pageNumber]="pageNumber" [totalPages]="totalPages" (pageChange)="onPageChange($event)"></app-pagination>
+    </div>
+    </div>
+  </div>
+</div>

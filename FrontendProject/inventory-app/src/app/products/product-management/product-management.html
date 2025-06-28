@@ -1,0 +1,173 @@
+<div class="container-fluid py-4" style="background-color: var(--color-primary-bg); min-height: 100vh;">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-9">
+            <h2 class="mb-4 text-center" style="color: var(--color-primary-text);">Product Management</h2>
+
+            <div class="card p-3 mb-4 shadow-sm"
+                style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-md-4">
+                        <label for="searchFilter" class="form-label mb-0"
+                            style="color: var(--color-primary-text);">Search Product</label>
+                        <input type="text" class="form-control" id="searchFilter" [formControl]="searchControl"
+                            placeholder="e.g., Laptop, SKU123" style="border-color: var(--color-border);">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="categoryFilter" class="form-label mb-0"
+                            style="color: var(--color-primary-text);">Filter by Category</label>
+                        <select class="form-select" id="categoryFilter" [(ngModel)]="selectedCategory"
+                            (ngModelChange)="onCategoryChange()" style="border-color: var(--color-border);">
+                            <option [value]="null">All Categories</option>
+                            <option *ngFor="let category of categories" [value]="category.categoryId">{{
+                                category.categoryName }}</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="showDeletedCheckbox"
+                                [(ngModel)]="showDeleted" (ngModelChange)="onShowDeletedChange()">
+                            <label class="form-check-label" for="showDeletedCheckbox"
+                                style="color: var(--color-primary-text);">
+                                Show Deleted Products
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="mb-2" style="color: var(--color-primary-text);">Multi-level Sort Options:</h6>
+                <div class="mb-2" *ngFor="let criterion of sortCriteria; let i = index">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-5">
+                            <select class="form-select" [(ngModel)]="criterion.field" (ngModelChange)="onSortChange()"
+                                [name]="'sortField_' + i" style="border-color: var(--color-border);">
+                                <option value="">Select Field</option>
+                                <option *ngFor="let field of sortFields" [value]="field.value">{{ field.name }}</option>
+                            </select>
+                        </div>
+                        <div class="col-5">
+                            <select class="form-select" [(ngModel)]="criterion.order" (ngModelChange)="onSortChange()"
+                                [name]="'sortOrder_' + i" style="border-color: var(--color-border);">
+                                <option value="asc">Ascending</option>
+                                <option value="desc">Descending</option>
+                            </select>
+                        </div>
+                        <div class="col-2 text-end">
+                            <button type="button" class="btn btn-sm btn-danger" (click)="removeSortCriterion(i)"
+                                *ngIf="sortCriteria.length > 1 || (sortCriteria.length === 1 && criterion.field !== '')"
+                                style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+                                X
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-sm mt-2" (click)="addSortCriterion()"
+                    style="background-color: var(--color-accent); color: var(--color-content-bg); border-color: var(--color-accent);">
+                    Add Another Sort
+                </button>
+            </div>
+            <div class="text-end mb-3">
+                <button class="btn" (click)="addProduct()" *ngIf="isManagerOrAdmin()"
+                    style="background-color: var(--color-success); color: var(--color-content-bg); border-color: var(--color-success);">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Product
+                </button>
+            </div>
+
+            <div *ngIf="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+                    <span class="visually-hidden">Loading products...</span>
+                </div>
+                <p class="mt-2" style="color: var(--color-secondary-text);">Loading products...</p>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger text-center">
+                {{ errorMessage }}
+            </div>
+
+            <div *ngIf="!loading && !errorMessage && filteredProducts.length === 0"
+                class="alert alert-info text-center">
+                No products found matching your criteria.
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col" *ngFor="let product of filteredProducts">
+                    <div class="card h-100 shadow-sm product-card" [class.deleted]="product.isDeleted"
+                        style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+                        <div class="card-body">
+                            <h5 class="card-title mb-1" style="color: var(--color-primary-text);">{{ product.productName
+                                }}</h5>
+                            <p class="card-subtitle text-muted mb-2"
+                                style="font-size: 0.85rem; color: var(--color-secondary-text);">SKU: {{ product.sku }}
+                            </p>
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <strong style="color: var(--color-primary-text);">Price:</strong> <span
+                                        style="color: var(--color-secondary-text);">₹{{ product.unitPrice |
+                                        number:'1.2-2' }}</span>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong style="color: var(--color-primary-text);">Category:</strong> <span
+                                        style="color: var(--color-secondary-text);">{{ product.categoryName || 'N/A'
+                                        }}</span>
+                                </div>
+                            </div>
+                            <p class="card-text description mb-3" style="color: var(--color-secondary-text);">
+                                {{ product.description ? (product.description.length > 70 ? (product.description |
+                                slice:0:70) + '...' : product.description) : 'No description provided.' }}
+                            </p>
+                            <span *ngIf="product.isDeleted"
+                                class="badge bg-danger position-absolute top-0 end-0 m-2">DELETED</span>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-sm btn-outline-primary"
+                                    (click)="viewProductDetails(product.productId)"
+                                    style="border-color: var(--color-accent); color: var(--color-accent);">
+                                    Details
+                                </button>
+                                <div class="btn-group" *ngIf="isManagerOrAdmin()">
+                                    <button class="btn btn-sm btn-info" (click)="editProduct(product.productId)"
+                                        style="background-color: var(--color-info); color: var(--color-content-bg); border-color: var(--color-info);">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-warning"
+                                        (click)="softDeleteProduct(product.productId)"
+                                        *ngIf="!product.isDeleted && isAdmin()"
+                                        style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);">
+                                        Soft Delete
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" (click)="hardDeleteProduct(product.productId)"
+                                        *ngIf="product.isDeleted && isAdmin()"
+                                        style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+                                        Hard Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="totalPages > 1 && !loading && !errorMessage">
+
+                <app-pagination [totalPages]="totalPages" [pageNumber]="pageNumber" (pageChange)="onPageChange($event)">
+                </app-pagination>
+            </div>
+
+
+            <div *ngIf="!loading && !errorMessage" class="d-flex justify-content-end align-items-center mt-3">
+                <label for="pageSizeSelect" class="form-label mb-0 me-2" style="color: var(--color-primary-text);">Items
+                    per page:</label>
+                <select id="pageSizeSelect" class="form-select w-auto" [(ngModel)]="pageSize"
+                    (ngModelChange)="onPageSizeChange()" style="border-color: var(--color-border);">
+                    <option value="1">1</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

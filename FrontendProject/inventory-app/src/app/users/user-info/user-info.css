@@ -1,0 +1,108 @@
+/* User Info Component specific styles */
+
+/* Ensure the main container provides adequate padding and background */
+.container-fluid {
+  padding: 2rem;
+}
+
+/* Card styling consistency */
+.card {
+  margin-bottom: 1.5rem;
+}
+
+/* Profile picture specific styling */
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border: 3px solid var(--color-accent);
+  border-radius: 50%; /* Ensure it's perfectly round */
+}
+
+/* Custom styling for the horizontal rule to match theme */
+hr {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Ensure form controls match the theme */
+.form-control, .form-select {
+  border-radius: 0.375rem;
+  border-color: var(--color-border);
+  color: var(--color-primary-text);
+  background-color: var(--color-content-bg);
+  flex-grow: 1; /* Allows inputs/selects to grow */
+  min-width: 150px; /* Ensures they don't get too small */
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+  background-color: var(--color-content-bg);
+}
+
+/* Alert styles for consistency */
+.alert-danger {
+  background-color: var(--color-danger);
+  color: var(--color-content-bg);
+  border-color: var(--color-danger);
+}
+
+.alert-info {
+  background-color: #E0F2F7; /* A light blue for info alerts */
+  color: #007BFF;
+  border-color: #B3E5FC;
+}
+
+/* Styling for the new "Add Sort" button (plus icon) */
+.add-sort-btn {
+  /* Smaller dimensions */
+  width: 32px; /* Slightly smaller width */
+  height: 32px; /* Slightly smaller height */
+  font-size: 1rem; /* Adjust icon size for smaller button */
+
+  /* Translucent grey background */
+  background-color: rgba(128, 128, 128, 0.3); /* Grey with 30% opacity */
+  color: var(--color-primary-text); /* Icon color to match text */
+  border: 1px solid rgba(128, 128, 128, 0.5); /* Subtle grey border */
+  border-radius: 50%; /* Make it round */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0; /* Remove default padding */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; /* Add transform for hover */
+
+  /* *** CRITICAL FOR ALIGNMENT *** */
+  align-self: center; /* Explicitly center this item vertically within the flex line */
+  /* You might still need a small nudge if the elements have different intrinsic heights */
+  /* For example, if it's still too low, try: margin-top: -4px; */
+}
+
+.add-sort-btn:hover {
+  background-color: rgba(128, 128, 128, 0.5); /* Darker grey on hover */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Slightly more prominent shadow */
+  
+}
+
+/* Added for responsive horizontal layout of sort criteria */
+@media (max-width: 767.98px) {
+  .d-flex.flex-wrap > div {
+    width: 100%; /* Each sort criterion takes full width on small screens */
+    flex-direction: column; /* Stack elements vertically within each criterion */
+    align-items: flex-start !important; /* Align items to the start */
+  }
+  .d-flex.flex-wrap > div .form-select,
+  .d-flex.flex-wrap > div .form-control {
+    width: 100%; /* Make selects/inputs full width within their stacked parent */
+  }
+  /* Ensure the add button aligns well on small screens too */
+  .add-sort-btn {
+    width: 100%; /* Make it full width on small screens for better touch target */
+    border-radius: 0.375rem; /* Make it rectangular like other buttons */
+    margin-top: 10px; /* Add some space above it */
+    background-color: rgba(128, 128, 128, 0.3); /* Ensure it keeps translucent background on small screens */
+    color: var(--color-primary-text);
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    align-self: auto; /* Reset align-self for small screens if needed */
+  }
+}

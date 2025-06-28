@@ -1,0 +1,118 @@
+<div class="container-fluid py-4" style="background-color: var(--color-primary-bg); min-height: 100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-9">
+      <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+        <div class="card-body text-center">
+          <img
+            [src]="profilePictureUrl"
+            class="rounded-circle mb-3 profile-picture"
+            alt="Profile Picture"
+          >
+          <h3 class="mb-1" style="color: var(--color-primary-text);">{{ user?.username || 'N/A' }}</h3>
+          <p class="text-muted mb-2" style="color: var(--color-secondary-text);">Role: {{ user?.roleName || 'N/A' }}</p>
+          <hr class="my-3">
+          <div class="row text-start px-3">
+            <div class="col-12 mb-2">
+              <strong style="color: var(--color-primary-text);">Email:</strong>
+              <span class="ms-2" style="color: var(--color-secondary-text);">{{ user?.email || 'N/A' }}</span>
+            </div>
+            <div class="col-12 mb-2">
+              <strong style="color: var(--color-primary-text);">Phone:</strong>
+              <span class="ms-2" style="color: var(--color-secondary-text);">{{ user?.phone || 'N/A' }}</span>
+            </div>
+            <div class="col-12">
+              <strong style="color: var(--color-primary-text);">User ID:</strong>
+              <span class="ms-2" style="color: var(--color-secondary-text);">{{ user?.userId || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h4 class="mb-3 text-center" style="color: var(--color-primary-text);">Managed Inventories</h4>
+
+      <div class="card p-3 mb-4 shadow-sm" style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-6 col-lg-4">
+            <label for="locationFilter" class="form-label mb-0" style="color: var(--color-primary-text);">Filter by Location</label>
+            <input
+              type="text"
+              class="form-control"
+              id="locationFilter"
+              [(ngModel)]="locationFilter"
+              (ngModelChange)="onFilterChange()"
+              placeholder="e.g., Warehouse A"
+            >
+          </div>
+
+          <div class="col-md-6 col-lg-8">
+            <h6 class="mb-2" style="color: var(--color-primary-text);">Multi-level Sort Options:</h6>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <div *ngFor="let criterion of sortCriteria; let i = index" class="d-flex align-items-center gap-2">
+                <select
+                  class="form-select"
+                  [(ngModel)]="criterion.field"
+                  (ngModelChange)="onSortChange()"
+                  [name]="'sortField_' + i"
+                >
+                  <option value="">Select Field</option>
+                  <option *ngFor="let field of sortFields" [value]="field.value">{{ field.name }}</option>
+                </select>
+                <select
+                  class="form-select"
+                  [(ngModel)]="criterion.order"
+                  (ngModelChange)="onSortChange()"
+                  [name]="'sortOrder_' + i"
+                >
+                  <option value="asc">Ascending</option>
+                  <option value="desc">Descending</option>
+                </select>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-danger"
+                  (click)="removeSortCriterion(i)"
+                  *ngIf="sortCriteria.length > 1 || (sortCriteria.length === 1 && criterion.field !== '')"
+                >
+                  X
+                </button>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-sm add-sort-btn"
+                (click)="addSortCriterion()"
+              >
+                <i class="bi bi-plus"></i> </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+          <span class="visually-hidden">Loading inventories...</span>
+        </div>
+        <p class="mt-2" style="color: var(--color-secondary-text);">Loading inventories...</p>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="!loading && !errorMessage && filteredInventories.length === 0" class="alert alert-info text-center">
+        No inventories found for this user or matching your filter.
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        <div class="col" *ngFor="let inventory of filteredInventories">
+          <div class="card h-100 shadow-sm" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+            <div class="card-body">
+              <h5 class="card-title" style="color: var(--color-primary-text);">{{ inventory.name }}</h5>
+              <p class="card-text text-muted mb-0" style="color: var(--color-secondary-text);">Location: {{ inventory.location }}</p>
+              <p class="card-text text-muted" style="color: var(--color-secondary-text);">ID: {{ inventory.inventoryId }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

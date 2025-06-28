@@ -1,0 +1,60 @@
+<nav class="d-flex flex-wrap justify-content-center align-items-center mt-4 pagination-container">
+  <ul class="pagination mb-3 mb-md-0">
+    <!-- First Page -->
+    <li class="page-item" [class.disabled]="pageNumber === 1">
+      <a class="page-link" (click)="goToPage(1)">First</a>
+    </li>
+
+    <!-- Previous Page -->
+    <li class="page-item" [class.disabled]="pageNumber === 1">
+      <a class="page-link" (click)="goToPage(pageNumber - 1)">Previous</a>
+    </li>
+
+    <!-- First 3 Pages -->
+    <li class="page-item" *ngFor="let page of pagesToShow.firstPages" [class.active]="page === pageNumber">
+      <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+    </li>
+
+    <!-- Ellipsis for skipped pages -->
+    <li class="page-item disabled" *ngIf="showLeftEllipsis">
+      <span class="page-link">...</span>
+    </li>
+
+    <!-- Nearby Pages -->
+    <li class="page-item" *ngFor="let page of pagesToShow.middlePages" [class.active]="page === pageNumber">
+      <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+    </li>
+
+    <!-- Ellipsis for skipped pages -->
+    <li class="page-item disabled" *ngIf="showRightEllipsis">
+      <span class="page-link">...</span>
+    </li>
+
+    <!-- Last 3 Pages -->
+    <li class="page-item" *ngFor="let page of pagesToShow.lastPages" [class.active]="page === pageNumber">
+      <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+    </li>
+
+    <!-- Next Page -->
+    <li class="page-item" [class.disabled]="pageNumber === totalPages">
+      <a class="page-link" (click)="goToPage(pageNumber + 1)">Next</a>
+    </li>
+
+    <!-- Last Page -->
+    <li class="page-item" [class.disabled]="pageNumber === totalPages">
+      <a class="page-link" (click)="goToPage(totalPages)">Last</a>
+    </li>
+  </ul>
+
+  <!-- Input Field for Direct Navigation -->
+  <div class="ml-3 input-container">
+    <input
+      type="number"
+      class="form-control"
+      [(ngModel)]="pageNumber"
+      (change)="goToPage(pageNumber)"
+      [min]="1"
+      [max]="totalPages"
+    />
+  </div>
+</nav>

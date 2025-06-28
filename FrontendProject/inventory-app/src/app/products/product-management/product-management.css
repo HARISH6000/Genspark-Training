@@ -1,0 +1,106 @@
+/* Product Management Component specific styles */
+
+.container-fluid {
+  padding: 2rem;
+}
+
+.card {
+  margin-bottom: 1.5rem;
+}
+
+.form-control,
+.form-select {
+  border-radius: 0.375rem;
+  border-color: var(--color-border);
+  color: var(--color-primary-text);
+  background-color: var(--color-content-bg);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+  background-color: var(--color-content-bg);
+}
+
+.btn {
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  filter: brightness(90%);
+}
+
+.spinner-border {
+  color: var(--color-accent) !important;
+}
+
+.alert-danger {
+  background-color: var(--color-danger);
+  color: var(--color-content-bg);
+  border-color: var(--color-danger);
+}
+
+.alert-info {
+  background-color: #E0F2F7;
+  color: #007BFF;
+  border-color: #B3E5FC;
+}
+
+/* Product Card Styling */
+.product-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  position: relative; /* For the DELETED badge */
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.product-card .card-title {
+  font-weight: bold;
+}
+
+.product-card .card-text.description {
+  font-size: 0.9rem;
+  min-height: 2.7rem; /* Ensure consistent height for truncated descriptions */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+}
+
+.product-card.deleted {
+  opacity: 0.7;
+  background-color: var(--color-content-bg-light) !important; /* Lighter background for deleted items */
+  border-color: var(--color-danger) !important;
+}
+
+.product-card.deleted .card-title,
+.product-card.deleted .card-subtitle,
+.product-card.deleted .card-text {
+  text-decoration: line-through;
+}
+
+/* Pagination styles */
+.pagination .page-item .page-link {
+  color: var(--color-primary-text);
+  background-color: var(--color-content-bg);
+  border-color: var(--color-border);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-content-bg);
+}
+
+.pagination .page-item.disabled .page-link {
+  color: var(--color-secondary-text);
+  pointer-events: none;
+  background-color: var(--color-content-bg-light);
+  border-color: var(--color-border);
+}

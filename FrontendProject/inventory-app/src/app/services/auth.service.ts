@@ -21,6 +21,7 @@ export interface UserDetails {
   username: string;
   email: string;
   phone: string;
+  profilePictureUrl:string,
   roleId: number;
   roleName: string;
   isDeleted: boolean;

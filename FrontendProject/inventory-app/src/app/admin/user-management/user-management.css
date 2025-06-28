@@ -1,0 +1,57 @@
+.container-fluid {
+  padding: 2rem;
+}
+
+.user-card {
+  background-color: var(--color-content-bg);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.user-profile-picture {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.user-card .card-title {
+  color: var(--color-primary-text);
+  font-weight: bold;
+}
+
+.user-card .card-text {
+  color: var(--color-secondary-text);
+  font-size: 0.9rem;
+}
+
+.spinner-border {
+  color: var(--color-accent) !important;
+}
+
+.alert-danger {
+  background-color: var(--color-danger);
+  color: var(--color-content-bg);
+  border-color: var(--color-danger);
+}
+
+.alert-info {
+  background-color: #E0F2F7;
+  color: #007BFF;
+  border-color: #B3E5FC;
+}
+
+@media (max-width: 767.98px) {
+  .row-cols-md-2 > .col {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

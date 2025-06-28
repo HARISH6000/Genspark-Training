@@ -1,0 +1,123 @@
+<div class="container-fluid py-4" style="background-color: var(--color-primary-bg); min-height: 100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+      <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+        <div class="card-body">
+          
+          <h2 class="card-title text-center mb-4" style="color: var(--color-primary-text);">
+            Edit User: {{ userToEdit?.username || 'Loading...' }}
+          </h2>
+
+          <!-- Loading Spinner -->
+          <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+              <span class="visually-hidden">Loading user data...</span>
+            </div>
+            <p class="mt-2" style="color: var(--color-secondary-text);">Loading user data...</p>
+          </div>
+
+          <!-- Error/Success Messages -->
+          <div *ngIf="errorMessage" class="alert alert-danger text-center mb-3">
+            {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="alert alert-success text-center mb-3">
+            {{ successMessage }}
+          </div>
+
+          <!-- Profile Picture Upload Section -->
+          <div *ngIf="isEditingOwnProfile">
+          <!-- <h4 class="card-title text-center mb-3" style="color: var(--color-primary-text);">Profile Picture</h4> -->
+          <div class="text-center mb-4">
+            <img
+              [src]="getProfilePictureUrl()"
+              class="rounded-circle profile-picture-preview mb-3"
+              alt="Profile Picture"
+            >
+            <input type="file" class="form-control" (change)="onFileSelected($event)">
+            <button
+              type="button"
+              class="btn btn-secondary mt-3"
+              (click)="uploadProfilePicture()"
+              [disabled]="!selectedFile || uploadingPicture"
+            >
+              <span *ngIf="uploadingPicture" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ uploadingPicture ? 'Uploading...' : 'Upload New Picture' }}
+            </button>
+          </div>
+          </div>
+
+          <!-- Edit User Form -->
+          <form *ngIf="!loading && userToEdit" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  class="form-control"
+                  [class.disabled-field]="!canEditUsername"
+                  [readonly]="!canEditUsername"
+                  [(ngModel)]="userToEdit.username"
+                  required
+                >
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-control"
+                  [(ngModel)]="userToEdit.email"
+                  required
+                >
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Phone:</label>
+                <input
+                  type="text"
+                  id="phone"
+                  name="phone"
+                  class="form-control"
+                  [(ngModel)]="userToEdit.phone"
+                >
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="role" class="form-label">Role:</label>
+                <select
+                  id="role"
+                  name="role"
+                  class="form-select"
+                  [class.disabled-field]="!canEditRoleId"
+                  [disabled]="!canEditRoleId"
+                  [(ngModel)]="userToEdit.roleId"
+                  required
+                >
+                  <option *ngFor="let role of roles" [value]="role.roleId">
+                    {{ role.roleName }}
+                  </option>
+                  <option *ngIf="!canEditRoleId && !userToEdit.roleId" [value]="userToEdit.roleId" selected>
+                    {{ userToEdit.roleName || 'N/A' }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="text-center mt-3">
+              <button type="submit" class="btn btn-primary" [disabled]="saving">
+                <span *ngIf="saving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                {{ saving ? 'Saving...' : 'Save Changes' }}
+              </button>
+            </div>
+          </form>
+
+          <hr class="my-4">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+/* Remove arrows in Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove arrows in Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.ml-3{
+    padding-left: 10px;
+}
+
+input{
+    align-items: center;
+    text-align: center;
+}
+
+.pagination-container {
+  flex-direction: row; /* Default to horizontal */
+}
+
+.input-container {
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+    align-items: center;
+  }
+
+  .pagination {
+    margin-bottom: 1rem; /* Add spacing below pagination */
+  }
+
+  .input-container {
+    width: 50px; /* Adjust input width for smaller screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .pagination-container {
+    flex-direction: column;
+  }
+
+  .pagination .page-link {
+    font-size: 0.875rem; /* Reduce font size for smaller screens */
+    padding: 0.25rem 0.5rem;
+  }
+
+  .input-container input {
+    font-size: 0.875rem; /* Adjust input font size */
+    padding: 0.25rem;
+  }
+}
+
+@media (max-height: 800px) {
+  .pagination-container {
+    flex-direction: column;
+  }
+
+  .pagination .page-link {
+    font-size: 0.875rem; /* Reduce font size for smaller screens */
+    padding: 0.25rem 0.5rem;
+  }
+
+  .input-container input {
+    font-size: 0.875rem; /* Adjust input font size */
+    padding: 0.25rem;
+  }
+}

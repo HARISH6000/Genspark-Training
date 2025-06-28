@@ -1,59 +1,63 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './login/login';
+import { LoginComponent } from './auth/login/login';
 import { AdminDashboardComponent } from './admin/dashboard/dashboard';
 import { ManagerDashboardComponent } from './manager/dashboard/dashboard';
+import { RegisterUserComponent } from './admin/register-user/register-user';
+import { UserInfoComponent } from './users/user-info/user-info';
+import { EditUserComponent } from './admin/edit-user/edit-user';
+import { UserManagementComponent } from './admin/user-management/user-management';
 import { NotFoundComponent } from './shared/not-found/not-found';
+import { ProductManagementComponent } from './products/product-management/product-management';
+import { ProductAddEditComponent } from './products/product-add-edit/product-add-edit';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { map } from 'rxjs/operators';
 import { CanActivateFn, Router } from '@angular/router';
 
-// Auth Guard to check if user is authenticated
+
 const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Check if token exists or currentUser data exists (from localStorage on refresh)
+  
   if (authService.accessToken && authService.currentUserValue) {
     return true;
   }
 
-  // If not authenticated, redirect to login page
   router.navigate(['/login']);
   return false;
 };
 
-// Admin Guard to check if user is admin
+
 const adminGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Ensure user data is loaded (important for initial load)
   return authService.currentUser.pipe(
     map(user => {
       if (user && authService.isAdmin()) {
         return true;
       }
-      // Not admin or no user, redirect to appropriate place
-      router.navigate(['/access-denied']); // Or back to login, or generic dashboard
+      
+      router.navigate(['/access-denied']); 
       return false;
     })
   );
 };
 
-// Manager Guard to check if user is manager
+
 const managerGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Ensure user data is loaded (important for initial load)
+  
   return authService.currentUser.pipe(
     map(user => {
       if (user && authService.isManager()) {
         return true;
       }
-      // Not manager or no user, redirect to appropriate place
-      router.navigate(['/access-denied']); // Or back to login, or generic dashboard
+
+      router.navigate(['/access-denied']);
       return false;
     })
   );
@@ -64,14 +68,50 @@ export const routes: Routes = [
   {
     path: 'admin/dashboard',
     component: AdminDashboardComponent,
-    canActivate: [authGuard, adminGuard] // Apply both auth and role guard
+    canActivate: [authGuard, adminGuard] 
   },
   {
     path: 'manager/dashboard',
     component: ManagerDashboardComponent,
-    canActivate: [authGuard, managerGuard] // Apply both auth and role guard
+    canActivate: [authGuard, managerGuard] 
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirect root to login
-  { path: 'access-denied', component: NotFoundComponent, data: { message: 'Access Denied: You do not have permission to view this page.' } }, // Generic access denied page
+  {
+    path: 'admin/register-user', 
+    component: RegisterUserComponent,
+    canActivate: [authGuard, adminGuard] 
+  },
+  {
+    path: 'admin/users',
+    component: UserManagementComponent,
+    canActivate: [authGuard, adminGuard]
+  },
+  {
+    path: 'user-info', 
+    component: UserInfoComponent,
+    canActivate: [authGuard] 
+  },
+  {
+    path: 'user-info/:userId', 
+    component: UserInfoComponent,
+    canActivate: [authGuard,adminGuard] 
+  },
+  { path: 'admin/edit-user/:userId', 
+    component: EditUserComponent,
+    canActivate:[authGuard,adminGuard]
+  },
+  { path: 'products',
+    component: ProductManagementComponent,
+    canActivate:[authGuard]
+  },
+  { path: 'add-product',
+    component: ProductAddEditComponent,
+    canActivate:[authGuard]
+  },
+  { path: 'edit-product/:id',
+    component: ProductAddEditComponent,
+    canActivate:[authGuard]
+  },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'access-denied', component: NotFoundComponent, data: { message: 'Access Denied: You do not have permission to view this page.' } },
   { path: '**', component: NotFoundComponent } // Wildcard for 404 Not Found
 ];

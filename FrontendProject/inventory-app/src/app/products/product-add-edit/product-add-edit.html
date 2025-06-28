@@ -1,0 +1,156 @@
+<div class="container-fluid py-4" style="background-color: var(--color-primary-bg); min-height: 100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+        <div class="card-body">
+          <h2 class="mb-4 text-center" style="color: var(--color-primary-text);">
+            {{ isEditMode ? 'Edit Product' : 'Add New Product' }}
+          </h2>
+
+          <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2" style="color: var(--color-secondary-text);">Loading product data...</p>
+          </div>
+
+          <div *ngIf="errorMessage" class="alert alert-danger text-center" style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+            {{ errorMessage }}
+          </div>
+
+          <div *ngIf="successMessage" class="alert alert-success text-center" style="background-color: #d4edda; color: #155724; border-color: #c3e6cb;">
+            {{ successMessage }}
+          </div>
+
+          <form (ngSubmit)="onSubmit()" #productForm="ngForm" *ngIf="!loading" novalidate>
+  <!-- SKU -->
+  <div class="mb-3">
+    <label for="sku" class="form-label" style="color: var(--color-primary-text);">SKU</label>
+    <input
+      type="text"
+      class="form-control"
+      id="sku"
+      [(ngModel)]="product.sku"
+      name="sku"
+      required
+      maxlength="15"
+      [disabled]="isEditMode"
+      #sku="ngModel"
+      style="border-color: var(--color-border); background-color: var(--color-input-bg); color: var(--color-primary-text);"
+    >
+    <div *ngIf="sku.invalid && sku.touched" class="form-text text-danger">
+      <small *ngIf="sku.errors?.['required']">SKU is required.</small>
+      <small *ngIf="sku.errors?.['maxlength']">SKU cannot exceed 15 characters.</small>
+    </div>
+  </div>
+
+  <!-- Product Name -->
+  <div class="mb-3">
+    <label for="productName" class="form-label" style="color: var(--color-primary-text);">Product Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="productName"
+      [(ngModel)]="product.productName"
+      name="productName"
+      required
+      maxlength="100"
+      #productName="ngModel"
+      style="border-color: var(--color-border); background-color: var(--color-input-bg); color: var(--color-primary-text);"
+    >
+    <div *ngIf="productName.invalid && productName.touched" class="form-text text-danger">
+      <small *ngIf="productName.errors?.['required']">Product Name is required.</small>
+      <small *ngIf="productName.errors?.['maxlength']">Product Name should be less than 10 words (100 characters).</small>
+    </div>
+  </div>
+
+  <!-- Description -->
+  <div class="mb-3">
+    <label for="description" class="form-label" style="color: var(--color-primary-text);">Description</label>
+    <textarea
+      class="form-control"
+      id="description"
+      [(ngModel)]="product.description"
+      name="description"
+      required
+      maxlength="750"
+      rows="3"
+      #description="ngModel"
+      style="border-color: var(--color-border); background-color: var(--color-input-bg); color: var(--color-primary-text);"
+    ></textarea>
+    <div *ngIf="description.invalid && description.touched" class="form-text text-danger">
+      <small *ngIf="description.errors?.['required']">Description is required.</small>
+      <small *ngIf="description.errors?.['maxlength']">Description should be less than 150 words (750 characters).</small>
+    </div>
+  </div>
+
+  <!-- Unit Price -->
+  <div class="mb-3">
+    <label for="unitPrice" class="form-label" style="color: var(--color-primary-text);">Unit Price</label>
+    <input
+      type="number"
+      class="form-control"
+      id="unitPrice"
+      [(ngModel)]="product.unitPrice"
+      name="unitPrice"
+      required
+      min="0.01"
+      step="0.01"
+      #unitPrice="ngModel"
+      style="border-color: var(--color-border); background-color: var(--color-input-bg); color: var(--color-primary-text);"
+    >
+    <div *ngIf="unitPrice.invalid && unitPrice.touched" class="form-text text-danger">
+      <small *ngIf="unitPrice.errors?.['required']">Unit Price is required.</small>
+      <small *ngIf="unitPrice.errors?.['min']">Unit Price must be a positive value.</small>
+    </div>
+  </div>
+
+  <!-- Category -->
+  <div class="mb-4">
+    <label for="category" class="form-label" style="color: var(--color-primary-text);">Category</label>
+    <select
+      class="form-select"
+      id="category"
+      [(ngModel)]="product.categoryId"
+      name="categoryId"
+      required
+      #category="ngModel"
+      style="border-color: var(--color-border); background-color: var(--color-input-bg); color: var(--color-primary-text);"
+    >
+      <option [value]="0" disabled>Select a category</option>
+      <option *ngFor="let category of categories" [value]="category.categoryId">
+        {{ category.categoryName }}
+      </option>
+    </select>
+    <div *ngIf="category.value==0 && category.touched" class="form-text text-danger">
+      <small>Category is required.</small>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="onCancel()"
+      style="background-color: var(--color-secondary); color: var(--color-content-bg); border-color: var(--color-secondary);"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="productForm.invalid || loading || category.value==0"
+      style="background-color: var(--color-accent); color: var(--color-content-bg); border-color: var(--color-accent);"
+    >
+      <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      {{ isEditMode ? 'Update Product' : 'Add Product' }}
+    </button>
+  </div>
+</form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

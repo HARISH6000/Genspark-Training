@@ -1,0 +1,122 @@
+<div class="d-flex justify-content-center align-items-center min-vh-100" style="background-color: var(--color-primary-bg);">
+  <div class="card p-4 shadow-sm" style="width: 100%; max-width: 500px; background-color: var(--color-content-bg); border-radius: 0.5rem;">
+    <div class="card-body">
+      <h3 class="card-title text-center mb-4" style="color: var(--color-primary-text);">Register New User</h3>
+
+      <form (ngSubmit)="onRegister()" #userForm="ngForm" novalidate>
+        <!-- Username -->
+        <div class="mb-3">
+          <label for="username" class="form-label" style="color: var(--color-primary-text);">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            [(ngModel)]="registerRequest.username"
+            required
+            #usernameInput="ngModel"
+            [class.is-invalid]="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched || formSubmitted)"
+          >
+          <div *ngIf="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched || formSubmitted)" class="invalid-feedback">
+            Username is required.
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label for="password" class="form-label" style="color: var(--color-primary-text);">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            [(ngModel)]="registerRequest.password"
+            required
+            #passwordInput="ngModel"
+            [class.is-invalid]="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched || formSubmitted)"
+          >
+          <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched || formSubmitted)" class="invalid-feedback">
+            Password is required.
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label" style="color: var(--color-primary-text);">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            [(ngModel)]="registerRequest.email"
+            required
+            email
+            #emailInput="ngModel"
+            [class.is-invalid]="emailInput.invalid && (emailInput.dirty || emailInput.touched || formSubmitted)"
+          >
+          <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched || formSubmitted)" class="invalid-feedback">
+            Please enter a valid email address.
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-3">
+          <label for="phone" class="form-label" style="color: var(--color-primary-text);">Phone</label>
+          <input
+            type="text"
+            class="form-control"
+            id="phone"
+            name="phone"
+            [(ngModel)]="registerRequest.phone"
+            required
+            #phoneInput="ngModel"
+            [class.is-invalid]="phoneInput.invalid && (phoneInput.dirty || phoneInput.touched || formSubmitted)"
+          >
+          <div *ngIf="phoneInput.invalid && (phoneInput.dirty || phoneInput.touched || formSubmitted)" class="invalid-feedback">
+            Phone number is required.
+          </div>
+        </div>
+
+        <!-- Role -->
+        <div class="mb-3">
+          <label for="role" class="form-label" style="color: var(--color-primary-text);">Role</label>
+          <select
+            class="form-select"
+            id="role"
+            name="role"
+            [(ngModel)]="registerRequest.roleId"
+            required
+            #roleInput="ngModel"
+            [class.is-invalid]="roleInput.invalid && (roleInput.dirty || roleInput.touched || formSubmitted)"
+          >
+            <option [ngValue]="0" disabled>Select a role</option>
+            <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name }}</option>
+          </select>
+          <div *ngIf="roleInput.invalid && (roleInput.dirty || roleInput.touched || formSubmitted)" class="invalid-feedback">
+            Please select a role.
+          </div>
+        </div>
+
+        <!-- Error Message Display -->
+        <div *ngIf="errorMessage" class="alert alert-danger mb-3" style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Success Message Display -->
+        <div *ngIf="successMessage" class="alert alert-success mb-3" style="background-color: var(--color-success); color: var(--color-content-bg); border-color: var(--color-success);">
+          {{ successMessage }}
+        </div>
+
+        <button
+          type="submit"
+          class="btn w-100"
+          [disabled]="loading"
+          style="background-color: var(--color-accent); color: var(--color-content-bg); border-color: var(--color-accent);"
+        >
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ loading ? 'Registering...' : 'Register User' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
