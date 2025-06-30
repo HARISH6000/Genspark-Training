@@ -1,1 +1,127 @@
-<p>dashboard works!</p>
+<div class="container-fluid py-4" style="background-color: var(--color-primary-bg); min-height: 100vh;">
+  <h2 class="mb-4 text-center" style="color: var(--color-primary-text);">Manager Dashboard</h2>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+      <span class="visually-hidden">Loading dashboard...</span>
+    </div>
+    <p class="mt-2" style="color: var(--color-secondary-text);">Loading dashboard data...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger text-center"
+    style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && !errorMessage">
+    <div class="row mb-4">
+      <!-- SignalR Notifications (Top Left) -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm notification-card" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+          <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+            <h5 class="mb-0" style="color: var(--color-primary-text);">
+              <i class="bi bi-bell-fill me-2"></i>Low Stock Notifications
+            </h5>
+            <span [class.text-success]="signalRConnectionStatus === 'Connected'" [class.text-danger]="signalRConnectionStatus !== 'Connected'" style="font-size: 0.85rem;">
+              Status: {{ signalRConnectionStatus }}
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="lowStockNotifications.length === 0" class="text-muted text-center py-3" style="color: var(--color-secondary-text) !important;">
+              No recent low stock notifications.
+            </div>
+            <ul class="list-group list-group-flush" *ngIf="lowStockNotifications.length > 0">
+              <li *ngFor="let notif of lowStockNotifications" class="list-group-item d-flex justify-content-between align-items-start"
+                style="background-color: var(--color-content-bg); border-color: var(--color-border); color: var(--color-primary-text);">
+                <div class="me-auto">
+                  <div class="fw-bold" style="color: var(--color-primary-text);">{{ notif.productName }} (SKU: {{ notif.sku }})</div>
+                  <small class="text-muted" style="color: var(--color-secondary-text) !important;">{{ notif.message }}</small>
+                </div>
+                <span class="badge bg-danger rounded-pill" style="background-color: var(--color-danger) !important; color: var(--color-content-bg);">
+                  Qty: {{ notif.currentQuantity }} / Min: {{ notif.minStockQuantity }}
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="card-footer text-center" style="background-color: var(--color-primary-bg); border-top: 1px solid var(--color-border);">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="viewNotifications()" style="color: var(--color-accent); border-color: var(--color-accent);">View All Notifications</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Distribution Pie Chart (Top Right) -->
+      <div class="col-md-6 mb-4">
+  <div class="card h-100 shadow-sm chart-card">
+    <div class="card-header text-center">
+      <h5 class="mb-0">
+        <i class="bi bi-pie-chart-fill me-2"></i>Product Distribution by Inventory
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="chart-container">
+        <app-inventory-product-pie-chart [inventoryProductCounts]="inventoryProductCounts"></app-inventory-product-pie-chart>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Managed Inventories Section -->
+    <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);" *ngIf="!loading && !errorMessage" >
+      <div class="card-header" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+        <h5 class="mb-0" style="color: var(--color-primary-text);">
+          <i class="bi bi-boxes me-2"></i>Inventories You Manage
+        </h5>
+      </div>
+      <div class="card-body">
+        <div *ngIf="managedInventories.length === 0" class="alert alert-info text-center"
+          style="background-color: #E0F2F7; color: #007BFF; border-color: #B3E5FC;">
+          You are not currently managing any inventories.
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          <div class="col" *ngFor="let inv of managedInventories">
+            <div class="card h-100 shadow-sm inventory-card" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2" style="color: var(--color-primary-text);">{{ inv.name }}</h5>
+                <p class="card-text text-muted" style="color: var(--color-secondary-text);">Location: {{ inv.location }}</p>
+                <p class="card-text text-muted mt-auto" style="font-size: 0.85rem; color: var(--color-secondary-text);">ID: {{ inv.inventoryId }}</p>
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                  style="border-color: var(--color-accent); color: var(--color-accent);"
+                  (click)="viewInventoryDetails(inv.inventoryId)">
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Products Section -->
+    <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);" *ngIf="!loading && !errorMessage">
+      <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+        <h5 class="mb-0" style="color: var(--color-primary-text);">
+          <i class="bi bi-tag-fill me-2"></i>Featured Products
+        </h5>
+        <button type="button" class="btn btn-sm btn-outline-primary" (click)="viewAllProducts()" style="color: var(--color-accent); border-color: var(--color-accent);">View All</button>
+      </div>
+      <div class="card-body">
+        <div *ngIf="featuredProducts.length === 0" class="alert alert-info text-center"
+          style="background-color: #E0F2F7; color: #007BFF; border-color: #B3E5FC;">
+          No featured products available.
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+          <div class="col" *ngFor="let prod of featuredProducts">
+            <div class="card h-100 shadow-sm product-card" (click)="viewProductInfo(prod)" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+              <div class="card-body d-flex flex-column">
+                <h6 class="card-title mb-1" style="color: var(--color-primary-text);">{{ prod.productName }}</h6>
+                <p class="card-text text-muted mb-2" style="font-size: 0.85rem; color: var(--color-secondary-text);">SKU: {{ prod.sku }}</p>
+                <p class="card-text mb-1" style="color: var(--color-primary-text);">Price: {{ prod.unitPrice | currency:'INR':'symbol' }}</p>
+                <p class="card-text text-muted" style="font-size: 0.85rem; color: var(--color-secondary-text);">Category: {{ prod.categoryName }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

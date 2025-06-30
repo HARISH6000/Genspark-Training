@@ -4,7 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
-import { Inventory, CreateInventoryRequest, CreateInventoryProductRequest, InventoryManager, InventoryManagerAssignmentRequest, UpdateInventoryRequest, UpdateMinStockRequest, ManagerUser, InventoryProduct, QuantityChangeRequest, SetQuantityRequest } from '../models/inventory';
+import { Inventory, CreateInventoryRequest, CreateInventoryProductRequest, InventoryManager, InventoryManagerAssignmentRequest, UpdateInventoryRequest, UpdateMinStockRequest, ManagerUser, InventoryProduct, QuantityChangeRequest, SetQuantityRequest, InventoriesForProduct, ProductsForInventories } from '../models/inventory';
 import { Product } from '../models/product';
 import { PaginationResponse } from '../models/pagination-response';
 @Injectable({
@@ -187,7 +187,7 @@ export class InventoryService {
   }
 
   
-  getProductsInInventory(inventoryId: number, pageNumber: number | null = null, pageSize: number | null = null, searchTerm: string | null = null, orderBy: string | null = null): Observable<PaginationResponse<Product>> {
+  getProductsInInventory(inventoryId: number, pageNumber: number | null = null, pageSize: number | null = null, searchTerm: string | null = null, orderBy: string | null = null): Observable<PaginationResponse<ProductsForInventories>> {
 
     let params = new HttpParams();
     if (pageNumber !== null) params = params.set('pageNumber', pageNumber);
@@ -195,7 +195,7 @@ export class InventoryService {
     if (searchTerm !== null) params = params.set('searchTerm', searchTerm);
     if (orderBy !== null) params = params.set('orderBy', orderBy);
 
-    return this.http.get<PaginationResponse<Product>>(`${this.baseUrl}/api/v1/InventoryProducts/products-in-inventory/${inventoryId}`, { headers: this.getAuthHeaders(), params }).pipe(
+    return this.http.get<PaginationResponse<ProductsForInventories>>(`${this.baseUrl}/api/v1/InventoryProducts/products-in-inventory/${inventoryId}`, { headers: this.getAuthHeaders(), params }).pipe(
       catchError(error => this.handleError(error, `fetching products in inventory ${inventoryId}`))
     );
   }
@@ -212,12 +212,16 @@ export class InventoryService {
   }
 
   
-  getInventoriesForProduct(productId: number, sortBy?: string): Observable<Inventory[]> {
+  getInventoriesForProduct(productId: number, pageNumber: number | null = null, pageSize: number | null = null, searchTerm: string | null = null, orderBy: string | null = null): Observable<PaginationResponse<InventoriesForProduct>> {
     let params = new HttpParams();
-    if (sortBy) {
-      params = params.set('sortBy', sortBy);
-    }
-    return this.http.get<Inventory[]>(`${this.baseUrl}/api/v1/InventoryProducts/inventories-for-product/${productId}`, { headers: this.getAuthHeaders(), params }).pipe(
+    if (pageNumber !== null) params = params.set('pageNumber', pageNumber);
+    if (pageSize !== null) params = params.set('pageSize', pageSize);
+    if (searchTerm !== null) params = params.set('searchTerm', searchTerm);
+    if (orderBy !== null) params = params.set('orderBy', orderBy);
+
+    console.log("prdId2:",productId);
+
+    return this.http.get<PaginationResponse<InventoriesForProduct>>(`${this.baseUrl}/api/v1/InventoryProducts/inventories-for-product/${productId}`, { headers: this.getAuthHeaders(), params }).pipe(
       catchError(error => this.handleError(error, `fetching inventories for product ${productId}`))
     );
   }

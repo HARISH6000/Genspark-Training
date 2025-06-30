@@ -6,6 +6,7 @@ import { AuthService, UserDetails } from './auth.service';
 import { environment } from '../../environments/environment';
 import { User, RegisterUserRequest, UpdateUserRequest, UpdateContactDetailsRequest, ChangePasswordRequest, Role } from '../models/user';
 import { PaginationResponse } from '../models/pagination-response';
+import { map } from 'rxjs/operators'; 
 
 
 @Injectable({
@@ -69,16 +70,16 @@ export class UserService {
         );
     }
 
-    getAllUsers(pageNumber: number | null =null, pageSize: number | null=null, searchTerm: string | null=null, orderBy: string | null=null): Observable<PaginationResponse<User>> {
+    getAllUsers(pageNumber: number | null = null, pageSize: number | null = null, searchTerm: string | null = null, orderBy: string | null = null): Observable<PaginationResponse<User>> {
 
         let params = new HttpParams();
 
         if (pageNumber !== null) params = params.set('pageNumber', pageNumber);
         if (pageSize !== null) params = params.set('pageSize', pageSize);
         if (searchTerm !== null) params = params.set('searchTerm', searchTerm);
-        if (orderBy !== null) params = params.set('orderBy',orderBy);
+        if (orderBy !== null) params = params.set('orderBy', orderBy);
 
-        console.log("inServ:",orderBy);
+        console.log("inServ:", orderBy);
 
         return this.http.get<PaginationResponse<User>>(this.usersApiUrl, { headers: this.getAuthHeaders(), params, }).pipe(
             catchError(error => this.handleError(error, 'fetching all users'))
@@ -135,6 +136,18 @@ export class UserService {
     getAllRoles(): Observable<Role[]> {
         return this.http.get<Role[]>(this.rolesApiUrl, { headers: this.getAuthHeaders() }).pipe(
             catchError(error => this.handleError(error, 'fetching all roles'))
+        );
+    }
+
+    getAdmins(): Observable<UserDetails[]> {
+        return this.getAllUsers().pipe(
+            map(response => response.data.filter(user => user.roleName === 'Admin'))
+        );
+    }
+
+    getManagers(): Observable<UserDetails[]> {
+        return this.getAllUsers().pipe(
+            map(response => response.data.filter(user => user.roleName === 'Manager'))
         );
     }
 

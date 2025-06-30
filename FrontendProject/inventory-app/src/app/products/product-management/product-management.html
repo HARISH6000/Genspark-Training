@@ -135,7 +135,7 @@
                                         (click)="softDeleteProduct(product.productId)"
                                         *ngIf="!product.isDeleted && isAdmin()"
                                         style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);">
-                                        Soft Delete
+                                        Delete
                                     </button>
                                     <button class="btn btn-sm btn-danger" (click)="hardDeleteProduct(product.productId)"
                                         *ngIf="product.isDeleted && isAdmin()"

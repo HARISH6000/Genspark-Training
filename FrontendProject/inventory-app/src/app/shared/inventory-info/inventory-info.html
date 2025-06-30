@@ -1,0 +1,308 @@
+<div class="container-fluid py-4" style="background-color: var(--color-primary-bg); min-height: 100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-9">
+      <h2 class="mb-4 text-center" style="color: var(--color-primary-text);">Inventory Details & Products</h2>
+
+      <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+        <div class="card-body">
+          <div *ngIf="loading && !inventory" class="text-center py-3">
+            <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+              <span class="visually-hidden">Loading inventory...</span>
+            </div>
+            <p class="mt-2" style="color: var(--color-secondary-text);">Loading inventory details...</p>
+          </div>
+
+          <div *ngIf="errorMessage && !inventory" class="alert alert-danger text-center"
+            style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+            {{ errorMessage }}
+          </div>
+
+          <div *ngIf="!loading && inventory">
+            <h3 class="card-title text-center mb-3" style="color: var(--color-primary-text);">
+              {{ inventory.name || 'N/A' }}
+            </h3>
+            <p class="card-text text-center text-muted mb-3" style="color: var(--color-secondary-text);">
+              Location: {{ inventory.location || 'N/A' }}
+            </p>
+            <hr style="border-top: 1px solid var(--color-border);">
+            <div class="d-flex justify-content-center gap-2 mt-3" *ngIf="isAdmin()">
+              <button type="button" class="btn btn-primary"
+                style="background-color: var(--color-accent); border-color: var(--color-accent);"
+                (click)="editInventory()">
+                Edit Inventory
+              </button>
+              <button type="button" class="btn btn-danger"
+                style="background-color: var(--color-danger); border-color: var(--color-danger);"
+                (click)="deleteInventory()">
+                Delete Inventory
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-3 mb-4 shadow-sm" style="background-color: var(--color-content-bg); border-radius: 0.5rem;"
+        *ngIf="isManager">
+        <div class="d-flex justify-content-end mb-3">
+          <button type="button" class="btn btn-success" (click)="openAddProductForm()" *ngIf="!showAddProductForm">
+            <i class="bi bi-plus-circle me-2"></i>Add Existing Product to Inventory
+          </button>
+        </div>
+
+        <form *ngIf="showAddProductForm" (ngSubmit)="addProductToInventory()" class="row g-3 align-items-center">
+          <div class="col-md-6">
+            <label for="productSelect" class="form-label mb-0" style="color: var(--color-primary-text);">Select
+              Product</label>
+            <ng-select [items]="availableProductsForDropdown" bindLabel="productName"  bindValue="productId" placeholder="Select a product"
+              [(ngModel)]="selectedProductToAddId" [searchable]="true" [clearable]="true" name="productSelect"
+              [searchFn]="customProductSearchFn" >
+              <ng-template ng-option-tmp let-item="item">
+                {{ item.productName }} (SKU: {{ item.sku }})
+              </ng-template>
+            </ng-select>
+
+
+          </div>
+          <div class="col-md-3">
+            <label for="quantity" class="form-label mb-0" style="color: var(--color-primary-text);">Quantity</label>
+            <input type="number" id="quantity" class="form-control" [(ngModel)]="newProductQuantity" name="quantity"
+              required min="1" style="border-color: var(--color-border);">
+          </div>
+          <div class="col-md-3">
+            <label for="minStock" class="form-label mb-0" style="color: var(--color-primary-text);">Min Stock</label>
+            <input type="number" id="minStock" class="form-control" [(ngModel)]="newProductMinStock" name="minStock"
+              required min="0" style="border-color: var(--color-border);">
+          </div>
+          <div class="col-12 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary"
+              style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);"
+              (click)="cancelAddProduct()">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-success"
+              [disabled]="!selectedProductToAddId || newProductQuantity <= 0">
+              Add Product
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card p-3 mb-4 shadow-sm" style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-4">
+            <label for="searchFilter" class="form-label mb-0" style="color: var(--color-primary-text);">Search
+              Product</label>
+            <input type="text" class="form-control" id="searchFilter" [formControl]="searchControl"
+              placeholder="e.g., Laptop, SKU123" style="border-color: var(--color-border);">
+          </div>
+
+        
+
+        <div class="col-md">
+          <label class="form-label mb-0" style="color: var(--color-primary-text);">Sort By:</label>
+          <div *ngFor="let criterion of sortCriteria; let i = index" class="row g-2 mb-2 align-items-center">
+            <div class="col-md-5">
+              <select class="form-select" [(ngModel)]="criterion.field" (ngModelChange)="onSortChange()"
+                name="sortField{{i}}" style="border-color: var(--color-border);">
+                <option value="">-- Select Field --</option>
+                <option *ngFor="let field of sortFields" [value]="field.value">{{ field.name }}</option>
+              </select>
+            </div>
+            <div class="col-md-5">
+              <select class="form-select" [(ngModel)]="criterion.order" (ngModelChange)="onSortChange()"
+                name="sortOrder{{i}}" style="border-color: var(--color-border);">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-danger btn-sm w-100" (click)="removeSortCriterion(i)"
+                style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+                Remove
+              </button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline-secondary btn-sm mt-2" (click)="addSortCriterion()"
+            style="border-color: var(--color-border); color: var(--color-secondary-text);">
+            Add Sort Criterion
+          </button>
+        </div>
+      </div>
+
+      </div>
+
+      <div *ngIf="loading && !inventory" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+          <span class="visually-hidden">Loading products...</span>
+        </div>
+        <p class="mt-2" style="color: var(--color-secondary-text);">Loading products in inventory...</p>
+      </div>
+
+      <div *ngIf="errorMessage && !loading" class="alert alert-danger text-center"
+        style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="!loading && !errorMessage && productsInInventory.length === 0" class="alert alert-info text-center"
+        style="background-color: #E0F2F7; color: #007BFF; border-color: #B3E5FC;">
+        No products found in this inventory or matching your filter criteria.
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" *ngFor="let ip of filteredProductsInInventory">
+          <div class="card h-100 shadow-sm product-card"
+            [class.below-min-stock]="ip.quantityInInventory < ip.minStockQuantity && ip.minStockQuantity > 0"
+            style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+            <div class="card-body">
+              <h5 class="card-title" style="color: var(--color-primary-text);">{{ ip.productName || 'N/A' }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted" style="color: var(--color-secondary-text);">SKU: {{ ip.sku ||
+                'N/A' }}</h6>
+              <p class="card-text description" style="color: var(--color-secondary-text);">Description: {{
+                ip.description || 'N/A' }}</p>
+              <ul class="list-group list-group-flush mt-3">
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                  style="background-color: var(--color-input-bg); border-color: var(--color-border); color: var(--color-primary-text);">
+                  Current Quantity:
+                  <span [class.text-danger]="ip.quantityInInventory < ip.minStockQuantity && ip.minStockQuantity > 0"
+                    [class.text-success]="ip.quantityInInventory >= ip.minStockQuantity || ip.minStockQuantity === 0">
+                    {{ ip.quantityInInventory }}
+                  </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                  style="background-color: var(--color-input-bg); border-color: var(--color-border); color: var(--color-primary-text);">
+                  Min Stock Quantity:
+                  <span>{{ ip.minStockQuantity }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                  style="background-color: var(--color-input-bg); border-color: var(--color-border); color: var(--color-primary-text);">
+                  Unit Price:
+                  <span>${{ ip.unitPrice | number:'1.2-2' }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                  style="background-color: var(--color-input-bg); border-color: var(--color-border); color: var(--color-primary-text);">
+                  Category:
+                  <span>{{ ip.categoryName || 'N/A' }}</span>
+                </li>
+
+              </ul>
+
+              <div class="mt-3 d-flex flex-wrap gap-2 justify-content-center" *ngIf="isManager">
+                <ng-container *ngIf="activeProductIdForQuantityChange !== ip.productId">
+                  <button type="button" class="btn btn-sm btn-success"
+                    style="background-color: var(--color-success); color: var(--color-content-bg); border-color: var(--color-success);"
+                    (click)="openQuantityChangeInput(ip.productId, 'add', ip.quantityInInventory)">
+                    Add Stock
+                  </button>
+                  <button type="button" class="btn btn-sm btn-warning"
+                    style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);"
+                    (click)="openQuantityChangeInput(ip.productId, 'remove', ip.quantityInInventory)">
+                    Remove Stock
+                  </button>
+                  <button type="button" class="btn btn-sm btn-info"
+                    style="background-color: var(--color-info); color: var(--color-content-bg); border-color: var(--color-info);"
+                    (click)="openQuantityChangeInput(ip.productId, 'set', ip.quantityInInventory)">
+                    Set Stock
+                  </button>
+                  <button type="button" class="btn btn-sm btn-primary"
+                    style="background-color: var(--color-info); color: var(--color-content-bg); border-color: var(--color-info);"
+                    (click)="openQuantityChangeInput(ip.productId, 'minStock', undefined, ip.minStockQuantity)">
+                    Update Min Stock
+                  </button>
+                  <button type="button" class="btn btn-sm btn-danger"
+                    style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);"
+                    (click)="removeProductFromInventory(ip.id)">
+                    Remove from Inventory
+                  </button>
+                </ng-container>
+
+                <ng-container *ngIf="activeProductIdForQuantityChange === ip.productId">
+                  <input *ngIf="actionType !== 'minStock'" type="number" class="form-control mb-2"
+                    [(ngModel)]="quantityChangeValue"
+                    [placeholder]="actionType === 'set' ? 'New Quantity' : 'Quantity Change'"
+                    [min]="actionType === 'set' ? 0 : 1" style="border-color: var(--color-border);">
+                  <input *ngIf="actionType === 'minStock'" type="number" class="form-control mb-2"
+                    [(ngModel)]="minStockChangeValue" placeholder="New Min Stock" min="0"
+                    style="border-color: var(--color-border);">
+                  <div class="d-flex justify-content-between w-100 gap-2">
+                    <button type="button" class="btn btn-secondary flex-grow-1"
+                      style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);"
+                      (click)="cancelQuantityChange()">
+                      Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary flex-grow-1" (click)="submitQuantityChange()"
+                      [disabled]="(actionType !== 'minStock' && (quantityChangeValue === null || isNaN(quantityChangeValue))) || (actionType === 'minStock' && (minStockChangeValue === null || isNaN(minStockChangeValue)))">
+                      Update
+                    </button>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="totalPages > 1 && !loading && !errorMessage">
+        <app-pagination [totalPages]="totalPages" [pageNumber]="pageNumber" (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+
+      <div *ngIf="!loading && !errorMessage" class="d-flex justify-content-end align-items-center mt-3">
+        <label for="pageSizeSelect" class="form-label mb-0 me-2" style="color: var(--color-primary-text);">Items
+          per page:</label>
+        <select id="pageSizeSelect" class="form-select w-auto" [(ngModel)]="pageSize"
+          (ngModelChange)="onPageSizeChange()" style="border-color: var(--color-border);">
+          <option value="1">1</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-container *ngIf="showEditInventoryModal && inventory">
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show d-block">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Inventory</h5>
+          <button type="button" class="btn-close" (click)="toggleEditInventoryModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form #editForm="ngForm">
+            <div class="mb-3">
+              <label for="inventoryName" class="form-label">Inventory Name</label>
+              <input
+                type="text"
+                id="inventoryName"
+                class="form-control"
+                [(ngModel)]="inventory.name"
+                name="name"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="inventoryLocation" class="form-label">Location</label>
+              <input
+                type="text"
+                id="inventoryLocation"
+                class="form-control"
+                [(ngModel)]="inventory.location"
+                name="location"
+                required
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="toggleEditInventoryModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="saveInventory()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

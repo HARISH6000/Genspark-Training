@@ -1,0 +1,188 @@
+<div class="container-fluid py-4" [class.blurred-background]="showForm">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-9">
+      <h2 class="mb-4 text-center text-primary">Category Management</h2>
+
+      <div class="d-flex justify-content-end mb-4">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="openAddForm()"
+          *ngIf="isAdmin()"
+        >
+          <i class="bi bi-plus-circle me-2"></i>Add New Category
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading categories...</span>
+        </div>
+        <p class="mt-2 text-secondary">Loading category data...</p>
+      </div>
+
+      <div *ngIf="errorMessage && !showForm" class="alert alert-danger text-center">
+        {{ errorMessage }}
+      </div>
+
+      <div
+        *ngIf="!loading && !errorMessage && categories.length === 0"
+        class="alert alert-info text-center"
+      >
+        No categories found. Click "Add New Category" to get started!
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" *ngFor="let category of categories">
+          <div class="card h-100 shadow-sm category-card">
+            <div class="card-body">
+              <h5 class="card-title text-primary">{{ category.categoryName }}</h5>
+              <p class="card-text text-secondary description">
+                {{ category.description || 'No description provided.' }}
+              </p>
+              <hr class="my-3" />
+              <p class="card-text">
+                <small class="text-muted">ID: {{ category.categoryId }}</small>
+              </p>
+              <div class="d-flex justify-content-end gap-2 mt-3" *ngIf="isAdmin()">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-info"  style="background-color: var(--color-info); color: var(--color-content-bg); border-color: var(--color-info);"
+                  (click)="openEditForm(category)"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger" style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);"
+                  (click)="deleteCategory(category.categoryId)"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="form-popup-overlay" *ngIf="showForm">
+  <div class="form-popup-content card shadow-lg">
+    <div class="card-header bg-white text-black d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">{{ isEditMode ? 'Edit Category' : 'Add New Category' }}</h4>
+      <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeForm()"></button>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="submitCategoryForm()">
+        <div class="mb-3">
+          <label for="categoryName" class="form-label text-primary">Category Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="categoryName"
+            name="categoryName"
+            [(ngModel)]="newCategory.categoryName"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="categoryDescription" class="form-label text-primary">Description</label>
+          <textarea
+            class="form-control"
+            id="categoryDescription"
+            name="categoryDescription"
+            rows="3"
+            [(ngModel)]="newCategory.description"
+            required
+          ></textarea>
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+        <div class="d-grid gap-2 mt-4">
+          <button type="submit" class="btn btn-primary" >
+            {{ isEditMode ? 'Update Category' : 'Add Category' }}
+          </button>
+          <button type="button" class="btn btn-secondary" style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);" (click)="closeForm()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->
+
+
+<div class="form-popup-overlay" *ngIf="showForm">
+  <div class="form-popup-content card shadow-lg">
+    <div class="card-header bg-white text-black d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">{{ isEditMode ? 'Edit Category' : 'Add New Category' }}</h4>
+      <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeForm()"></button>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="submitCategoryForm()" #categoryForm="ngForm">
+        <!-- Category Name -->
+        <div class="mb-3">
+          <label for="categoryName" class="form-label text-primary">Category Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="categoryName"
+            name="categoryName"
+            [(ngModel)]="newCategory.categoryName"
+            #categoryName="ngModel"
+            required
+            maxlength="50"
+          />
+          <div *ngIf="categoryName.invalid && categoryName.touched" class="text-danger mt-1">
+            Category name is required and should be less than 50 characters.
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+          <label for="categoryDescription" class="form-label text-primary">Description</label>
+          <textarea
+            class="form-control"
+            id="categoryDescription"
+            name="categoryDescription"
+            rows="3"
+            [(ngModel)]="newCategory.description"
+            #categoryDescription="ngModel"
+            required
+            maxlength="1500"
+          ></textarea>
+          <div *ngIf="categoryDescription.invalid && categoryDescription.touched" class="text-danger mt-1">
+            Description is required and should be less than 1500 characters.
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);"
+            (click)="closeForm()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="categoryForm.invalid"
+          >
+            {{ isEditMode ? 'Update Category' : 'Add Category' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

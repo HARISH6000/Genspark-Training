@@ -1,0 +1,162 @@
+/* src/app/components/inventory-management/inventory-management.component.css */
+
+/* General styles for consistency */
+.container-fluid {
+  padding: 2rem;
+}
+
+.card {
+  margin-bottom: 1.5rem;
+}
+
+.form-control,
+.form-select {
+  border-radius: 0.375rem;
+  border-color: var(--color-border);
+  color: var(--color-primary-text);
+  background-color: var(--color-content-bg);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Adjust shadow color if needed */
+  background-color: var(--color-content-bg);
+}
+
+.btn {
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  filter: brightness(90%);
+}
+
+.spinner-border {
+  color: var(--color-accent) !important;
+}
+
+.alert-danger {
+  background-color: var(--color-danger);
+  color: var(--color-content-bg);
+  border-color: var(--color-danger);
+}
+
+.alert-info {
+  background-color: #E0F2F7;
+  color: #007BFF;
+  border-color: #B3E5FC;
+}
+
+/* Inventory Card Styling */
+.inventory-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  position: relative; /* For the DELETED badge */
+}
+
+.inventory-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.inventory-card .card-title {
+  font-weight: bold;
+}
+
+.inventory-card .card-text.location {
+  font-size: 0.9rem;
+  min-height: 1.2rem; /* Ensure consistent height */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inventory-card.deleted {
+  opacity: 0.7;
+  background-color: var(--color-content-bg-light) !important; /* Lighter background for deleted items */
+  border-color: var(--color-danger) !important;
+}
+
+.inventory-card.deleted .card-title,
+.inventory-card.deleted .card-subtitle,
+.inventory-card.deleted .card-text {
+  text-decoration: line-through;
+}
+
+.deleted-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.4em 0.7em;
+  font-size: 0.75em;
+  font-weight: bold;
+  border-radius: 0.25rem;
+}
+
+/* Form Pop-up Styling */
+.form-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050; /* Ensure it's above other content */
+}
+
+.form-popup-card {
+  background-color: var(--color-content-bg);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 500px; /* Max width for the form */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: fadeInScale 0.3s ease-out; /* Simple animation */
+}
+
+.blurred-background {
+  filter: blur(5px); /* Apply blur to the background content */
+  pointer-events: none; /* Prevent interaction with blurred content */
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pagination styles (similar to product-management) */
+.pagination .page-item .page-link {
+  color: var(--color-primary-text);
+  background-color: var(--color-content-bg);
+  border-color: var(--color-border);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-content-bg);
+}
+
+.pagination .page-item.disabled .page-link {
+  color: var(--color-secondary-text);
+  background-color: var(--color-content-bg-light);
+  border-color: var(--color-border);
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}

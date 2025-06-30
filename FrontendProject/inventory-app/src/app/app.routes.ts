@@ -9,10 +9,14 @@ import { UserManagementComponent } from './admin/user-management/user-management
 import { NotFoundComponent } from './shared/not-found/not-found';
 import { ProductManagementComponent } from './products/product-management/product-management';
 import { ProductAddEditComponent } from './products/product-add-edit/product-add-edit';
+import { CategoryManagementComponent } from './admin/category-management/category-management';
+import { InventoryManagementComponent } from './admin/inventory-management/inventory-management';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { map } from 'rxjs/operators';
 import { CanActivateFn, Router } from '@angular/router';
+import { ProductInfoComponent } from './products/product-info/product-info';
+import { InventoryInfoComponent } from './shared/inventory-info/inventory-info';
 
 
 const authGuard: CanActivateFn = () => {
@@ -103,12 +107,29 @@ export const routes: Routes = [
     component: ProductManagementComponent,
     canActivate:[authGuard]
   },
+  { path: 'product-info/:id',
+    component: ProductInfoComponent,
+    canActivate:[authGuard]
+  },
   { path: 'add-product',
     component: ProductAddEditComponent,
     canActivate:[authGuard]
   },
   { path: 'edit-product/:id',
     component: ProductAddEditComponent,
+    canActivate:[authGuard]
+  },
+  {
+    path:'category',
+    component:CategoryManagementComponent,
+    canActivate:[authGuard]
+  },
+  { path: 'inventories',
+    component: InventoryManagementComponent,
+    canActivate:[authGuard]
+  },
+  { path: 'inventory/:id',
+    component: InventoryInfoComponent,
     canActivate:[authGuard]
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' },

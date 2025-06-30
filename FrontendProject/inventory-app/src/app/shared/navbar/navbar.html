@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm" style="background-color: var(--color-accent) !important;">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/" style="color: var(--color-content-bg);">InventoryApp</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item" *ngIf="isLoggedIn() && isAdmin()"><a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page" style="color: var(--color-content-bg);">Dashboard</a></li>
+        <li class="nav-item" *ngIf="isManager()">
+          <a class="nav-link" routerLink="/manager/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page" style="color: var(--color-content-bg);">Manager Dashboard</a>
+        </li>
+        <!-- Links for all authenticated users -->
+        <li class="nav-item" *ngIf="isLoggedIn()">
+          <a class="nav-link" routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page" style="color: var(--color-content-bg);">Products</a>
+        </li>
+        <li class="nav-item" *ngIf="isLoggedIn()">
+          <a class="nav-link" routerLink="/inventories" routerLinkActive="active" ariaCurrentWhenActive="page" style="color: var(--color-content-bg);">Inventories</a>
+        </li>
+
+        <!-- Admin Specific Links -->
+        
+        <li class="nav-item" *ngIf="isLoggedIn() && isAdmin()"><a class="nav-link" routerLink="/admin/users" routerLinkActive="active" ariaCurrentWhenActive="page" style="color: var(--color-content-bg);">User Management</a></li>
+        <li class="nav-item" *ngIf="isLoggedIn() && isAdmin()"><a class="nav-link" routerLink="/admin/register-user" routerLinkActive="active" ariaCurrentWhenActive="page" style="color: var(--color-content-bg);">Register User</a></li>
+        <li class="nav-item" *ngIf="isLoggedIn() && isAdmin()"><a class="nav-link" routerLink="/category" routerLinkActive="active" ariaCurrentWhenActive="page" style="color: var(--color-content-bg);">Categories</a></li>
+
+        
+      </ul>
+
+      <ul class="navbar-nav">
+        <!-- User Info and Logout -->
+        <li class="nav-item dropdown" *ngIf="isLoggedIn()">
+          <a class="nav-link dropdown-toggle" href="#" id="userInfoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--color-content-bg);">
+            <i class="bi bi-person-circle me-1"></i> {{ currentUser?.username || 'User' }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userInfoDropdown" style="background-color: var(--color-content-bg);">
+            <li><a class="dropdown-item" routerLink="/user-info" style="color: var(--color-primary-text);">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" (click)="logout()" style="color: var(--color-danger);">Logout</a></li>
+          </ul>
+        </li>
+
+        <!-- Login Link (if not logged in) -->
+        <li class="nav-item" *ngIf="!isLoggedIn()">
+          <a class="nav-link" routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page" style="color: var(--color-content-bg);">Login</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

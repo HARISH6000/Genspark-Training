@@ -1,78 +1,38 @@
-/* Global styles for the Inventory Stock Management Application */
-
-/* Import Bootstrap utilities if you want to use them directly in styles.css
-   Note: Bootstrap's main CSS is already imported via angular.json
-   @import 'bootstrap/scss/functions';
-   @import 'bootstrap/scss/variables';
-   @import 'bootstrap/scss/mixins';
-   @import 'bootstrap/scss/utilities';
-*/
+/* src/styles.css */
 
 :root {
-  /* Primary and Background Colors */
-  --color-primary-bg: #F8F9FA; /* Very light gray, almost off-white */
-  --color-content-bg: #FFFFFF; /* Pure white for cards, modals, etc. */
+  /* Primary Colors */
+  --color-primary-bg: #f8f9fa; /* Light background for the overall page */
+  --color-primary-text: #212529; /* Dark text for primary content */
 
-  /* Text Colors */
-  --color-primary-text: #343A40; /* Dark charcoal gray for main text */
-  --color-secondary-text: #6C757D; /* Medium gray for subtle text */
+  /* Content Colors */
+  --color-content-bg: #ffffff; /* White background for cards/sections */
+  --color-secondary-text: #6c757d; /* Muted text for secondary info */
+  --color-border: #dee2e6; /* Light border color */
+  --color-input-bg: #ffffff; /* Background for form inputs */
 
-  /* Accent and Interactive Colors */
-  --color-accent: #007BFF; /* Professional blue for buttons, links, active states */
+  /* Accent Colors */
+  --color-accent: #007bff; /* Primary accent color (e.g., for buttons, links) */
+  --color-accent-rgb: 0, 123, 255; /* RGB for accent color, used in rgba() */
+  --color-accent-dark: #0056b3; /* Darker shade of accent for hover */
 
-  /* Borders and Dividers */
-  --color-border: #DEE2E6; /* Light gray for subtle separation */
-
-  /* Feedback Colors */
-  --color-success: #28A745; /* Green for success messages/states */
-  --color-danger: #DC3545; /* Red for errors/danger actions */
-  --color-warning: #FFC107; /* Yellow/Orange for warnings */
-
-  /* Spacing (optional, based on Bootstrap's default spacing scale if desired) */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 3rem;
+  /* Action/Status Colors */
+  --color-success: #28a745; /* Green for success actions/messages */
+  --color-success-dark: #218838;
+  --color-warning: #ffc107; /* Yellow/orange for warning actions/messages */
+  --color-warning-dark: #e0a800;
+  --color-danger: #dc3545; /* Red for destructive actions/error messages */
+  --color-danger-dark: #c82333;
+  --color-info: #17a2b8; /* Blue for informational messages */
+  --color-info-dark: #138496;
+  --color-secondary: #6c757d; /* Gray for secondary buttons */
+  --color-secondary-dark: #5a6268;
 }
 
-/* Basic body styling */
+/* You might also want to add some basic body styles for consistency */
 body {
-  font-family: Arial, sans-serif; /* Or your preferred font-family */
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  margin: 0;
   background-color: var(--color-primary-bg);
   color: var(--color-primary-text);
-  margin: 0;
-  padding: 0;
-  min-height: 100vh; /* Ensure body takes full viewport height */
-  display: flex;
-  flex-direction: column;
 }
-
-/* Example of how to use a custom color: */
-/*
-.btn-custom-primary {
-  background-color: var(--color-accent);
-  color: var(--color-content-bg);
-  border-color: var(--color-accent);
-}
-
-.btn-custom-primary:hover {
-  background-color: darken(var(--color-accent), 10%); // Note: 'darken' needs SCSS, for plain CSS use a slightly different hex
-  border-color: darken(var(--color-accent), 10%);
-}
-*/
-
-/* Overriding Bootstrap variables (if needed for deeper customization) */
-/*
-:root {
-    --bs-primary: var(--color-accent);
-    --bs-light: var(--color-primary-bg);
-    --bs-dark: var(--color-primary-text);
-    --bs-success: var(--color-success);
-    --bs-danger: var(--color-danger);
-    --bs-warning: var(--color-warning);
-    --bs-body-bg: var(--color-primary-bg);
-    --bs-body-color: var(--color-primary-text);
-    --bs-border-color: var(--color-border);
-}
-*/

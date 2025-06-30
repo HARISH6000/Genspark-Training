@@ -1,0 +1,98 @@
+/* src/app/user/dashboard/user-dashboard.component.css */
+
+/* General Card Styling - similar to manager dashboard */
+.container-fluid {
+  padding: 2rem;
+}
+
+.card {
+  background-color: var(--color-content-bg);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-primary-bg);
+}
+
+.text-primary {
+  color: var(--color-primary-text) !important;
+}
+
+.text-secondary {
+  color: var(--color-secondary-text) !important;
+}
+
+.text-success {
+  color: var(--color-success) !important;
+}
+
+.text-danger {
+  color: var(--color-danger) !important;
+}
+
+.spinner-border {
+  color: var(--color-accent) !important;
+}
+
+.alert-danger {
+  background-color: var(--color-danger);
+  color: var(--color-content-bg);
+  border-color: var(--color-danger);
+}
+
+.alert-info {
+  background-color: #E0F2F7;
+  color: #007BFF;
+  border-color: #B3E5FC;
+}
+
+/* Specific Card Styles */
+.notification-card .list-group-item {
+  background-color: var(--color-content-bg);
+  border-color: var(--color-border);
+  padding: 0.75rem 1.25rem;
+}
+
+.chart-card .card-body {
+  min-height: 250px; /* Ensure enough space for the chart canvas */
+  display: flex; /* Helps center the chart component */
+  justify-content: center;
+  align-items: center;
+}
+
+.stats-card .card-body {
+  padding: 1.25rem;
+}
+
+.clickable-card {
+  cursor: pointer;
+}
+
+.clickable-card:hover {
+  background-color: var(--color-primary-bg) !important;
+  border-color: var(--color-accent) !important;
+}
+
+.btn-outline-primary {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--color-accent);
+  color: var(--color-content-bg);
+}
+
+.form-select {
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+}

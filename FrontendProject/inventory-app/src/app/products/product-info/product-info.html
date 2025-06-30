@@ -1,0 +1,215 @@
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-9">
+            <div *ngIf="loadingProduct" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading product details...</span>
+                </div>
+                <p class="mt-2 text-secondary">Loading product data...</p>
+            </div>
+
+            <div *ngIf="productErrorMessage" class="alert alert-danger text-center">
+                {{ productErrorMessage }}
+            </div>
+
+            <div *ngIf="!loadingProduct && product" class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="mb-4 text-center ">Product Details</h2>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Product ID:</strong>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ product.productId || 'N/A' }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>SKU:</strong>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ product.sku || 'N/A' }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Product Name:</strong>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ product.productName || 'N/A' }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Description:</strong>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ product.description || 'N/A' }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Unit Price:</strong>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ product.unitPrice | currency }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Category:</strong>
+                        </div>
+                        <div class="col-sm-8 text-secondary">
+                            {{ product.categoryName || 'N/A' }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Status:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            <span [class]="product.isDeleted ? 'text-danger' : 'text-success'">
+                                {{ product.isDeleted ? 'Inactive (Deleted)' : 'Active' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn btn-sm btn-info"  style="background-color: var(--color-info); color: var(--color-content-bg); border-color: var(--color-info);" (click)="onEditProduct(product.productId)"
+                            *ngIf="isAdmin() || isManagerOrAdmin()">
+                            Edit Product
+                        </button>
+                        <button type="button" class="btn btn-sm btn-warning" style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);"
+                            *ngIf="!product.isDeleted && (isAdmin() || isManagerOrAdmin())"
+                            (click)="softDeleteProduct(product.productId)">
+                            Delete
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger" *ngIf="product.isDeleted && isAdmin()" style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);"
+                            (click)="hardDeleteProduct(product.productId)">
+                            Hard Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="mb-3 text-center" style="color: var(--color-primary-text);">Available In Inventories</h4>
+
+            <div class="card p-3 mb-4 shadow-sm"
+                style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-md-6 col-lg-5">
+                        <label for="inventorySearch" class="form-label mb-0"
+                            style="color: var(--color-primary-text);">Search Inventory</label>
+                        <input type="text" class="form-control" id="inventorySearch"
+                            [formControl]="inventorySearchControl" placeholder="e.g., Main Warehouse, inv-101">
+                    </div>
+
+                    <div class="col-md-6 col-lg-5">
+                        <label for="lowStockFilter" class="form-label mb-0"
+                            style="color: var(--color-primary-text);">Low Stock Filter</label>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" id="lowStockFilter"
+                                [(ngModel)]="showLowStockOnly" (change)="onToggleLowStockFilter()">
+                            <label class="form-check-label" for="lowStockFilter">Show Only Low Stock Inventories</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="mb-2" style="color: var(--color-primary-text);">Sort Options:</h6>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <div *ngFor="let criterion of sortCriteria; let i = index"
+                            class="d-flex align-items-center gap-2">
+                            <select class="form-select" [(ngModel)]="criterion.field"
+                                (ngModelChange)="onSortCriterionChange()" [name]="'sortField_' + i">
+                                <option value="">Select Field</option>
+                                <option *ngFor="let field of sortFields" [value]="field.value">{{ field.name }}</option>
+                            </select>
+                            <select class="form-select" [(ngModel)]="criterion.order"
+                                (ngModelChange)="onSortCriterionChange()" [name]="'sortOrder_' + i">
+                                <option value="asc">Ascending</option>
+                                <option value="desc">Descending</option>
+                            </select>
+                            <button type="button" class="btn btn-sm btn-danger" (click)="removeSortCriterion(i)">
+                                X
+                            </button>
+                        </div>
+
+                        <button type="button" class="btn btn-sm add-sort-btn" (click)="addSortCriterion()">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="loadingInventories" class="text-center py-5">
+                    <div class="spinner-border" role="status" style="color: var(--color-accent);">
+                        <span class="visually-hidden">Loading inventories...</span>
+                    </div>
+                    <p class="mt-2" style="color: var(--color-secondary-text);">Loading inventories...</p>
+                </div>
+
+                <div *ngIf="inventoryErrorMessage" class="alert alert-danger text-center"
+                    style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+                    {{ inventoryErrorMessage }}
+                </div>
+
+                <div *ngIf="!loadingInventories && !inventoryErrorMessage && filteredInventories.length === 0"
+                    class="alert alert-info text-center">
+                    No inventories found for this product or matching your filter.
+                </div>
+            </div>
+
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                <div class="col" *ngFor="let inventoryProduct of filteredInventories">
+                    <div class="card h-100 shadow-sm inventory-card"
+                        style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);"
+                        [class.low-stock]="inventoryProduct.quantityInInventory < inventoryProduct.minStockQuantity">
+                        <div class="card-body">
+                            <!-- Header Section -->
+                            <h5 class="card-title mb-1" style="color: var(--color-primary-text)">{{ inventoryProduct.inventoryName || 'N/A' }}</h5>
+
+                            <!-- Location -->
+                            <p class="card-text  mb-3">
+                                <i class="bi bi-geo-alt-fill text-secondary"></i>
+                                {{ inventoryProduct.inventoryLocation || 'N/A' }}
+                            </p>
+
+                            <!-- Stock Information -->
+                            <div class="d-flex justify-content-between">
+                                <!-- Min Stock -->
+                                <div>
+                                    <p class="mb-0">
+                                        <strong>Min Stock:</strong>
+                                        <span class="text-secondary">{{ inventoryProduct.minStockQuantity }}</span>
+                                    </p>
+                                </div>
+
+                                <!-- Available Stock -->
+                                <div>
+                                    <p class="mb-0">
+                                        <strong>Available Stock:</strong>
+                                        <span
+                                            [class]="inventoryProduct.quantityInInventory < inventoryProduct.minStockQuantity ? 'text-danger fw-bold' : 'text-success'">
+                                            {{ inventoryProduct.quantityInInventory }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Low Stock Warning -->
+                            <div *ngIf="inventoryProduct.quantityInInventory < inventoryProduct.minStockQuantity"
+                                class="alert alert-warning-custom mt-3 p-2">
+                                <i class="bi bi-exclamation-triangle-fill" style="color: var(--color-danger);"></i> <span style="color: var(--color-danger);"> Low Stock!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>

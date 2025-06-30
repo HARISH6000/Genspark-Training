@@ -186,7 +186,7 @@ export class ProductManagementComponent implements OnInit {
   // --- Product Actions ---
 
   viewProductDetails(productId: number): void {
-    this.router.navigate(['/product-details', productId]);
+    this.router.navigate(['/product-info', productId]);
   }
 
   editProduct(productId: number): void {

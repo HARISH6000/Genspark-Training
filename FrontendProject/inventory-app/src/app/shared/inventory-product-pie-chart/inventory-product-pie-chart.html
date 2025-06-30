@@ -1,0 +1,10 @@
+<div class="chart-container">
+  <canvas baseChart
+    [data]="pieChartData"
+    [options]="pieChartOptions"
+    [type]="pieChartType">
+  </canvas>
+  <p *ngIf="isNoData">
+    No product data available for chart.
+  </p>
+</div>

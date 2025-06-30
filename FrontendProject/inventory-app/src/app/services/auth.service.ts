@@ -21,7 +21,7 @@ export interface UserDetails {
   username: string;
   email: string;
   phone: string;
-  profilePictureUrl:string,
+  profilePictureUrl: string,
   roleId: number;
   roleName: string;
   isDeleted: boolean;
@@ -31,7 +31,7 @@ export interface UserDetails {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5085/api/v1'; 
+  private apiUrl = 'http://localhost:5085/api/v1';
 
   private currentUserSubject: BehaviorSubject<UserDetails | null>;
   public currentUser: Observable<UserDetails | null>;
@@ -48,6 +48,12 @@ export class AuthService {
 
   public get currentUserValue(): UserDetails | null {
     return this.currentUserSubject.value;
+  }
+
+  public get currentUserId(): number | null {
+    const currentUser = this.currentUserSubject.value;
+    console.log("current user Id:", currentUser?.userId);
+    return currentUser?.userId || null;
   }
 
   public get accessToken(): string | null {

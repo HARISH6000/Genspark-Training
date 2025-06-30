@@ -1,1 +1,209 @@
-<p>dashboard works!</p>
+<div class="container-fluid py-4" style="background-color: var(--color-primary-bg); min-height: 100vh;">
+  <h2 class="mb-4 text-center" style="color: var(--color-primary-text);">Admin Dashboard</h2>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
+      <span class="visually-hidden">Loading dashboard...</span>
+    </div>
+    <p class="mt-2" style="color: var(--color-secondary-text);">Loading dashboard data...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger text-center"
+    style="background-color: var(--color-danger); color: var(--color-content-bg); border-color: var(--color-danger);">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && !errorMessage">
+    <div class="row mb-4">
+      <!-- SignalR Notifications (Top Left) -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm notification-card" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+          <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+            <h5 class="mb-0" style="color: var(--color-primary-text);">
+              <i class="bi bi-bell-fill me-2"></i>Low Stock Notifications
+            </h5>
+            <span [class.text-success]="signalRConnectionStatus === 'Connected'" [class.text-danger]="signalRConnectionStatus !== 'Connected'" style="font-size: 0.85rem;">
+              Status: {{ signalRConnectionStatus }}
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="lowStockNotifications.length === 0" class="text-muted text-center py-3" style="color: var(--color-secondary-text) !important;">
+              No recent low stock notifications.
+            </div>
+            <ul class="list-group list-group-flush" *ngIf="lowStockNotifications.length > 0">
+              <li *ngFor="let notif of lowStockNotifications" class="list-group-item d-flex justify-content-between align-items-start"
+                style="background-color: var(--color-content-bg); border-color: var(--color-border); color: var(--color-primary-text);">
+                <div class="me-auto">
+                  <div class="fw-bold" style="color: var(--color-primary-text);">{{ notif.productName }} (SKU: {{ notif.sku }})</div>
+                  <small class="text-muted" style="color: var(--color-secondary-text) !important;">{{ notif.message }}</small>
+                </div>
+                <span class="badge bg-danger rounded-pill" style="background-color: var(--color-danger) !important; color: var(--color-content-bg);">
+                  Qty: {{ notif.currentQuantity }} / Min: {{ notif.minStockQuantity }}
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="card-footer text-center" style="background-color: var(--color-primary-bg); border-top: 1px solid var(--color-border);">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="viewNotifications()" style="color: var(--color-accent); border-color: var(--color-accent);">View All Notifications</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pie Chart: Product Distribution by Inventory & Location Filter -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm chart-card" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+          <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+            <h5 class="mb-0" style="color: var(--color-primary-text);">
+              <i class="bi bi-pie-chart-fill me-2"></i>Product Distribution by Inventory
+            </h5>
+            <div class="col-md-2">
+              <label for="locationFilterPie" class="visually-hidden">Filter by Location</label>
+              <select id="locationFilterPie" class="form-select form-select-sm" [(ngModel)]="pieChartSelectedLocation" (change)="onPieChartLocationChange($event)"
+                      style="background-color: var(--color-input-bg); color: var(--color-primary-text); border-color: var(--color-border);">
+                <option *ngFor="let loc of availableLocations" [value]="loc">{{ loc }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body">
+            <app-inventory-product-pie-chart [inventoryProductCounts]="filteredInventoryProductCounts"></app-inventory-product-pie-chart>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart: Inventories by Managers & Location Filter -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm chart-card" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+          <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+            <h5 class="mb-0" style="color: var(--color-primary-text);">
+              <i class="bi bi-bar-chart-fill me-2"></i>Inventories by Manager Count (Top 10)
+            </h5>
+            <div class="col-md-2">
+              <label for="locationFilterBar" class="visually-hidden">Filter by Location</label>
+              <select id="locationFilterBar" class="form-select form-select-sm" [(ngModel)]="barChartSelectedLocation" (change)="onBarChartLocationChange($event)"
+                      style="background-color: var(--color-input-bg); color: var(--color-primary-text); border-color: var(--color-border);">
+                <option *ngFor="let loc of availableLocations" [value]="loc">{{ loc }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body">
+            <app-inventory-managers-bar-chart [inventoryManagerCounts]="filteredInventoriesForBarChart"></app-inventory-managers-bar-chart>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Card (Below SignalR) -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm stats-card" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+          <div class="card-header" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+            <h5 class="mb-0" style="color: var(--color-primary-text);">
+              <i class="bi bi-info-circle-fill me-2"></i>Overall Statistics
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-6 mb-2"><strong>Total Products:</strong></div>
+              <div class="col-6 text-end">{{ totalProductsCount }}</div>
+              <div class="col-6 mb-2"><strong>Total Categories:</strong></div>
+              <div class="col-6 text-end">{{ totalCategoriesCount }}</div>
+              <div class="col-6 mb-2"><strong>Total Inventories:</strong></div>
+              <div class="col-6 text-end">{{ totalInventoriesCount }}</div>
+              <div class="col-6 mb-2"><strong>Total Locations:</strong></div>
+              <div class="col-6 text-end">{{ totalLocationsCount }}</div>
+              <div class="col-6 mb-2"><strong>Total Users:</strong></div>
+              <div class="col-6 text-end">{{ totalUsersCount }}</div>
+              <div class="col-6 mb-2"><strong>Total Admins:</strong></div>
+              <div class="col-6 text-end">{{ totalAdminsCount }}</div>
+              <div class="col-6 mb-2"><strong>Total Managers:</strong></div>
+              <div class="col-6 text-end">{{ totalManagersCount }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scrollable Sections: Users, Inventories, Products -->
+    <div class="mb-4">
+      <!-- Recent Users -->
+      <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+          <h5 class="mb-0" style="color: var(--color-primary-text);">
+            <i class="bi bi-people-fill me-2"></i>Recent Users
+          </h5>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="viewAllUsers()" style="color: var(--color-accent); border-color: var(--color-accent);">View All</button>
+        </div>
+        <div class="card-body">
+          <div *ngIf="recentUsers.length === 0" class="alert alert-info text-center"
+            style="background-color: #E0F2F7; color: #007BFF; border-color: #B3E5FC;">
+            No recent users found.
+          </div>
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div class="col" *ngFor="let user of recentUsers">
+              <div class="card h-100 shadow-sm clickable-card" (click)="viewUserInfo(user.userId)" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title mb-1" style="color: var(--color-primary-text);">{{ user.username }}</h6>
+                  <p class="card-text text-muted mb-2" style="font-size: 0.85rem; color: var(--color-secondary-text);">Role: {{ user.roleName }}</p>
+                  <p class="card-text text-muted" style="font-size: 0.85rem; color: var(--color-secondary-text);">Email: {{ user.email }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Inventories -->
+      <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+          <h5 class="mb-0" style="color: var(--color-primary-text);">
+            <i class="bi bi-boxes me-2"></i>Recent Inventories
+          </h5>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="viewAllInventories()" style="color: var(--color-accent); border-color: var(--color-accent);">View All</button>
+        </div>
+        <div class="card-body">
+          <div *ngIf="recentInventories.length === 0" class="alert alert-info text-center"
+            style="background-color: #E0F2F7; color: #007BFF; border-color: #B3E5FC;">
+            No recent inventories found.
+          </div>
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div class="col" *ngFor="let inv of recentInventories">
+              <div class="card h-100 shadow-sm clickable-card" (click)="viewInventoryDetails(inv.inventoryId)" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title mb-1" style="color: var(--color-primary-text);">{{ inv.name }}</h6>
+                  <p class="card-text text-muted mb-2" style="font-size: 0.85rem; color: var(--color-secondary-text);">Location: {{ inv.location }}</p>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Products -->
+      <div class="card shadow-sm mb-4" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+          <h5 class="mb-0" style="color: var(--color-primary-text);">
+            <i class="bi bi-tag-fill me-2"></i>Recent Products
+          </h5>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="viewAllProducts()" style="color: var(--color-accent); border-color: var(--color-accent);">View All</button>
+        </div>
+        <div class="card-body">
+          <div *ngIf="recentProducts.length === 0" class="alert alert-info text-center"
+            style="background-color: #E0F2F7; color: #007BFF; border-color: #B3E5FC;">
+            No recent products found.
+          </div>
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div class="col" *ngFor="let prod of recentProducts">
+              <div class="card h-100 shadow-sm clickable-card" (click)="viewProductInfo(prod)" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title mb-1" style="color: var(--color-primary-text);">{{ prod.productName }}</h6>
+                  <p class="card-text text-muted mb-2" style="font-size: 0.85rem; color: var(--color-secondary-text);">SKU: {{ prod.sku }}</p>
+                  <p class="card-text mb-1" style="color: var(--color-primary-text);">Price: {{ prod.unitPrice | currency:'INR':'symbol' }}</p>
+                  <p class="card-text text-muted" style="font-size: 0.85rem; color: var(--color-secondary-text);">Category: {{ prod.categoryName }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

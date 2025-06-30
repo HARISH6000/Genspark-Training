@@ -17,7 +17,7 @@ export interface UpdateInventoryRequest {
 }
 
 export interface InventoryProduct {
-  id: number; 
+  id: number;
   inventoryId: number;
   inventoryName: string;
   inventoryLocation: string;
@@ -62,7 +62,7 @@ export interface Product {
   categoryId: number;
   categoryName: string;
   isDeleted?: boolean;
-  quantityInInventory?: number; 
+  quantityInInventory?: number;
 }
 
 
@@ -95,4 +95,25 @@ export interface ManagerUser {
   phone: string;
   profilePictureUrl: string;
   roleName: string;
+}
+
+export interface InventoriesForProduct {
+  inventoryId: number;
+  inventoryName: string;
+  inventoryLocation: string;
+  quantityInInventory: number;
+  minStockQuantity: number;
+}
+
+export interface ProductsForInventories {
+  id:number;
+  productId: number;
+  productName: string;
+  sku: string;
+  description: string;
+  unitPrice: number;
+  categoryId: number;
+  categoryName: string;
+  quantityInInventory: number;
+  minStockQuantity: number;
 }
