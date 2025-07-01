@@ -160,6 +160,7 @@ export class InventoryProductPieChartComponent implements OnChanges {
   }
 
   get isNoData(): boolean {
+    console.log('Checking for no data condition:', this.inventoryProductCounts);
     return (
       this.inventoryProductCounts.length === 0 ||
       this.inventoryProductCounts.every((d) => d.totalProducts === 0)

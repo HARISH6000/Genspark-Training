@@ -17,6 +17,7 @@ import { map } from 'rxjs/operators';
 import { CanActivateFn, Router } from '@angular/router';
 import { ProductInfoComponent } from './products/product-info/product-info';
 import { InventoryInfoComponent } from './shared/inventory-info/inventory-info';
+import { NotificationListComponent } from './shared/notification-list/notification-list';
 
 
 const authGuard: CanActivateFn = () => {
@@ -131,6 +132,11 @@ export const routes: Routes = [
   { path: 'inventory/:id',
     component: InventoryInfoComponent,
     canActivate:[authGuard]
+  },
+  {
+    path: 'notifications', 
+    component: NotificationListComponent,
+    canActivate: [authGuard]
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'access-denied', component: NotFoundComponent, data: { message: 'Access Denied: You do not have permission to view this page.' } },

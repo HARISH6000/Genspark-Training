@@ -82,7 +82,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-    this.signalrService.stopConnection();
   }
 
   private startSignalRConnection(): void {
@@ -92,19 +91,22 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
         // Retrieve stored notifications from sessionStorage
         const storedNotifications = sessionStorage.getItem('lowStockNotifications');
-        this.lowStockNotifications = storedNotifications ? JSON.parse(storedNotifications) : [];
+        var allLowStockNotifications = storedNotifications ? JSON.parse(storedNotifications) : [];
 
+        this.lowStockNotifications = allLowStockNotifications.slice(0, 4);
         this.notificationsSub = this.signalrService.lowStockNotifications$.subscribe(notification => {
           // Add new notification to the beginning of the array
-          this.lowStockNotifications = [notification, ...this.lowStockNotifications];
+          allLowStockNotifications = [notification, ...allLowStockNotifications];
 
-          // Keep only the latest 5 notifications for display (0 to 4 indices)
-          if (this.lowStockNotifications.length > 5) { // If length becomes 6, trim it to 5
-            this.lowStockNotifications = this.lowStockNotifications.slice(0, 5);
+          
+          if (allLowStockNotifications.length > 4) { 
+            this.lowStockNotifications = allLowStockNotifications.slice(0, 4);
+          } else {
+            this.lowStockNotifications = allLowStockNotifications;
           }
 
           // Save the notifications to sessionStorage
-          sessionStorage.setItem('lowStockNotifications', JSON.stringify(this.lowStockNotifications));
+          sessionStorage.setItem('lowStockNotifications', JSON.stringify(allLowStockNotifications));
         });
       })
       .catch(err => {
@@ -125,8 +127,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
     forkJoin([
       this.inventoryService.getInventoriesByManagerId(managerId),
-      // Fetch 4 active products for featured section.
-      // Assuming getAllProducts takes (pageNumber, pageSize, searchTerm, orderBy, includeDeleted)
       this.productService.getAllProducts(1, 4, null, null, false)
     ]).pipe(
       switchMap(([inventories, featuredProductsResponse]) => {

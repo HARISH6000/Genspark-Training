@@ -100,7 +100,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-
   }
 
   private startSignalRConnection(): void {
@@ -110,17 +109,23 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
         // Retrieve stored notifications from sessionStorage
         const storedNotifications = sessionStorage.getItem('lowStockNotifications');
-        this.lowStockNotifications = storedNotifications ? JSON.parse(storedNotifications) : [];
+        var allLowStockNotifications = storedNotifications ? JSON.parse(storedNotifications) : [];
 
+        this.lowStockNotifications = allLowStockNotifications.slice(0, 4); 
         this.notificationsSub = this.signalrService.lowStockNotifications$.subscribe(notification => {
           // Add new notification to the beginning of the array
-          this.lowStockNotifications = [notification, ...this.lowStockNotifications];
+          allLowStockNotifications = [notification, ...allLowStockNotifications];
 
-          // Keep only the latest 5 notifications for display
-          if (this.lowStockNotifications.length > 5) {
-            this.lowStockNotifications = this.lowStockNotifications.slice(0, 5);
+
+          if (allLowStockNotifications.length > 4) {
+            this.lowStockNotifications = allLowStockNotifications.slice(0, 4);
+          }else{
+            this.lowStockNotifications = allLowStockNotifications;
           }
-          sessionStorage.setItem('lowStockNotifications', JSON.stringify(this.lowStockNotifications));
+
+          // Save the notifications to sessionStorage
+          sessionStorage.setItem('lowStockNotifications', JSON.stringify(allLowStockNotifications));
+
         });
       })
       .catch(err => {
@@ -194,7 +199,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         managers,
         inventoriesWithManagers } = results;
 
-      console.log("prres:",productsResponse);
+      console.log("prres:", productsResponse);
       // Set Statistics
       this.totalProductsCount = productsResponse.data.length;
       this.totalCategoriesCount = categoriesResponse.length;

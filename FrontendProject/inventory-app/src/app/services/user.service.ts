@@ -49,7 +49,9 @@ export class UserService {
             errorMessage = `Resource not found for ${context}.`;
         } else if (error.status === 401 || error.status === 403) {
             errorMessage = 'Unauthorized: You do not have permission to perform this action.';
-            this.authService.logout();
+            if(context !== 'fetching all users'){
+                this.authService.logout();
+            }
         } else if (error.status === 400) {
             errorMessage = `Bad Request: ${error.error?.message || error.error || 'Invalid data provided.'}`;
         } else if (error.status === 409) {

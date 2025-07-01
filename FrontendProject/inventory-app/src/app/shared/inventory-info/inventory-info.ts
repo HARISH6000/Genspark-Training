@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, combineLatest, of } from 'rxjs';
+import { Observable, combineLatest, of, forkJoin } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
 
-import { AuthService } from '../../services/auth.service';
+import { AuthService, UserDetails } from '../../services/auth.service';
 import { InventoryService } from '../../services/inventory.service';
 import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
+import { UserService } from '../../services/user.service'; // Import UserService
 
 import {
   Inventory,
@@ -19,9 +20,12 @@ import {
   SetQuantityRequest,
   UpdateMinStockRequest,
   Category,
-  ProductsForInventories
-} from '../../models/inventory'; // Assuming Inventory, Category, etc. are in inventory.ts
-import { Product } from '../../models/product'; // Assuming Product interface is here
+  ProductsForInventories,
+  ManagerUser, 
+  InventoryManagerAssignmentRequest 
+} from '../../models/inventory'; 
+import { Product } from '../../models/product'; 
+import { User } from '../../models/user'; 
 import { PaginationResponse } from '../../models/pagination-response';
 import { SortCriterion } from '../../models/sortCriterion';
 import { PageNumberComponent } from '../../shared/page-number/page-number';
@@ -36,7 +40,7 @@ import { PageNumberComponent } from '../../shared/page-number/page-number';
 })
 export class InventoryInfoComponent implements OnInit {
   inventory: Inventory | null = null;
-  isManager:boolean =false;
+  isManagerOfThisInventory: boolean = false; // Renamed to be more specific
   productsInInventory: ProductsForInventories[] = [];
   filteredProductsInInventory: ProductsForInventories[] = [];
   allAvailableProducts: Product[] = []; // For add product dropdown
@@ -44,6 +48,12 @@ export class InventoryInfoComponent implements OnInit {
 
   showEditInventoryModal: boolean = false;
 
+  // New properties for Inventory Managers section
+  assignedManagers: ManagerUser[] = [];
+  showAssignManagerForm: boolean = false;
+  allUsers: UserDetails[] = []; // All users to populate the assign manager dropdown
+  availableUsersForManagerDropdown: UserDetails[] = []; // Filtered users for dropdown
+  selectedUserToAssignId: number | null = null;
 
 
   categories: Category[] = [];
@@ -68,6 +78,7 @@ export class InventoryInfoComponent implements OnInit {
   sortFields = [
     { value: 'productName', name: 'Product Name' },
     { value: 'productSKU', name: 'SKU' },
+    { value: 'categoryName', name: 'category' },
     { value: 'quantity', name: 'Quantity' },
     { value: 'minStockQuantity', name: 'Min Stock' }
   ];
@@ -90,7 +101,8 @@ export class InventoryInfoComponent implements OnInit {
     private authService: AuthService,
     private inventoryService: InventoryService,
     private productService: ProductService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private userService: UserService // Inject UserService
   ) { }
 
   ngOnInit(): void {
@@ -102,26 +114,50 @@ export class InventoryInfoComponent implements OnInit {
       return;
     }
 
-    this.fetchInventoryDetails(this.inventoryId);
+    // Initial data fetches that don't depend on inventory details
     this.fetchAllCategories();
     this.fetchAllAvailableProducts();
+    this.fetchAllUsersForManagerAssignment(); // Fetch all users for manager assignment
 
+    // CombineLatest for reactive updates based on filters/params
     combineLatest([
       this.searchControl.valueChanges.pipe(startWith(this.searchControl.value)),
       this.activatedRoute.paramMap.pipe(map(params => Number(params.get('id')))),
       this.productSearchControl.valueChanges.pipe(startWith(this.productSearchControl.value), debounceTime(300), distinctUntilChanged()),
-      // Removed selectedCategory and showDeleted from combineLatest for now, as they are NgModel driven
-      // They will trigger fetchProductsInInventory directly via their (ngModelChange)
+      // Include inventory details and assigned managers in the main data stream
+      this.inventoryService.getInventoryById(this.inventoryId).pipe(
+        catchError(error => {
+          this.errorMessage = error.message || 'Failed to fetch inventory details.';
+          this.loading = false;
+          return of(null);
+        })
+      ),
+      this.inventoryService.getManagersByInventoryId(this.inventoryId).pipe( // Fetch assigned managers
+        catchError(error => {
+          console.error('Failed to fetch assigned managers:', error);
+          return of([]);
+        })
+      )
     ])
       .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap(([searchTerm, inventoryId, productSearchTerm]) => {
+        debounceTime(300), // Debounce to prevent excessive API calls
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)), // Only proceed if significant changes
+        switchMap(([searchTerm, currentInventoryId, productSearchTerm, inventoryDetails, managers]) => {
           this.loading = true;
           this.errorMessage = null;
+          this.inventory = inventoryDetails; // Update inventory details
+          this.assignedManagers = managers; // Update assigned managers
+
+          // Determine if current user is a manager of this inventory
+          const currentUserId = this.authService.currentUserId??0;
+          this.isManagerOfThisInventory = this.authService.isAdmin() ||
+            (managers.some(m => m.userId === currentUserId));
+
           this.filterAvailableProductsForDropdown();
+          this.filterAvailableUsersForManagerDropdown(); // Filter users for manager dropdown
+
           return this.inventoryService.getProductsInInventory(
-            inventoryId,
+            currentInventoryId,
             this.pageNumber,
             this.pageSize,
             searchTerm,
@@ -144,23 +180,13 @@ export class InventoryInfoComponent implements OnInit {
         this.loading = false;
       });
 
-      this.inventoryService.getInventoriesByManagerId(this.authService.currentUserId??0).pipe(
-      catchError(error => {
-        this.errorMessage = error.message || 'Failed to get current user Id';
-        return of([]); // Return empty array on error
-      })
-    ).subscribe((response:Inventory[]) => {
-      console.log("2", this.inventory,response);
-      console.log("tst:",response.some(item => item.inventoryId === this.inventory?.inventoryId));
-      this.isManager = response.some(item => item.inventoryId === this.inventory?.inventoryId);// Check if inventory exists
-    });
-
-    console.log("isManager:",this.isManager);
-    // Initial fetch
+    // Initial fetch for products (if not covered by combineLatest's startWith)
     this.fetchProductsInInventory();
   }
 
   fetchInventoryDetails(id: number): void {
+    // This method is now largely covered by the combineLatest in ngOnInit
+    // but kept for explicit calls if needed elsewhere.
     this.loading = true;
     this.errorMessage = null;
     this.inventoryService.getInventoryById(id).pipe(
@@ -239,6 +265,109 @@ export class InventoryInfoComponent implements OnInit {
       item.sku.toLowerCase().includes(term)
     );
   };
+
+  
+  fetchAssignedManagers(): void {
+    if (this.inventoryId === null) return;
+    this.inventoryService.getManagersByInventoryId(this.inventoryId).pipe(
+      catchError(error => {
+        console.error('Failed to fetch assigned managers:', error);
+        return of([]);
+      })
+    ).subscribe(managers => {
+      this.assignedManagers = managers;
+      this.filterAvailableUsersForManagerDropdown(); 
+    });
+  }
+
+  fetchAllUsersForManagerAssignment(): void {
+    
+    this.userService.getAllUsers().pipe( 
+      catchError(error => {
+        console.error('Failed to fetch all users for manager assignment:', error);
+        return of({ data: [], pagination:{ totalPages: 0, totalRecords: 0, page: 0, pageSize: 0 } } as PaginationResponse<User>);
+      })
+    ).subscribe(response => {
+      this.allUsers = response.data;
+      this.filterAvailableUsersForManagerDropdown();
+    });
+  }
+
+  filterAvailableUsersForManagerDropdown(): void {
+    if (!this.allUsers || !this.assignedManagers) {
+      this.availableUsersForManagerDropdown = [];
+      return;
+    }
+    // Filter out users who are already assigned as managers to this inventory
+    this.availableUsersForManagerDropdown = this.allUsers.filter(user =>
+      !this.assignedManagers.some(manager => manager.userId === user.userId)
+    );
+  }
+
+  customUserSearchFn = (term: string, item: any) => {
+    term = term.toLowerCase();
+    return item.username.toLowerCase().includes(term)||item.email.toLowerCase().includes(term) || item.userId.toString().includes(term);
+  };
+
+  toggleAssignManagerForm(): void {
+    this.showAssignManagerForm = !this.showAssignManagerForm;
+    this.selectedUserToAssignId = null; // Reset selected user
+    if (this.showAssignManagerForm) {
+      this.filterAvailableUsersForManagerDropdown(); // Refresh dropdown when opening
+    }
+  }
+
+  assignManagerToInventory(): void {
+    if (this.inventoryId === null || this.selectedUserToAssignId === null) {
+      this.errorMessage = 'Please select a user to assign.';
+      return;
+    }
+
+    const request: InventoryManagerAssignmentRequest = {
+      inventoryId: this.inventoryId,
+      managerId: this.selectedUserToAssignId
+    };
+
+    this.inventoryService.assignInventoryToManager(request).pipe(
+      catchError(error => {
+        this.errorMessage = error.message || 'Failed to assign manager.';
+        return of(null);
+      })
+    ).subscribe(response => {
+      if (response) {
+        alert('Manager assigned successfully!');
+        this.showAssignManagerForm = false;
+        this.fetchAssignedManagers(); // Refresh assigned managers list
+        this.filterAvailableUsersForManagerDropdown(); // Update available users
+      }
+    });
+  }
+
+  removeManagerFromInventory(userId: number): void {
+    if (this.inventoryId === null) return;
+
+    if (confirm('Are you sure you want to remove this manager from the inventory?')) {
+      const request: InventoryManagerAssignmentRequest = {
+        inventoryId: this.inventoryId,
+        managerId: userId
+      };
+
+      this.inventoryService.removeInventoryFromManager(request).pipe(
+        catchError(error => {
+          this.errorMessage = error.message || 'Failed to remove manager.';
+          return of(null);
+        })
+      ).subscribe(response => {
+        if (response) {
+          alert('Manager removed successfully!');
+          this.fetchAssignedManagers(); // Refresh assigned managers list
+          this.filterAvailableUsersForManagerDropdown(); // Update available users
+        }
+      });
+    }
+  }
+  
+
 
   onCategoryChange(): void {
     this.pageNumber = 1;
@@ -437,7 +566,7 @@ export class InventoryInfoComponent implements OnInit {
     this.actionType = null;
     this.quantityChangeValue = null;
     this.minStockChangeValue = null;
-    this.errorMessage = null; // Clear error on cancel
+    this.errorMessage = null; 
   }
 
   removeProductFromInventory(inventoryProductId: number): void {
@@ -449,8 +578,8 @@ export class InventoryInfoComponent implements OnInit {
         })
       ).subscribe(response => {
         if (response) {
-          this.fetchProductsInInventory(); // Refresh list
-          this.fetchAllAvailableProducts(); // Refresh available products for dropdown
+          this.fetchProductsInInventory(); 
+          this.fetchAllAvailableProducts();
         }
       });
     }
@@ -494,6 +623,6 @@ export class InventoryInfoComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/inventories']); // Adjust this path if needed
+    this.router.navigate(['/inventories']); 
   }
 }

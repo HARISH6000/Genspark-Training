@@ -41,51 +41,57 @@
         </div>
       </div>
 
-      <div class="card p-3 mb-4 shadow-sm" style="background-color: var(--color-content-bg); border-radius: 0.5rem;"
-        *ngIf="isManager">
-        <div class="d-flex justify-content-end mb-3">
-          <button type="button" class="btn btn-success" (click)="openAddProductForm()" *ngIf="!showAddProductForm">
-            <i class="bi bi-plus-circle me-2"></i>Add Existing Product to Inventory
+      <!-- New: Inventory Managers Section (Only for Admin) -->
+      <div class="card shadow-sm mb-4" *ngIf="isAdmin()" style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-border); padding: 0.75rem 1.25rem;">
+          <h5 class="mb-0" style="color: var(--color-primary-text);">
+            <i class="bi bi-person-badge-fill me-2"></i>Inventory Managers
+          </h5>
+          <button type="button" class="btn btn-success btn-sm" (click)="toggleAssignManagerForm()" *ngIf="!showAssignManagerForm">
+            <i class="bi bi-person-plus-fill me-2"></i>Assign Manager
           </button>
         </div>
+        <div class="card-body">
+          <div *ngIf="assignedManagers.length === 0" class="alert alert-info text-center"
+            style="background-color: #E0F2F7; color: #007BFF; border-color: #B3E5FC;">
+            No managers assigned to this inventory.
+          </div>
+          <ul class="list-group list-group-flush" *ngIf="assignedManagers.length > 0">
+            <li *ngFor="let manager of assignedManagers" class="list-group-item d-flex justify-content-between align-items-center"
+              style="background-color: var(--color-content-bg); border-color: var(--color-border); color: var(--color-primary-text);">
+              <span>{{ manager.username }} ({{ manager.email }})</span>
+              <button type="button" class="btn btn-danger btn-sm" (click)="removeManagerFromInventory(manager.userId)">
+                Remove
+              </button>
+            </li>
+          </ul>
 
-        <form *ngIf="showAddProductForm" (ngSubmit)="addProductToInventory()" class="row g-3 align-items-center">
-          <div class="col-md-6">
-            <label for="productSelect" class="form-label mb-0" style="color: var(--color-primary-text);">Select
-              Product</label>
-            <ng-select [items]="availableProductsForDropdown" bindLabel="productName"  bindValue="productId" placeholder="Select a product"
-              [(ngModel)]="selectedProductToAddId" [searchable]="true" [clearable]="true" name="productSelect"
-              [searchFn]="customProductSearchFn" >
-              <ng-template ng-option-tmp let-item="item">
-                {{ item.productName }} (SKU: {{ item.sku }})
-              </ng-template>
-            </ng-select>
-
-
+          <!-- Assign Manager Form (Dropdown) -->
+          <div class="card p-3 mt-3 shadow-sm" *ngIf="showAssignManagerForm">
+            <form (ngSubmit)="assignManagerToInventory()" class="row g-3 align-items-center">
+              <div class="col-md-9">
+                <label for="managerSelect" class="form-label mb-0" style="color: var(--color-primary-text);">Select User to Assign</label>
+                <ng-select [items]="availableUsersForManagerDropdown" bindLabel="username" bindValue="userId" placeholder="Select a user"
+                  [(ngModel)]="selectedUserToAssignId" [searchable]="true" [clearable]="true" name="managerSelect"
+                  [searchFn]="customUserSearchFn">
+                  <ng-template ng-option-tmp let-item="item">
+                    {{ item.username }} ({{ item.email }}) - {{ item.userId }}
+                  </ng-template>
+                </ng-select>
+              </div>
+              <div class="col-md-3 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-success flex-grow-1" [disabled]="!selectedUserToAssignId">
+                  Assign
+                </button>
+                <button type="button" class="btn btn-secondary flex-grow-1" (click)="toggleAssignManagerForm()">
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
-          <div class="col-md-3">
-            <label for="quantity" class="form-label mb-0" style="color: var(--color-primary-text);">Quantity</label>
-            <input type="number" id="quantity" class="form-control" [(ngModel)]="newProductQuantity" name="quantity"
-              required min="1" style="border-color: var(--color-border);">
-          </div>
-          <div class="col-md-3">
-            <label for="minStock" class="form-label mb-0" style="color: var(--color-primary-text);">Min Stock</label>
-            <input type="number" id="minStock" class="form-control" [(ngModel)]="newProductMinStock" name="minStock"
-              required min="0" style="border-color: var(--color-border);">
-          </div>
-          <div class="col-12 d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-secondary"
-              style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);"
-              (click)="cancelAddProduct()">
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-success"
-              [disabled]="!selectedProductToAddId || newProductQuantity <= 0">
-              Add Product
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
+
 
       <div class="card p-3 mb-4 shadow-sm" style="background-color: var(--color-content-bg); border-radius: 0.5rem;">
         <div class="row g-3 align-items-center mb-3">
@@ -130,6 +136,52 @@
       </div>
 
       </div>
+
+      <div class="d-flex justify-content-end mb-3" *ngIf="isManagerOfThisInventory">
+          <button type="button" class="btn btn-success" (click)="openAddProductForm()" *ngIf="!showAddProductForm">
+            <i class="bi bi-plus-circle me-2"></i>Add Existing Product to Inventory
+          </button>
+        </div>
+
+      <div class="card p-3 mb-4 shadow-sm" *ngIf="showAddProductForm">
+        <form (ngSubmit)="addProductToInventory()" class="row g-3 align-items-center">
+          <div class="col-md-6">
+            <label for="productSelect" class="form-label mb-0" style="color: var(--color-primary-text);">Select
+              Product</label>
+            <ng-select [items]="availableProductsForDropdown" bindLabel="productName"  bindValue="productId" placeholder="Select a product"
+              [(ngModel)]="selectedProductToAddId" [searchable]="true" [clearable]="true" name="productSelect"
+              [searchFn]="customProductSearchFn" >
+              <ng-template ng-option-tmp let-item="item">
+                {{ item.productName }} (SKU: {{ item.sku }})
+              </ng-template>
+            </ng-select>
+
+
+          </div>
+          <div class="col-md-3">
+            <label for="quantity" class="form-label mb-0" style="color: var(--color-primary-text);">Quantity</label>
+            <input type="number" id="quantity" class="form-control" [(ngModel)]="newProductQuantity" name="quantity"
+              required min="1" style="border-color: var(--color-border);">
+          </div>
+          <div class="col-md-3">
+            <label for="minStock" class="form-label mb-0" style="color: var(--color-primary-text);">Min Stock</label>
+            <input type="number" id="minStock" class="form-control" [(ngModel)]="newProductMinStock" name="minStock"
+              required min="0" style="border-color: var(--color-border);">
+          </div>
+          <div class="col-12 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary"
+              style="background-color: var(--color-warning); color: var(--color-content-bg); border-color: var(--color-warning);"
+              (click)="cancelAddProduct()">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-success"
+              [disabled]="!selectedProductToAddId || newProductQuantity <= 0">
+              Add Product
+            </button>
+          </div>
+        </form>
+
+        </div>
 
       <div *ngIf="loading && !inventory" class="text-center py-5">
         <div class="spinner-border text-primary" role="status" style="color: var(--color-accent) !important;">
@@ -186,7 +238,7 @@
 
               </ul>
 
-              <div class="mt-3 d-flex flex-wrap gap-2 justify-content-center" *ngIf="isManager">
+              <div class="mt-3 d-flex flex-wrap gap-2 justify-content-center" *ngIf="isManagerOfThisInventory">
                 <ng-container *ngIf="activeProductIdForQuantityChange !== ip.productId">
                   <button type="button" class="btn btn-sm btn-success"
                     style="background-color: var(--color-success); color: var(--color-content-bg); border-color: var(--color-success);"

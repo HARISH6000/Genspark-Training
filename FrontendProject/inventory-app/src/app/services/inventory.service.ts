@@ -37,6 +37,9 @@ export class InventoryService {
   private handleError(error: any, context: string) {
     console.error(`Error in ${context}:`, error);
     let errorMessage = `Failed to ${context}. Please try again.`;
+    if(error.message){
+      errorMessage = `Error: ${error.message}`;
+    }
 
     if (error.status === 404) {
       errorMessage = `Resource not found for ${context}.`;
@@ -44,11 +47,11 @@ export class InventoryService {
       errorMessage = 'Unauthorized: You do not have permission to perform this action.';
       this.authService.logout(); // Redirect to login or handle session expiry
     } else if (error.status === 400) {
-      errorMessage = `Bad Request: ${error.error?.detail || error.message || 'Invalid data provided.'}`;
+      errorMessage = `Bad Request: ${error.error?.message || error.message || 'Invalid data provided.'}`;
     } else if (error.status === 409) {
-      errorMessage = `Conflict: ${error.error?.detail || error.message || 'Resource already exists or operation conflicts.'}`;
+      errorMessage = `Conflict: ${error.error?.message || error.message || 'Resource already exists or operation conflicts.'}`;
     } else if (error.status === 422) {
-      errorMessage = `Unprocessable Content: ${error.error?.detail || error.message || 'The request was well-formed but could not be processed.'}`;
+      errorMessage = `Unprocessable Content: ${error.error?.message || error.message || 'The request was well-formed but could not be processed.'}`;
     } else if (error.status === 500) {
       errorMessage = 'Server error. Please try again later.';
     }
