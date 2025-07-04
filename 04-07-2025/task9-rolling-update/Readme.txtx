@@ -1,0 +1,50 @@
+docker service create \
+  --name webapp \
+  --replicas 3 \
+  --update-delay 10s \
+  httpd
+
+
+p86pwuucxnhhuc6sapr3mpbhr
+overall progress: 3 out of 3 tasks 
+1/3: running   [==================================================>] 
+2/3: running   [==================================================>] 
+3/3: running   [==================================================>] 
+verify: Service p86pwuucxnhhuc6sapr3mpbhr converged 
+
+
+docker service ls
+
+ID             NAME      MODE         REPLICAS   IMAGE          PORTS
+p86pwuucxnhh   webapp    replicated   3/3        httpd:latest   
+
+
+docker service ps webapp
+
+ID             NAME       IMAGE          NODE             DESIRED STATE   CURRENT STATE            ERROR     PORTS
+gvr5vju2ida9   webapp.1   httpd:latest   docker-desktop   Running         Running 47 seconds ago             
+posaxnl3z78y   webapp.2   httpd:latest   docker-desktop   Running         Running 47 seconds ago             
+kw6p9esd6gep   webapp.3   httpd:latest   docker-desktop   Running         Running 47 seconds ago             
+
+
+docker service update \
+  --image httpd:alpine \
+  webapp
+
+webapp
+overall progress: 3 out of 3 tasks 
+1/3: running   [==================================================>] 
+2/3: running   [==================================================>] 
+3/3: running   [==================================================>] 
+verify: Service webapp converged 
+
+
+docker service ps webapp 
+
+ID             NAME           IMAGE          NODE             DESIRED STATE   CURRENT STATE                 ERROR     PORTS
+90wh72rz7frr   webapp.1       httpd:alpine   docker-desktop   Running         Running about a minute ago              
+gvr5vju2ida9    \_ webapp.1   httpd:latest   docker-desktop   Shutdown        Shutdown about a minute ago             
+palzmzov4mn9   webapp.2       httpd:alpine   docker-desktop   Running         Running 50 seconds ago                  
+posaxnl3z78y    \_ webapp.2   httpd:latest   docker-desktop   Shutdown        Shutdown 50 seconds ago                 
+wfzdqei0dys5   webapp.3       httpd:alpine   docker-desktop   Running         Running about a minute ago              
+kw6p9esd6gep    \_ webapp.3   httpd:latest   docker-desktop   Shutdown        Shutdown about a minute ago    
