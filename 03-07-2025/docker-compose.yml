@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  api:
+    image: api:latest
+    ports:
+      - "3000:3000"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+
+  web:
+    image: web:latest
+    ports:
+      - "8080:80"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 64M
+      restart_policy:
+        condition: on-failure
