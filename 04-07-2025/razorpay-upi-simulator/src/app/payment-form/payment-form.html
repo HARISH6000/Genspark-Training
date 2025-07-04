@@ -1,0 +1,91 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">UPI Payment Simulator</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="amount" class="form-label">Amount (INR)</label>
+              <input
+                type="number"
+                id="amount"
+                formControlName="amount"
+                class="form-control"
+                [class.is-invalid]="f['amount'].invalid && f['amount'].touched"
+                placeholder="Enter amount (e.g., 100)"
+              />
+              <div *ngIf="f['amount'].invalid && f['amount'].touched" class="invalid-feedback">
+                <div *ngIf="f['amount'].errors?.['required']">Amount is required.</div>
+                <div *ngIf="f['amount'].errors?.['min']">Amount must be greater than 0.</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="customerName" class="form-label">Customer Name</label>
+              <input
+                type="text"
+                id="customerName"
+                formControlName="customerName"
+                class="form-control"
+                [class.is-invalid]="f['customerName'].invalid && f['customerName'].touched"
+                placeholder="Enter customer name"
+              />
+              <div *ngIf="f['customerName'].invalid && f['customerName'].touched" class="invalid-feedback">
+                <div *ngIf="f['customerName'].errors?.['required']">Customer Name is required.</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                class="form-control"
+                [class.is-invalid]="f['email'].invalid && f['email'].touched"
+                placeholder="Enter email"
+              />
+              <div *ngIf="f['email'].invalid && f['email'].touched" class="invalid-feedback">
+                <div *ngIf="f['email'].errors?.['required']">Email is required.</div>
+                <div *ngIf="f['email'].errors?.['email']">Enter a valid email address.</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="contactNumber" class="form-label">Contact Number</label>
+              <input
+                type="tel"
+                id="contactNumber"
+                formControlName="contactNumber"
+                class="form-control"
+                [class.is-invalid]="f['contactNumber'].invalid && f['contactNumber'].touched"
+                placeholder="Enter 10-digit contact number"
+              />
+              <div *ngIf="f['contactNumber'].invalid && f['contactNumber'].touched" class="invalid-feedback">
+                <div *ngIf="f['contactNumber'].errors?.['required']">Contact Number is required.</div>
+                <div *ngIf="f['contactNumber'].errors?.['pattern']">Enter a valid 10-digit number.</div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100" [disabled]="paymentForm.invalid">Pay with Razorpay</button>
+          </form>
+
+          <div *ngIf="paymentStatus" class="mt-4">
+            <div *ngIf="paymentStatus === 'success'" class="alert alert-success">
+              <strong>Payment Successful!</strong> Payment ID: {{ paymentId }}
+            </div>
+            <div *ngIf="paymentStatus === 'failed'" class="alert alert-danger">
+              <strong>Payment Failed!</strong> Please try again.
+            </div>
+            <div *ngIf="paymentStatus === 'cancelled'" class="alert alert-warning">
+              <strong>Payment Cancelled!</strong> You can try again.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

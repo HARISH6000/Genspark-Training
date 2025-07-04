@@ -1,0 +1,17 @@
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.card-header {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+.invalid-feedback {
+  display: block; 
+}
