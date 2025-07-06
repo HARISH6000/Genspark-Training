@@ -31,5 +31,12 @@ namespace InventoryManagementAPI.Repositories
                                               .Include(p => p.Category)
                                               .SingleOrDefaultAsync(p => p.SKU == sku);
         }
+
+        public IQueryable<Product> GetAllAsQueryable()
+        {
+            return _applicationDbContext.Products
+                                              .Include(p => p.Category)
+                                              .AsQueryable();
+        }
     }
 }

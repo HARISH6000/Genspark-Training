@@ -1,8 +1,9 @@
 using InventoryManagementAPI.DTOs;
 using InventoryManagementAPI.Interfaces;
 using InventoryManagementAPI.Models;
-using InventoryManagementAPI.Exceptions; 
-using InventoryManagementAPI.Mappers; 
+using InventoryManagementAPI.Exceptions;
+using InventoryManagementAPI.Mappers;
+using InventoryManagementAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text.Json; 
@@ -102,7 +103,7 @@ namespace InventoryManagementAPI.Services
             return UserMapper.ToUserResponseDto(user);
         }
 
-        public async Task<UserResponseDto?> UpdateUserAsync(int userId, AddUserDto userDto, int? currentUserId)
+        public async Task<UserResponseDto?> UpdateUserAsync(int userId, UpdateUserDto userDto, int? currentUserId)
         {
             var existingUser = await _userRepository.Get(userId);
             if (existingUser == null)
@@ -141,6 +142,46 @@ namespace InventoryManagementAPI.Services
             existingUser.Phone = userDto.Phone;
             existingUser.RoleId = userDto.RoleId;
             existingUser.Role = role;
+
+            var updatedUser = await _userRepository.Update(userId, existingUser);
+            
+            // --- AUDIT LOGGING: UPDATE OPERATION ---
+            await _auditLogService.LogActionAsync(new AuditLogEntryDto
+            {
+                UserId = currentUserId,
+                TableName = "Users",
+                RecordId = updatedUser.UserId.ToString(),
+                ActionType = "UPDATE",
+                OldValues = oldUserSnapshot,
+                NewValues = updatedUser
+            });
+            // --- END AUDIT LOGGING ---
+
+            return UserMapper.ToUserResponseDto(updatedUser);
+        }
+
+        public async Task<UserResponseDto?> UpdateUserByUserAsync(int userId, UpdateUserbyUserDto userDto, int? currentUserId)
+        {
+            var existingUser = await _userRepository.Get(userId);
+            if (existingUser == null)
+            {
+                throw new NotFoundException($"User with ID {userId} not found.");
+            }
+
+            var oldUserSnapshot = JsonSerializer.Deserialize<User>(JsonSerializer.Serialize(existingUser)); 
+
+
+            if (existingUser.Email != userDto.Email)
+            {
+                var userWithSameEmail = await _userRepository.GetByEmail(userDto.Email);
+                if (userWithSameEmail != null && userWithSameEmail.UserId != userId)
+                {
+                    throw new ConflictException($"Email '{userDto.Email}' is already registered.");
+                }
+            }
+
+            existingUser.Email = userDto.Email;
+            existingUser.Phone = userDto.Phone;
 
             var updatedUser = await _userRepository.Update(userId, existingUser);
             
@@ -209,6 +250,57 @@ namespace InventoryManagementAPI.Services
             var users = await _userRepository.GetAll();
             return users.Select(u => UserMapper.ToUserResponseDto(u));
         }
+        
+        public async Task<PaginationResponse<UserResponseDto>> GetAllUsersAsync(
+            int pageNumber,
+            int pageSize,
+            string? searchTerm = null,
+            string? orderBy = null, bool includeDeleted = false)
+        {
+
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
+
+            IQueryable<User> query = _userRepository.GetAllAsQueryable();
+
+            query = query.Where(u => !u.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(u => u.Username.ToLower().Contains(searchTerm));
+            }
+
+            int totalRecords = await query.CountAsync();
+
+
+            query = query.ApplyDatabaseSorting(orderBy, "UserId");
+
+            var users = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+
+            var userResponseDtos = users.Select(u => UserMapper.ToUserResponseDto(u));
+
+            var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            var paginationMetadata = new PaginationMetadata
+            {
+                TotalRecords = totalRecords,
+                Page = pageNumber,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
+
+            return new PaginationResponse<UserResponseDto>
+            {
+                Data = userResponseDtos,
+                Pagination = paginationMetadata
+            };
+        }
 
         
         public async Task<UserResponseDto> UploadProfilePictureAsync(int userId, byte[] fileBytes, string fileName, string contentType, int? currentUserId)
@@ -227,9 +319,9 @@ namespace InventoryManagementAPI.Services
                 _fileStorageService.DeleteFile(user.ProfilePictureUrl);
             }
 
-            
+
             var newFileName = await _fileStorageService.SaveFileAsync(fileBytes, fileName, contentType);
-            
+
             // Update the user's ProfilePictureUrl with the new file name
             user.ProfilePictureUrl = newFileName; // Store only the file name, not the full path
 

@@ -84,14 +84,27 @@ namespace InventoryManagementAPI.Controllers
 
         
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginationResponse<InventoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllInventories([FromQuery] bool includeDeleted = false)
+        public async Task<IActionResult> GetAllInventories(
+            [FromQuery] int? pageNumber = null,
+            [FromQuery] int? pageSize = null,
+            [FromQuery] bool includeDeleted = false,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] string? orderBy = null)
         {
             try
             {
-                var inventories = await _inventoryService.GetAllInventoriesAsync(includeDeleted);
-                return Ok(inventories);
+                if (pageNumber.HasValue && pageSize.HasValue)
+                {
+                    var inventories = await _inventoryService.GetAllInventoriesAsync(pageNumber.Value, pageSize.Value, searchTerm, orderBy, includeDeleted);
+                    return Ok(inventories);
+                }
+                else
+                {
+                    var inventories = await _inventoryService.GetAllInventoriesAsync(includeDeleted);
+                    return Ok(new PaginationResponse<InventoryResponseDto> { Data=inventories, Pagination=null });
+                }
             }
             catch (Exception ex)
             {

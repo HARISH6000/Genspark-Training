@@ -297,3 +297,4 @@ C:/PresidioTraining/BackendProject/InventoryManagementAPI/obj/Debug/net9.0/ref/I
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Sinks.Console.dll
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Sinks.Debug.dll
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Sinks.File.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/System.Linq.Dynamic.Core.dll

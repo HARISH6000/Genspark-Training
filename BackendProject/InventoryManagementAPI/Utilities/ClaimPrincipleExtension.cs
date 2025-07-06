@@ -17,5 +17,18 @@ namespace InventoryManagementAPI.Utilities
             }
             return null;
         }
+
+        public static string? GetRole(this ClaimsPrincipal principal)
+        {
+            
+            var roleClaim = principal.FindFirst(ClaimTypes.Role);
+
+            if (roleClaim != null)
+            {
+                Console.WriteLine($"yrole: {roleClaim.Value}");
+                return roleClaim.Value;
+            }
+            return null;
+        }
     }
 }

@@ -21,6 +21,11 @@ namespace InventoryManagementAPI.Repositories
             return await _applicationDbContext.Users.Include(u => u.Role).ToListAsync();
         }
 
+        public IQueryable<User> GetAllAsQueryable()
+        {
+            return _applicationDbContext.Users.Include(u => u.Role).AsQueryable();
+        }
+
         public async Task<User> GetByUsername(string username)
         {
             return await _applicationDbContext.Users.Include(u => u.Role).SingleOrDefaultAsync(u => u.Username == username);

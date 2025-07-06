@@ -5,5 +5,7 @@ namespace InventoryManagementAPI.Interfaces
     public interface IInventoryRepository : IRepository<int, Inventory>
     {
         Task<Inventory?> GetByName(string name); 
+
+        IQueryable<Inventory> GetAllAsQueryable();
     }
 }

@@ -21,6 +21,11 @@ namespace InventoryManagementAPI.Repositories
             return await _applicationDbContext.Inventories.ToListAsync();
         }
 
+        public IQueryable<Inventory> GetAllAsQueryable()
+        {
+            return _applicationDbContext.Inventories.AsQueryable();
+        }
+
         
         public async Task<Inventory?> GetByName(string name)
         {

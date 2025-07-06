@@ -3,6 +3,7 @@ using InventoryManagementAPI.Repositories;
 using InventoryManagementAPI.Interfaces;
 using InventoryManagementAPI.Services;
 using InventoryManagementAPI.Models;
+using InventoryManagementAPI.Middleware;
 using InventoryManagementAPI.configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -56,7 +57,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAllOrigins",
         builder =>
         {
-            builder.WithOrigins("http://127.0.0.1:5500", "http://localhost:5085","http://127.0.0.1:4200","http://localhost:4200")
+            builder.WithOrigins("http://127.0.0.1:5500", "http://localhost:5085","http://127.0.0.1:4200","http://localhost:4200","http://127.0.0.1:8080","http://localhost:8080")
                    .AllowAnyMethod()
                    .AllowAnyHeader()
                    .AllowCredentials();
@@ -109,6 +110,7 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IInventoryManagerService, InventoryManagerService>();
 builder.Services.AddScoped<IInventoryProductService, InventoryProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
 builder.Services.AddScoped<IFileStorageService>(provider =>
@@ -139,7 +141,7 @@ builder.Services.AddAuthentication(options =>
     };
     options.Events = new JwtBearerEvents
     {
-        
+
         OnTokenValidated = async context =>
         {
             var tokenBlacklistService = context.HttpContext.RequestServices.GetRequiredService<ITokenBlacklistService>();
@@ -151,15 +153,15 @@ builder.Services.AddAuthentication(options =>
                 return;
             }
 
-            
+
             var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
             if (claimsIdentity != null)
             {
-                var userId = context.Principal.GetUserId(); 
+                var userId = context.Principal.GetUserId();
                 if (userId.HasValue)
                 {
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId.Value.ToString()));
-                    claimsIdentity.AddClaim(new Claim("clientid", userId.Value.ToString())); 
+                    claimsIdentity.AddClaim(new Claim("clientid", userId.Value.ToString()));
                 }
             }
         },
@@ -173,6 +175,8 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
+
+
 
 
 var app = builder.Build();
@@ -206,6 +210,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<LowStockHub>("/lowstock-notifications");
+
+app.UseMiddleware<RoleValidationMiddleware>();
 
 app.MapControllers();
 

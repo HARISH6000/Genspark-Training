@@ -144,7 +144,7 @@ namespace InventoryManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateUser(int userId, [FromBody] AddUserDto userDto)
+        public async Task<IActionResult> UpdateUser(int userId, [FromBody] UpdateUserDto? userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -155,13 +155,52 @@ namespace InventoryManagementAPI.Controllers
             {
 
                 var currentUserId = User.GetUserId();
-                var currentUser = await _userService.GetUserByIdAsync(currentUserId ?? 0);
-                if (currentUser.RoleId != 1 && currentUser.UserId != userId)
-                {
-                    _logger.LogWarning("User {CurrentUserId} attempted to update user {UserId} without permission.", currentUserId, userId);
-                    return StatusCode(StatusCodes.Status403Forbidden, new { message = "You do not have permission to update this user's details." });
-                }
+                var role=User.GetRole();
+                _logger.LogWarning("xrole:",role);
                 var updatedUser = await _userService.UpdateUserAsync(userId, userDto, currentUserId);
+                return Ok(updatedUser);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "User update failed: {Message}", ex.Message);
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ConflictException ex)
+            {
+                _logger.LogWarning(ex, "User update conflict: {Message}", ex.Message);
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during user update.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred during user update." });
+            }
+        }
+
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateContactDetails([FromBody] UpdateUserbyUserDto userDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+
+                var currentUserId = User.GetUserId();
+                var userId = currentUserId??0;
+                if(userId==0){
+                    _logger.LogWarning("No valid userId found for the current user");
+                    throw new Exception("Invalid UserId for current user.");
+                }
+                var updatedUser = await _userService.UpdateUserByUserAsync(userId, userDto, currentUserId);
                 return Ok(updatedUser);
             }
             catch (NotFoundException ex)
@@ -211,14 +250,27 @@ namespace InventoryManagementAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginationResponse<UserResponseDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers(
+            [FromQuery] int? pageNumber = null,
+            [FromQuery] int? pageSize = null,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] string? orderBy = null)
         {
             try
             {
-                var users = await _userService.GetAllUsersAsync();
-                return Ok(users);
+                _logger.LogWarning($"xl1:{pageNumber},{pageSize},{searchTerm},{orderBy}.",pageNumber, pageSize, searchTerm, orderBy);
+                if (pageNumber.HasValue && pageSize.HasValue)
+                {
+                    var users = await _userService.GetAllUsersAsync(pageNumber.Value, pageSize.Value, searchTerm, orderBy);
+                    return Ok(users);
+                }
+                else
+                {
+                    var users = await _userService.GetAllUsersAsync();
+                    return Ok(new PaginationResponse<UserResponseDto> { Data = users, Pagination = null });
+                }
             }
             catch (Exception ex)
             {

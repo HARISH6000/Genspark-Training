@@ -50,12 +50,29 @@ namespace InventoryManagementAPI.Repositories
                                               .ToListAsync();
         }
 
+        public IQueryable<InventoryProduct> GetProductsForInventoryAsQueryable(int inventoryId)
+        {
+            return _applicationDbContext.InventoryProducts
+                                        .Include(ip => ip.Product)
+                                            .ThenInclude(p => p.Category)
+                                        .Where(ip => ip.InventoryId == inventoryId)
+                                        .AsQueryable();
+        }
+
         public async Task<IEnumerable<InventoryProduct>> GetInventoriesForProduct(int productId)
         {
             return await _applicationDbContext.InventoryProducts
                                               .Include(ip => ip.Inventory)
                                               .Where(ip => ip.ProductId == productId)
                                               .ToListAsync();
+        }
+
+        public IQueryable<InventoryProduct> GetInventoriesForProductAsQueryable(int productId)
+        {
+            return _applicationDbContext.InventoryProducts
+                                              .Include(ip => ip.Inventory)
+                                              .Where(ip => ip.ProductId == productId)
+                                        .AsQueryable();
         }
 
         public async Task<IEnumerable<InventoryProduct>> GetLowStockProducts(int inventoryId, int threshold)

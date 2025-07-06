@@ -1,0 +1,58 @@
+# ---------- Base image for runtime ----------
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+
+# Install OpenSSL and generate self-signed certificate
+RUN apt-get update && apt-get install -y openssl
+
+RUN mkdir /https && \
+    openssl req -x509 -nodes -days 365 \
+      -newkey rsa:2048 \
+      -keyout /https/aspnetcore.key \
+      -out /https/aspnetcore.crt \
+      -subj "/CN=localhost" && \
+    openssl pkcs12 -export \
+      -out /https/aspnetcore.pfx \
+      -inkey /https/aspnetcore.key \
+      -in /https/aspnetcore.crt \
+      -passout pass:password
+
+EXPOSE 5000
+EXPOSE 5001
+
+# ---------- Build stage ----------
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+# Copy .csproj and restore
+COPY *.csproj ./
+RUN dotnet restore "./InventoryManagementAPI.csproj"
+
+# Copy the rest of the code
+COPY . .
+
+# Build the project
+RUN dotnet build "InventoryManagementAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# ---------- Publish stage ----------
+FROM build AS publish
+RUN dotnet publish "InventoryManagementAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# ---------- Final runtime ----------
+FROM base AS final
+WORKDIR /app
+
+# Copy published app
+COPY --from=publish /app/publish .
+
+# Copy generated certificate
+COPY --from=base /https/aspnetcore.pfx /https/aspnetcore.pfx
+
+# Environment setup
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS="http://+:5000;https://+:5001"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetcore.pfx
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=password
+
+ENTRYPOINT ["dotnet", "InventoryManagementAPI.dll"]

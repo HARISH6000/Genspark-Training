@@ -3,6 +3,7 @@ using InventoryManagementAPI.Interfaces;
 using InventoryManagementAPI.Models;
 using InventoryManagementAPI.Exceptions;
 using InventoryManagementAPI.Mappers;
+using InventoryManagementAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Linq;
@@ -81,6 +82,61 @@ namespace InventoryManagementAPI.Services
 
             return inventories.Select(i => InventoryMapper.ToInventoryResponseDto(i));
         }
+        
+        public async Task<PaginationResponse<InventoryResponseDto>> GetAllInventoriesAsync(
+            int pageNumber,
+            int pageSize,
+            string? searchTerm = null,
+            string? orderBy = null, bool includeDeleted = false)
+        {
+
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
+
+            IQueryable<Inventory> query = _inventoryRepository.GetAllAsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(i => !i.IsDeleted);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(i =>
+                    i.Name.ToLower().Contains(searchTerm));
+            }
+
+            int totalRecords = await query.CountAsync();
+
+
+            query = query.ApplyDatabaseSorting(orderBy, "InventoryId");
+
+            var inventories = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+
+            var inventoryResponseDtos = inventories.Select(i => InventoryMapper.ToInventoryResponseDto(i));
+
+            var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            var paginationMetadata = new PaginationMetadata
+            {
+                TotalRecords = totalRecords,
+                Page = pageNumber,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
+
+            return new PaginationResponse<InventoryResponseDto>
+            {
+                Data = inventoryResponseDtos,
+                Pagination = paginationMetadata
+            };
+        }
 
         public async Task<InventoryResponseDto> UpdateInventoryAsync(UpdateInventoryDto inventoryDto, int? currentUserId)
         {
@@ -90,7 +146,7 @@ namespace InventoryManagementAPI.Services
                 throw new NotFoundException($"Inventory with ID {inventoryDto.InventoryId} not found.");
             }
 
-            var oldInventorySnapshot = JsonSerializer.Deserialize<Inventory>(JsonSerializer.Serialize(existingInventory)); 
+            var oldInventorySnapshot = JsonSerializer.Deserialize<Inventory>(JsonSerializer.Serialize(existingInventory));
 
             if (existingInventory.Name != inventoryDto.Name)
             {
@@ -100,13 +156,13 @@ namespace InventoryManagementAPI.Services
                     throw new ConflictException($"Inventory with name '{inventoryDto.Name}' already exists.");
                 }
             }
-            
+
             InventoryMapper.ToInventory(inventoryDto, existingInventory);
 
             try
             {
                 var updatedInventory = await _inventoryRepository.Update(inventoryDto.InventoryId, existingInventory);
-                
+
                 await _auditLogService.LogActionAsync(new AuditLogEntryDto
                 {
                     UserId = currentUserId,

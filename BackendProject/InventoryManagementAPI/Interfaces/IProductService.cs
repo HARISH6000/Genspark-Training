@@ -9,6 +9,11 @@ namespace InventoryManagementAPI.Interfaces
         Task<ProductResponseDto> AddProductAsync(AddProductDto productDto, int? currentUserId);
         Task<ProductResponseDto?> GetProductByIdAsync(int productId);
         Task<IEnumerable<ProductResponseDto>> GetAllProductsAsync(bool includeDeleted = false);
+        Task<PaginationResponse<ProductResponseDto>> GetAllProductsAsync(int pageNumber,
+            int pageSize,
+            string? searchTerm = null,
+            string? orderBy = null,
+            bool includeDeleted = false);
         Task<ProductResponseDto> UpdateProductAsync(UpdateProductDto productDto, int? currentUserId);
         Task<ProductResponseDto> SoftDeleteProductAsync(int productId, int? currentUserId);
         Task<ProductResponseDto> HardDeleteProductAsync(int productId, int? currentUserId);

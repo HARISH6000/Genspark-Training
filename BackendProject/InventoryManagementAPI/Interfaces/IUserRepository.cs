@@ -7,5 +7,6 @@ namespace InventoryManagementAPI.Interfaces
     {
         Task<User?> GetByUsername(string username);
         Task<User?> GetByEmail(string email);
+        IQueryable<User> GetAllAsQueryable();
     }
 }

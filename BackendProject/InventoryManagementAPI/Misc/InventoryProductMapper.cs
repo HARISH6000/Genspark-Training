@@ -36,6 +36,7 @@ namespace InventoryManagementAPI.Mappers
         {
             return new ProductInInventoryResponseDto
             {
+                Id = inventoryProduct.Id,
                 ProductId = inventoryProduct.ProductId,
                 ProductName = inventoryProduct.Product?.ProductName ?? "Unknown Product",
                 SKU = inventoryProduct.Product?.SKU ?? "Unknown SKU",

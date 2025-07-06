@@ -154,7 +154,7 @@ namespace InventoryManagementAPI.Controllers
                 var inventories = await _inventoryManagerService.GetInventoriesManagedByManagerAsync(managerId, sortBy);
                 if (!inventories.Any())
                 {
-                    return NotFound(new { message = $"Manager with ID {managerId} manages no active inventories." });
+                    return Ok(new List<InventoryManagedByManagerResponseDto>());
                 }
                 return Ok(inventories);
             }

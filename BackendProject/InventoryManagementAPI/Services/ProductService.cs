@@ -3,9 +3,10 @@ using InventoryManagementAPI.Interfaces;
 using InventoryManagementAPI.Models;
 using InventoryManagementAPI.Exceptions;
 using InventoryManagementAPI.Mappers;
+using InventoryManagementAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Text.Json; 
+using System.Text.Json;
 
 namespace InventoryManagementAPI.Services
 {
@@ -13,15 +14,15 @@ namespace InventoryManagementAPI.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IAuditLogService _auditLogService; 
+        private readonly IAuditLogService _auditLogService;
 
-        public ProductService(IProductRepository productRepository, 
+        public ProductService(IProductRepository productRepository,
                               ICategoryRepository categoryRepository,
                               IAuditLogService auditLogService)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
-            _auditLogService = auditLogService; 
+            _auditLogService = auditLogService;
         }
 
         public async Task<ProductResponseDto> AddProductAsync(AddProductDto productDto, int? currentUserId)
@@ -44,7 +45,7 @@ namespace InventoryManagementAPI.Services
             try
             {
                 var addedProduct = await _productRepository.Add(newProduct);
-                
+
                 await _auditLogService.LogActionAsync(new AuditLogEntryDto
                 {
                     UserId = currentUserId,
@@ -53,7 +54,7 @@ namespace InventoryManagementAPI.Services
                     ActionType = "INSERT",
                     NewValues = addedProduct
                 });
-                
+
                 return ProductMapper.ToProductResponseDto(addedProduct);
             }
             catch (DbUpdateException ex)
@@ -88,6 +89,62 @@ namespace InventoryManagementAPI.Services
             return products.Select(p => ProductMapper.ToProductResponseDto(p));
         }
 
+        public async Task<PaginationResponse<ProductResponseDto>> GetAllProductsAsync(
+            int pageNumber,
+            int pageSize,
+            string? searchTerm = null,
+            string? orderBy = null, bool includeDeleted = false)
+        {
+
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
+
+            IQueryable<Product> query = _productRepository.GetAllAsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(p => !p.IsDeleted);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(p =>
+                    p.ProductName.ToLower().Contains(searchTerm) ||
+                    p.SKU.ToLower().Contains(searchTerm)||p.Category.CategoryName.ToLower().Contains(searchTerm));
+            }
+
+            int totalRecords = await query.CountAsync();
+
+
+            query = query.ApplyDatabaseSorting(orderBy, "ProductId");
+
+            var products = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+
+            var productResponseDtos = products.Select(p => ProductMapper.ToProductResponseDto(p));
+
+            var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            var paginationMetadata = new PaginationMetadata
+            {
+                TotalRecords = totalRecords,
+                Page = pageNumber,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
+
+            return new PaginationResponse<ProductResponseDto>
+            {
+                Data = productResponseDtos,
+                Pagination = paginationMetadata
+            };
+        }
+
         public async Task<ProductResponseDto> UpdateProductAsync(UpdateProductDto productDto, int? currentUserId)
         {
             var existingProduct = await _productRepository.Get(productDto.ProductId);
@@ -119,7 +176,7 @@ namespace InventoryManagementAPI.Services
             try
             {
                 var updatedProduct = await _productRepository.Update(productDto.ProductId, existingProduct);
-                
+
                 await _auditLogService.LogActionAsync(new AuditLogEntryDto
                 {
                     UserId = currentUserId,
@@ -129,7 +186,7 @@ namespace InventoryManagementAPI.Services
                     OldValues = oldProductSnapshot,
                     NewValues = updatedProduct
                 });
-                
+
                 return ProductMapper.ToProductResponseDto(updatedProduct);
             }
             catch (DbUpdateException ex)
@@ -160,7 +217,7 @@ namespace InventoryManagementAPI.Services
 
             productToDelete.IsDeleted = true;
             var deletedProduct = await _productRepository.Update(productId, productToDelete);
-            
+
             await _auditLogService.LogActionAsync(new AuditLogEntryDto
             {
                 UserId = currentUserId,
@@ -170,7 +227,7 @@ namespace InventoryManagementAPI.Services
                 OldValues = oldProductSnapshot,
                 NewValues = deletedProduct
             });
-            
+
             return ProductMapper.ToProductResponseDto(deletedProduct);
         }
 
@@ -185,7 +242,7 @@ namespace InventoryManagementAPI.Services
             var oldProductSnapshot = JsonSerializer.Deserialize<Product>(JsonSerializer.Serialize(productToDelete));
 
             var deletedProduct = await _productRepository.Delete(productId);
-            
+
             await _auditLogService.LogActionAsync(new AuditLogEntryDto
             {
                 UserId = currentUserId,
@@ -195,7 +252,7 @@ namespace InventoryManagementAPI.Services
                 OldValues = oldProductSnapshot,
                 NewValues = null
             });
-            
+
             return ProductMapper.ToProductResponseDto(deletedProduct);
         }
     }

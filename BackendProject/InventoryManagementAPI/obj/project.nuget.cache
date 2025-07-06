@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "z0ju6SvtQy8=",
+  "dgSpecHash": "PLhEk0GRNCU=",
   "success": true,
   "projectFilePath": "/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/InventoryManagementAPI.csproj",
   "expectedPackageFiles": [
@@ -97,6 +97,7 @@
     "/Users/presidio/.nuget/packages/system.composition.typedparts/7.0.0/system.composition.typedparts.7.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.identitymodel.tokens.jwt/8.0.1/system.identitymodel.tokens.jwt.8.0.1.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.io.pipelines/8.0.0/system.io.pipelines.8.0.0.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/system.linq.dynamic.core/1.6.6/system.linq.dynamic.core.1.6.6.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.net.websockets.websocketprotocol/5.1.0/system.net.websockets.websocketprotocol.5.1.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.reflection.emit/4.7.0/system.reflection.emit.4.7.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.reflection.metadata/7.0.0/system.reflection.metadata.7.0.0.nupkg.sha512",

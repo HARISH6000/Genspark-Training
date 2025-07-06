@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
-using System.Security.Claims; 
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using InventoryManagementAPI.Utilities;
 
 namespace InventoryManagementAPI.Controllers
 {
-    [ApiVersion("1.0")] 
+    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize]
@@ -27,7 +27,7 @@ namespace InventoryManagementAPI.Controllers
             _logger = logger;
         }
 
-        
+
         [HttpPost]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProductResponseDto))]
@@ -64,7 +64,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -87,16 +87,29 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginationResponse<ProductResponseDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllProducts([FromQuery] bool includeDeleted = false)
+        public async Task<IActionResult> GetAllProducts(
+            [FromQuery] int? pageNumber = null,
+            [FromQuery] int? pageSize = null,
+            [FromQuery] bool includeDeleted = false,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] string? orderBy = null)
         {
             try
             {
-                var products = await _productService.GetAllProductsAsync(includeDeleted);
-                return Ok(products);
+                if (pageNumber.HasValue && pageSize.HasValue)
+                {
+                    var products = await _productService.GetAllProductsAsync(pageNumber.Value, pageSize.Value, searchTerm, orderBy, includeDeleted);
+                    return Ok(products);
+                }
+                else
+                {
+                    var products = await _productService.GetAllProductsAsync(includeDeleted);
+                    return Ok(new PaginationResponse<ProductResponseDto> { Data=products, Pagination=null });
+                }
             }
             catch (Exception ex)
             {
@@ -105,7 +118,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpPut]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponseDto))]
@@ -143,7 +156,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpDelete("softdelete/{productId}")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponseDto))]
@@ -169,7 +182,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpDelete("harddelete/{productId}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResponseDto))]

@@ -435,6 +435,64 @@ namespace InventoryManagementAPI.Services
             return activeProducts;
         }
 
+        public async Task<PaginationResponse<ProductInInventoryResponseDto>> GetProductsInInventoryAsync(
+            int inventoryId,
+            int pageNumber,
+            int pageSize,
+            string? searchTerm = null,
+            string? orderBy = null)
+        {
+            var inventory = await _inventoryRepository.Get(inventoryId);
+            if (inventory == null || inventory.IsDeleted)
+            {
+                throw new NotFoundException($"Inventory with ID {inventoryId} not found or is deleted.");
+            }
+
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
+
+            IQueryable<InventoryProduct> query = _inventoryProductRepository.GetProductsForInventoryAsQueryable(inventoryId);
+
+            query = query.Where(ip => ip.Product != null && !ip.Product.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(ip => ip.Product.ProductName.ToLower().Contains(searchTerm)||ip.Product.SKU.ToLower().Contains(searchTerm) || 
+                                          ip.Product.Category.CategoryName.ToLower().Contains(searchTerm));
+            }
+
+            int totalRecords = await query.CountAsync();
+
+
+            query = query.ApplyDatabaseSorting(orderBy, "Id");
+
+            var inventoryProducts = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+
+            var inventoryProductResponseDtos = inventoryProducts.Select(ip => InventoryProductMapper.ToProductInInventoryResponseDto(ip));
+
+            var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            var paginationMetadata = new PaginationMetadata
+            {
+                TotalRecords = totalRecords,
+                Page = pageNumber,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
+
+            return new PaginationResponse<ProductInInventoryResponseDto>
+            {
+                Data = inventoryProductResponseDtos,
+                Pagination = paginationMetadata
+            };
+        }
+
         public async Task<IEnumerable<ProductInInventoryResponseDto>> GetProductsInInventoryByCategoryAsync(int inventoryId, int categoryId, string? sortBy = null)
         {
             var inventory = await _inventoryRepository.Get(inventoryId);
@@ -476,6 +534,63 @@ namespace InventoryManagementAPI.Services
                 activeInventories = SortHelper.ApplySorting(activeInventories, sortBy);
             }
             return activeInventories;
+        }
+
+        public async Task<PaginationResponse<InventoryForProductResponseDto>> GetInventoriesForProductAsync(
+            int productId,
+            int pageNumber,
+            int pageSize,
+            string? searchTerm = null,
+            string? orderBy = null)
+        {
+            var product = await _productRepository.Get(productId);
+            if (product == null || product.IsDeleted)
+            {
+                throw new NotFoundException($"Product with ID {productId} not found or is deleted.");
+            }
+
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
+
+            IQueryable<InventoryProduct> query = _inventoryProductRepository.GetInventoriesForProductAsQueryable(productId);
+
+            query = query.Where(ip => ip.Inventory != null && !ip.Inventory.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(ip => ip.Inventory.Name.ToLower().Contains(searchTerm));
+            }
+
+            int totalRecords = await query.CountAsync();
+
+
+            query = query.ApplyDatabaseSorting(orderBy, "Id");
+
+            var inventoryProducts = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+
+            var inventoryProductResponseDtos = inventoryProducts.Select(ip => InventoryProductMapper.ToInventoryForProductResponseDto(ip));
+
+            var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            var paginationMetadata = new PaginationMetadata
+            {
+                TotalRecords = totalRecords,
+                Page = pageNumber,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
+
+            return new PaginationResponse<InventoryForProductResponseDto>
+            {
+                Data = inventoryProductResponseDtos,
+                Pagination = paginationMetadata
+            };
         }
 
         public async Task<IEnumerable<InventoryForProductResponseDto>> GetInventoriesForProductBySKUAsync(string sku, string? sortBy = null)

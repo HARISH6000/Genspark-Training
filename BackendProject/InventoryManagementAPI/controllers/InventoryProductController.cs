@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
-using System.Security.Claims; 
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using InventoryManagementAPI.Utilities; 
+using InventoryManagementAPI.Utilities;
 
 namespace InventoryManagementAPI.Controllers
 {
-    [ApiVersion("1.0")] 
+    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize]
@@ -27,7 +27,7 @@ namespace InventoryManagementAPI.Controllers
             _logger = logger;
         }
 
-        
+
         [HttpPost]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(InventoryProductResponseDto))]
@@ -58,7 +58,7 @@ namespace InventoryManagementAPI.Controllers
                 _logger.LogWarning(ex, "Inventory product creation conflict: {Message}", ex.Message);
                 return Conflict(new { message = ex.Message });
             }
-            catch(ForbiddenException ex)
+            catch (ForbiddenException ex)
             {
                 _logger.LogWarning(ex, "Inventory product creation forbidden: {Message}", ex.Message);
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
@@ -75,7 +75,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpPut("increase-quantity")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
@@ -90,7 +90,7 @@ namespace InventoryManagementAPI.Controllers
             }
             try
             {
-                var currentUserId = User.GetUserId(); 
+                var currentUserId = User.GetUserId();
                 var updatedEntry = await _inventoryProductService.IncreaseProductQuantityAsync(dto, currentUserId); // Pass currentUserId
                 return Ok(updatedEntry);
             }
@@ -104,7 +104,7 @@ namespace InventoryManagementAPI.Controllers
                 _logger.LogWarning(ex, "Failed to increase product quantity due to invalid argument: {Message}", ex.Message);
                 return BadRequest(new { message = ex.Message });
             }
-            catch(ForbiddenException ex)
+            catch (ForbiddenException ex)
             {
                 _logger.LogWarning(ex, "Inventory product creation forbidden: {Message}", ex.Message);
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
@@ -116,13 +116,13 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpPut("decrease-quantity")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)] 
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DecreaseProductQuantity([FromBody] AdjustProductQuantityDto dto)
         {
@@ -133,7 +133,7 @@ namespace InventoryManagementAPI.Controllers
             try
             {
                 var currentUserId = User.GetUserId(); // Get current user ID
-                var updatedEntry = await _inventoryProductService.DecreaseProductQuantityAsync(dto, currentUserId); 
+                var updatedEntry = await _inventoryProductService.DecreaseProductQuantityAsync(dto, currentUserId);
                 return Ok(updatedEntry);
             }
             catch (NotFoundException ex)
@@ -146,7 +146,7 @@ namespace InventoryManagementAPI.Controllers
                 _logger.LogWarning(ex, "Failed to decrease product quantity due to invalid argument: {Message}", ex.Message);
                 return BadRequest(new { message = ex.Message });
             }
-            catch(ForbiddenException ex)
+            catch (ForbiddenException ex)
             {
                 _logger.LogWarning(ex, "Inventory product creation forbidden: {Message}", ex.Message);
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
@@ -163,7 +163,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpPut("set-quantity")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
@@ -222,7 +222,7 @@ namespace InventoryManagementAPI.Controllers
                 _logger.LogWarning(ex, "Failed to update minimum stock quantity: {Message}", ex.Message);
                 return NotFound(new { message = ex.Message });
             }
-            catch(ForbiddenException ex)
+            catch (ForbiddenException ex)
             {
                 _logger.LogWarning(ex, "Inventory product creation forbidden: {Message}", ex.Message);
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
@@ -239,7 +239,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpDelete("{inventoryProductId}")]
         [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
@@ -258,7 +258,7 @@ namespace InventoryManagementAPI.Controllers
                 _logger.LogWarning(ex, "Failed to delete inventory product: {Message}", ex.Message);
                 return NotFound(new { message = ex.Message });
             }
-            catch(ForbiddenException ex)
+            catch (ForbiddenException ex)
             {
                 _logger.LogWarning(ex, "Inventory product creation forbidden: {Message}", ex.Message);
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
@@ -270,7 +270,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("{inventoryProductId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -293,7 +293,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("by-inventory/{inventoryId}/product/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InventoryProductResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -316,7 +316,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryProductResponseDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -334,23 +334,29 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("products-in-inventory/{inventoryId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductInInventoryResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginationResponse<ProductInInventoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetProductsInInventory(int inventoryId, [FromQuery] string? sortBy = null)
+        public async Task<IActionResult> GetProductsInInventory(int inventoryId,
+            [FromQuery] int? pageNumber = null,
+            [FromQuery] int? pageSize = null,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] string? orderBy = null)
         {
             try
             {
-                var products = await _inventoryProductService.GetProductsInInventoryAsync(inventoryId, sortBy);
-                if (!products.Any())
+                if (pageNumber.HasValue && pageSize.HasValue)
                 {
-                    // This might be a valid scenario (inventory exists but has no products)
-                    // Consider returning 200 OK with empty list, or 404 if inventory itself is not found by GetProductsInInventoryAsync
+                    var products = await _inventoryProductService.GetProductsInInventoryAsync(inventoryId, pageNumber.Value, pageSize.Value, searchTerm, orderBy);
                     return Ok(products);
                 }
-                return Ok(products);
+                else
+                {
+                    var products = await _inventoryProductService.GetProductsInInventoryAsync(inventoryId, orderBy);
+                    return Ok(new PaginationResponse<ProductInInventoryResponseDto> { Data = products, Pagination = null });
+                }
             }
             catch (NotFoundException ex)
             {
@@ -364,7 +370,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("products-in-inventory/{inventoryId}/by-category/{categoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductInInventoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -376,7 +382,7 @@ namespace InventoryManagementAPI.Controllers
                 var products = await _inventoryProductService.GetProductsInInventoryByCategoryAsync(inventoryId, categoryId, sortBy);
                 if (!products.Any())
                 {
-                    return Ok(products); 
+                    return Ok(products);
                 }
                 return Ok(products);
             }
@@ -392,21 +398,29 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("inventories-for-product/{productId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryForProductResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginationResponse<InventoryForProductResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetInventoriesForProduct(int productId, [FromQuery] string? sortBy = null)
+        public async Task<IActionResult> GetInventoriesForProduct(int productId,
+            [FromQuery] int? pageNumber = null,
+            [FromQuery] int? pageSize = null,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] string? orderBy = null)
         {
             try
             {
-                var inventories = await _inventoryProductService.GetInventoriesForProductAsync(productId, sortBy);
-                if (!inventories.Any())
+                if (pageNumber.HasValue && pageSize.HasValue)
                 {
-                    return Ok(inventories); 
+                    var inventories = await _inventoryProductService.GetInventoriesForProductAsync(productId, pageNumber.Value, pageSize.Value, searchTerm, orderBy);
+                    return Ok(inventories);
                 }
-                return Ok(inventories);
+                else
+                {
+                    var inventories = await _inventoryProductService.GetInventoriesForProductAsync(productId, orderBy);
+                    return Ok(new PaginationResponse<InventoryForProductResponseDto> { Data = inventories, Pagination = null });
+                }
             }
             catch (NotFoundException ex)
             {
@@ -420,7 +434,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("inventories-for-product-by-sku/{sku}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InventoryForProductResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -448,7 +462,7 @@ namespace InventoryManagementAPI.Controllers
             }
         }
 
-        
+
         [HttpGet("low-stock/{inventoryId}/{threshold}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductInInventoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -460,7 +474,7 @@ namespace InventoryManagementAPI.Controllers
                 var products = await _inventoryProductService.GetLowStockProductsInInventoryAsync(inventoryId, threshold, sortBy);
                 if (!products.Any())
                 {
-                    return Ok(products); 
+                    return Ok(products);
                 }
                 return Ok(products);
             }
