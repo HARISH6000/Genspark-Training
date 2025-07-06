@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InventoryProductPieChart } from './inventory-product-pie-chart';
+import { InventoryProductPieChartComponent } from './inventory-product-pie-chart';
 
-describe('InventoryProductPieChart', () => {
-  let component: InventoryProductPieChart;
-  let fixture: ComponentFixture<InventoryProductPieChart>;
+describe('InventoryProductPieChartComponent', () => {
+  let component: InventoryProductPieChartComponent;
+  let fixture: ComponentFixture<InventoryProductPieChartComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InventoryProductPieChart]
+      imports: [InventoryProductPieChartComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InventoryProductPieChart);
+    fixture = TestBed.createComponent(InventoryProductPieChartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

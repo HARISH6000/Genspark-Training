@@ -11,6 +11,7 @@ import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from '
   styleUrls: ['./inventory-product-pie-chart.css']
 })
 export class InventoryProductPieChartComponent implements OnChanges {
+  @ViewChild(BaseChartDirective) chartRef?: BaseChartDirective;
   @Input() inventoryProductCounts: { inventoryName: string; totalProducts: number; inventoryId: number }[] = [];
 
   public pieChartOptions: ChartConfiguration['options'];
@@ -91,6 +92,8 @@ export class InventoryProductPieChartComponent implements OnChanges {
     };
   }
 
+  
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['inventoryProductCounts'] && this.inventoryProductCounts) { // Ensure inventoryProductCounts is not null/undefined
       this.updateChartData();
@@ -133,6 +136,13 @@ export class InventoryProductPieChartComponent implements OnChanges {
 
     // Trigger chart update - by creating a new object reference
     this.pieChartData = { ...this.pieChartData };
+    
+    setTimeout(() => {
+    if (this.chartRef && this.chartRef.chart) {
+      this.chartRef.update();
+      this.chartRef.chart.resize();
+    }
+  }, 100); 
   }
 
   // Helper function to darken a hex color (simple implementation)

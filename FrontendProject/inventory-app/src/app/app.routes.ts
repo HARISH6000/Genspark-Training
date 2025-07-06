@@ -18,6 +18,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { ProductInfoComponent } from './products/product-info/product-info';
 import { InventoryInfoComponent } from './shared/inventory-info/inventory-info';
 import { NotificationListComponent } from './shared/notification-list/notification-list';
+import { LandingPageComponent } from './landing-page/landing-page';
 
 
 const authGuard: CanActivateFn = () => {
@@ -100,9 +101,9 @@ export const routes: Routes = [
     component: UserInfoComponent,
     canActivate: [authGuard,adminGuard] 
   },
-  { path: 'admin/edit-user/:userId', 
+  { path: 'edit-user/:userId', 
     component: EditUserComponent,
-    canActivate:[authGuard,adminGuard]
+    canActivate:[authGuard]
   },
   { path: 'products',
     component: ProductManagementComponent,
@@ -138,7 +139,7 @@ export const routes: Routes = [
     component: NotificationListComponent,
     canActivate: [authGuard]
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', component: LandingPageComponent, pathMatch: 'full' },
   { path: 'access-denied', component: NotFoundComponent, data: { message: 'Access Denied: You do not have permission to view this page.' } },
-  { path: '**', component: NotFoundComponent } // Wildcard for 404 Not Found
+  { path: '**', component: NotFoundComponent }
 ];

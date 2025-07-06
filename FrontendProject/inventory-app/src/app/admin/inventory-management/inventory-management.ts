@@ -9,6 +9,7 @@ import { PageNumberComponent } from '../../shared/page-number/page-number';
 import { InventoryService } from '../../services/inventory.service';
 import { AuthService } from '../../services/auth.service';
 import { SortCriterion } from '../../models/sortCriterion';
+import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-inventory-management',
@@ -48,7 +49,8 @@ export class InventoryManagementComponent implements OnInit {
 
   constructor(
     private inventoryService: InventoryService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -242,5 +244,9 @@ export class InventoryManagementComponent implements OnInit {
   removeSortCriterion(index: number): void {
     this.sortCriteria.splice(index, 1);
     this.onSortChange(); // Re-apply sort after removal
+  }
+
+  viewInventoryDetails(inventory: Inventory): void {
+    this.router.navigate(['/inventory', inventory.inventoryId]);
   }
 }

@@ -32,6 +32,12 @@
   filter: brightness(90%);
 }
 
+.btn-outline-primary:hover {
+  background-color: var(--color-accent) !important;
+  color: white !important;
+  border-color: var(--color-accent) !important;
+}
+
 .spinner-border {
   color: var(--color-accent) !important;
 }

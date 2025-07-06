@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserDetails } from '../../services/auth.service';
 import { InventoryService } from '../../services/inventory.service';
 import { Inventory } from '../../models/inventory';
+import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { SortCriterion} from "../../models/sortCriterion";
 import { of } from 'rxjs';
@@ -43,7 +44,8 @@ export class UserInfoComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private inventoryService: InventoryService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state && navigation.extras.state['user']) {
@@ -81,6 +83,10 @@ export class UserInfoComponent implements OnInit {
       .filter(c => c.field && c.order) 
       .map(c => `${c.field}_${c.order}`)
       .join(',');
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   fetchInventories(managerId: number): void {
@@ -139,5 +145,36 @@ export class UserInfoComponent implements OnInit {
     if (this.user?.userId) {
       this.fetchInventories(this.user.userId);
     }
+  }
+
+  editUser(): void {
+    if (this.user?.userId) {
+      this.router.navigate(['/edit-user', this.user.userId]);
+    } else {
+      console.error('User ID is not available for editing.');
+    }
+  }
+
+  deleteUser(): void {
+    if (this.user?.userId) {
+      if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+        this.userService.deleteUser(this.user.userId).subscribe({
+          next: () => {
+            alert('User deleted successfully.');
+            this.router.navigate(['/users']);
+          },
+          error: err => {
+            console.error('Error deleting user:', err);
+            alert('Failed to delete user. Please try again later.');
+          }
+        });
+      }
+    } else {
+      console.error('User ID is not available for deletion.');
+    }
+  }
+
+  goToInventoryDetails(inventoryId: number): void {
+    this.router.navigate(['/inventory', inventoryId]);
   }
 }

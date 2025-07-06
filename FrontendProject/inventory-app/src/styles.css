@@ -1,5 +1,3 @@
-/* src/styles.css */
-
 :root {
   /* Primary Colors */
   --color-primary-bg: #f8f9fa; /* Light background for the overall page */
@@ -29,7 +27,7 @@
   --color-secondary-dark: #5a6268;
 }
 
-/* You might also want to add some basic body styles for consistency */
+
 body {
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   margin: 0;

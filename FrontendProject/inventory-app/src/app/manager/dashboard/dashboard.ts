@@ -18,6 +18,7 @@ import { PaginationResponse } from '../../models/pagination-response';
 
 // Chart Component
 import { InventoryProductPieChartComponent } from '../../shared/inventory-product-pie-chart/inventory-product-pie-chart';
+import { NotificationService } from '../../services/notification.service';
 
 // D3.js is no longer directly used for charting in this component, but can remain if used elsewhere
 // import * as d3 from 'd3';
@@ -58,8 +59,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     private inventoryService: InventoryService,
     private productService: ProductService,
     private signalrService: SignalrService,
+    private notificationService: NotificationService,
     private router: Router
-    // private cdr: ChangeDetectorRef // No longer directly manipulating view
   ) { }
 
   ngOnInit(): void {
@@ -67,56 +68,32 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     if (!this.currentUser || !this.currentUser.userId) {
       this.errorMessage = 'User not authenticated or user ID not found.';
       this.loading = false;
-      this.router.navigate(['/login']); // Redirect if not authenticated
+      this.router.navigate(['/login']); 
       return;
     }
 
-    this.startSignalRConnection();
-    this.fetchDashboardData();
-  }
-
-  ngAfterViewInit(): void {
-    // Pie chart rendering is now handled by InventoryProductPieChartComponent
-    // No direct D3 rendering here anymore.
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
-  private startSignalRConnection(): void {
-    this.signalrService.startConnection()
-      .then(() => {
-        console.log('SignalR connection started successfully from dashboard.');
-
-        // Retrieve stored notifications from sessionStorage
-        const storedNotifications = sessionStorage.getItem('lowStockNotifications');
-        var allLowStockNotifications = storedNotifications ? JSON.parse(storedNotifications) : [];
-
-        this.lowStockNotifications = allLowStockNotifications.slice(0, 4);
-        this.notificationsSub = this.signalrService.lowStockNotifications$.subscribe(notification => {
-          // Add new notification to the beginning of the array
-          allLowStockNotifications = [notification, ...allLowStockNotifications];
-
-          
-          if (allLowStockNotifications.length > 4) { 
-            this.lowStockNotifications = allLowStockNotifications.slice(0, 4);
-          } else {
-            this.lowStockNotifications = allLowStockNotifications;
-          }
-
-          // Save the notifications to sessionStorage
-          sessionStorage.setItem('lowStockNotifications', JSON.stringify(allLowStockNotifications));
-        });
-      })
-      .catch(err => {
-        console.error('Error starting SignalR connection for dashboard:', err);
-        this.errorMessage = 'Failed to connect to real-time notifications.';
-      });
+    this.notificationService.lowStockNotification$.subscribe((notifications: LowStockNotificationDto[]) => {
+      if(notifications.length > 4) {
+        this.lowStockNotifications = notifications.slice(0, 4);
+      }
+      else{
+        this.lowStockNotifications = notifications;
+      }
+    });
 
     this.connectionStatusSub = this.signalrService.connectionStatus$.subscribe(isConnected => {
       this.signalRConnectionStatus = isConnected ? 'Connected' : 'Disconnected/Connecting...';
     });
+    
+    this.fetchDashboardData();
+  }
+
+  ngAfterViewInit(): void {
+    
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   private fetchDashboardData(): void {

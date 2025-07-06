@@ -98,6 +98,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.fetchDashboardData();
   }
 
+ 
+
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
@@ -111,7 +114,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         const storedNotifications = sessionStorage.getItem('lowStockNotifications');
         var allLowStockNotifications = storedNotifications ? JSON.parse(storedNotifications) : [];
 
-        this.lowStockNotifications = allLowStockNotifications.slice(0, 4); 
+        this.lowStockNotifications = allLowStockNotifications.slice(0, 4);
         this.notificationsSub = this.signalrService.lowStockNotifications$.subscribe(notification => {
           // Add new notification to the beginning of the array
           allLowStockNotifications = [notification, ...allLowStockNotifications];
@@ -119,7 +122,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
           if (allLowStockNotifications.length > 4) {
             this.lowStockNotifications = allLowStockNotifications.slice(0, 4);
-          }else{
+          } else {
             this.lowStockNotifications = allLowStockNotifications;
           }
 

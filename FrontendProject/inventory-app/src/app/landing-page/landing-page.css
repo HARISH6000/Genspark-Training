@@ -1,0 +1,137 @@
+.landing-container {
+  overflow-x: hidden;
+}
+
+/* Hero Section */
+.hero-section {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  background-size: cover;
+  background-position: center;
+  color: var(--color-content-bg);
+}
+
+.hero-section h1 {
+  font-size: 3.5rem; /* Large heading */
+  line-height: 1.2;
+}
+
+.hero-section .lead {
+  font-size: 1.5rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-button {
+  padding: 0.75rem 2rem;
+  font-size: 1.25rem;
+  border-radius: 50px; /* Pill shape */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Features Section */
+.features-section {
+  background-color: var(--color-primary-bg);
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.feature-card {
+  border-radius: 0.75rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* Benefits Section */
+.benefits-section {
+  background-color: var(--color-content-bg);
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.benefit-item {
+  border-radius: 0.75rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.benefit-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.benefit-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Secondary CTA Section */
+.cta-bottom-section {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  background-color: var(--color-primary-bg);
+}
+
+/* Footer */
+.footer {
+  background-color: var(--color-content-bg);
+  color: var(--color-secondary-text);
+  font-size: 0.9rem;
+}
+
+.footer a {
+  text-decoration: none;
+  color: var(--color-secondary-text) !important;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767.98px) {
+  .hero-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .hero-section h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-section .lead {
+    font-size: 1.2rem;
+  }
+
+  .cta-button {
+    font-size: 1rem;
+    padding: 0.6rem 1.5rem;
+  }
+
+  .features-section,
+  .benefits-section,
+  .cta-bottom-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .feature-icon,
+  .benefit-icon {
+    font-size: 2.5rem;
+  }
+}

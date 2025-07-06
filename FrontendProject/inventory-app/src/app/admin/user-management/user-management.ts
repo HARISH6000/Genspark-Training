@@ -195,4 +195,9 @@ export class UserManagementComponent implements OnInit {
       this.fetchAllUsers();
     }
   }
+
+  onPageSizeChange(): void {
+    this.pageNumber = 1;
+    this.fetchAllUsers();
+  }
 }

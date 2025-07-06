@@ -88,7 +88,7 @@
 
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <div class="col" *ngFor="let inventory of inventories">
-                    <div class="card h-100 shadow-sm inventory-card" [class.deleted]="inventory.isDeleted" 
+                    <div class="card h-100 shadow-sm inventory-card" [class.deleted]="inventory.isDeleted" (click)="viewInventoryDetails(inventory)"
                         style="background-color: var(--color-content-bg); border-radius: 0.5rem; border: 1px solid var(--color-border);">
                         <div class="card-body">
                             <h5 class="card-title mb-2" style="color: var(--color-primary-text);">{{ inventory.name }}

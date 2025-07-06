@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InventoryManagersBarChart } from './inventory-managers-bar-chart';
+import { InventoryManagersBarChartComponent } from './inventory-managers-bar-chart';
 
-describe('InventoryManagersBarChart', () => {
-  let component: InventoryManagersBarChart;
-  let fixture: ComponentFixture<InventoryManagersBarChart>;
+describe('InventoryManagersBarChartComponent', () => {
+  let component: InventoryManagersBarChartComponent;
+  let fixture: ComponentFixture<InventoryManagersBarChartComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InventoryManagersBarChart]
+      imports: [InventoryManagersBarChartComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InventoryManagersBarChart);
+    fixture = TestBed.createComponent(InventoryManagersBarChartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
