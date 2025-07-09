@@ -1,0 +1,41 @@
+1. created a Vm with ubuntu server
+2. used ssh to access shell
+3. sudo apt update
+4. sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+5. curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+6. echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+7. sudo apt update
+8. sudo apt install -y docker-ce
+9. sudo usermod -aG docker $USER
+
+In local machine
+
+10. create a tag 
+    docker tag weatherapi:latest harish6000/weatherapi:latest
+11. docker login
+12. docker push harish6000/weatherapi:latest
+
+    docker push harish6000/weatherapi:latest
+    The push refers to repository [docker.io/harish6000/weatherapi]
+    fe07684b16b8: Pushed 
+    e9b9d5aa7baa: Pushed 
+    d9a0b93c1209: Pushed 
+    3b7062d09e02: Pushed 
+    fb746e72516f: Pushed 
+    63dda2adf85b: Pushed 
+    a9ff9baf1741: Pushed 
+    e7270c2f90e4: Pushed 
+    b55ed7d7b2de: Pushed 
+    784eb0ff7277: Pushed 
+    1edec325b636: Pushed 
+    2c127093dfc7: Pushed 
+    92971aeb101e: Pushed 
+    latest: digest: sha256:cf928ad504f4b098873a327d4459eec94cdd61d123802436370730b64395907c size: 856
+
+In Vm:
+13. docker login
+14. docker pull harish6000/weatherapi:latest
+15. docker run -d -p 8080:80 harish6000/weatherapi:latest
+
