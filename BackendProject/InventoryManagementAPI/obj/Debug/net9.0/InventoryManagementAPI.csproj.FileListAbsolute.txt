@@ -298,3 +298,9 @@ C:/PresidioTraining/BackendProject/InventoryManagementAPI/obj/Debug/net9.0/ref/I
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Sinks.Debug.dll
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Serilog.Sinks.File.dll
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/System.Linq.Dynamic.Core.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Azure.Core.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Azure.Storage.Blobs.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/Azure.Storage.Common.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/System.ClientModel.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/System.IO.Hashing.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/bin/Debug/net9.0/System.Memory.Data.dll

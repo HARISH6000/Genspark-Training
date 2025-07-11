@@ -33,6 +33,8 @@ namespace InventoryManagementAPI.Services
             _auditLogService = auditLogService;
             _fileStorageService = fileStorageService;
         }
+        
+        
 
         public async Task<UserResponseDto> RegisterUserAsync(AddUserDto userDto, int? currentUserId)
         {
@@ -41,28 +43,28 @@ namespace InventoryManagementAPI.Services
             {
                 throw new NotFoundException($"Role with ID {userDto.RoleId} not found.");
             }
-            
+
             var existingUserByUsername = await _userRepository.GetByUsername(userDto.Username);
             if (existingUserByUsername != null)
             {
                 throw new ConflictException($"Username '{userDto.Username}' is already taken.");
             }
-            
+
             var existingUserByEmail = await _userRepository.GetByEmail(userDto.Email);
             if (existingUserByEmail != null)
             {
-                 throw new ConflictException($"Email '{userDto.Email}' is already registered.");
+                throw new ConflictException($"Email '{userDto.Email}' is already registered.");
             }
-            
+
             string hashedPassword = _passwordHasher.HashPassword(userDto.Password);
-            
+
             var newUser = UserMapper.ToUser(userDto, hashedPassword);
-            newUser.Role = role; 
+            newUser.Role = role;
 
             try
             {
                 var addedUser = await _userRepository.Add(newUser);
-                
+
                 // --- AUDIT LOGGING: INSERT OPERATION ---
                 await _auditLogService.LogActionAsync(new AuditLogEntryDto
                 {
@@ -76,7 +78,7 @@ namespace InventoryManagementAPI.Services
 
                 return UserMapper.ToUserResponseDto(addedUser);
             }
-            catch (DbUpdateException ex) 
+            catch (DbUpdateException ex)
             {
                 if (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true || ex.InnerException?.Message.Contains("duplicate key") == true)
                 {
@@ -93,6 +95,10 @@ namespace InventoryManagementAPI.Services
         {
             var user = await _userRepository.Get(userId);
             if (user == null) return null;
+            if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+            {
+                user.ProfilePictureUrl = _fileStorageService.GetSasUrl(user.ProfilePictureUrl, TimeSpan.FromMinutes(60));
+            }
             return UserMapper.ToUserResponseDto(user);
         }
 
@@ -100,6 +106,10 @@ namespace InventoryManagementAPI.Services
         {
             var user = await _userRepository.GetByUsername(username);
             if (user == null) return null;
+            if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+            {
+                user.ProfilePictureUrl = _fileStorageService.GetSasUrl(user.ProfilePictureUrl, TimeSpan.FromMinutes(60));
+            }
             return UserMapper.ToUserResponseDto(user);
         }
 
@@ -248,7 +258,13 @@ namespace InventoryManagementAPI.Services
         public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync()
         {
             var users = await _userRepository.GetAll();
-            return users.Select(u => UserMapper.ToUserResponseDto(u));
+            var userResponseDtos  = users.Select(u => { if (!string.IsNullOrEmpty(u.ProfilePictureUrl))
+            {
+                u.ProfilePictureUrl = _fileStorageService.GetSasUrl(u.ProfilePictureUrl, TimeSpan.FromMinutes(60));
+            }
+            return UserMapper.ToUserResponseDto(u);
+            });
+            return userResponseDtos;
         }
         
         public async Task<PaginationResponse<UserResponseDto>> GetAllUsersAsync(
@@ -283,7 +299,14 @@ namespace InventoryManagementAPI.Services
                 .ToListAsync();
 
 
-            var userResponseDtos = users.Select(u => UserMapper.ToUserResponseDto(u));
+            var userResponseDtos  = users.Select(u => { if (!string.IsNullOrEmpty(u.ProfilePictureUrl))
+            {
+                u.ProfilePictureUrl = _fileStorageService.GetSasUrl(u.ProfilePictureUrl, TimeSpan.FromMinutes(60));
+            }
+            return UserMapper.ToUserResponseDto(u);
+            });
+
+            //var userResponseDtos = users.Select(u => UserMapper.ToUserResponseDto(u));
 
             var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
 
@@ -320,10 +343,10 @@ namespace InventoryManagementAPI.Services
             }
 
 
-            var newFileName = await _fileStorageService.SaveFileAsync(fileBytes, fileName, contentType);
+            var newFileUrl = await _fileStorageService.SaveFileAsync(fileBytes, fileName, contentType);
 
             // Update the user's ProfilePictureUrl with the new file name
-            user.ProfilePictureUrl = newFileName; // Store only the file name, not the full path
+            user.ProfilePictureUrl = newFileUrl; // Store only the file name, not the full path
 
             var updatedUser = await _userRepository.Update(userId, user);
 

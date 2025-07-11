@@ -48,6 +48,10 @@
               "target": "Package",
               "version": "[5.0.0, )"
             },
+            "Azure.Storage.Blobs": {
+              "target": "Package",
+              "version": "[12.24.1, )"
+            },
             "BCrypt.Net-Next": {
               "target": "Package",
               "version": "[4.0.3, )"

@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "PLhEk0GRNCU=",
+  "dgSpecHash": "OSZ5JxpcpHo=",
   "success": true,
   "projectFilePath": "/Users/presidio/Documents/PresidioTraining/Genspark-Training/BackendProject/InventoryManagementAPI/InventoryManagementAPI.csproj",
   "expectedPackageFiles": [
     "/Users/presidio/.nuget/packages/aspnetcoreratelimit/5.0.0/aspnetcoreratelimit.5.0.0.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/azure.core/1.44.1/azure.core.1.44.1.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/azure.storage.blobs/12.24.1/azure.storage.blobs.12.24.1.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/azure.storage.common/12.23.0/azure.storage.common.12.23.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/Users/presidio/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/presidio/.nuget/packages/microsoft.aspnetcore.authentication.abstractions/2.3.0/microsoft.aspnetcore.authentication.abstractions.2.3.0.nupkg.sha512",
@@ -87,6 +90,7 @@
     "/Users/presidio/.nuget/packages/swashbuckle.aspnetcore.swaggergen/8.1.4/swashbuckle.aspnetcore.swaggergen.8.1.4.nupkg.sha512",
     "/Users/presidio/.nuget/packages/swashbuckle.aspnetcore.swaggerui/8.1.4/swashbuckle.aspnetcore.swaggerui.8.1.4.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.buffers/4.6.0/system.buffers.4.6.0.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/system.clientmodel/1.1.0/system.clientmodel.1.1.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.codedom/6.0.0/system.codedom.6.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.collections.immutable/7.0.0/system.collections.immutable.7.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.composition/7.0.0/system.composition.7.0.0.nupkg.sha512",
@@ -95,16 +99,21 @@
     "/Users/presidio/.nuget/packages/system.composition.hosting/7.0.0/system.composition.hosting.7.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.composition.runtime/7.0.0/system.composition.runtime.7.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.composition.typedparts/7.0.0/system.composition.typedparts.7.0.0.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/system.diagnostics.diagnosticsource/6.0.1/system.diagnostics.diagnosticsource.6.0.1.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.identitymodel.tokens.jwt/8.0.1/system.identitymodel.tokens.jwt.8.0.1.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/system.io.hashing/6.0.0/system.io.hashing.6.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.io.pipelines/8.0.0/system.io.pipelines.8.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.linq.dynamic.core/1.6.6/system.linq.dynamic.core.1.6.6.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/system.memory.data/6.0.0/system.memory.data.6.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.net.websockets.websocketprotocol/5.1.0/system.net.websockets.websocketprotocol.5.1.0.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/system.numerics.vectors/4.5.0/system.numerics.vectors.4.5.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.reflection.emit/4.7.0/system.reflection.emit.4.7.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.reflection.metadata/7.0.0/system.reflection.metadata.7.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
     "/Users/presidio/.nuget/packages/system.text.json/9.0.4/system.text.json.9.0.4.nupkg.sha512",
-    "/Users/presidio/.nuget/packages/system.threading.channels/8.0.0/system.threading.channels.8.0.0.nupkg.sha512"
+    "/Users/presidio/.nuget/packages/system.threading.channels/8.0.0/system.threading.channels.8.0.0.nupkg.sha512",
+    "/Users/presidio/.nuget/packages/system.threading.tasks.extensions/4.5.4/system.threading.tasks.extensions.4.5.4.nupkg.sha512"
   ],
   "logs": []
 }

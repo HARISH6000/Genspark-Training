@@ -113,12 +113,19 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
-builder.Services.AddScoped<IFileStorageService>(provider =>
-{
-    var uploadBasePath = builder.Configuration["UploadSettings:BasePath"];
-    var auditLogService = provider.GetRequiredService<IAuditLogService>();
-    return new LocalFileStorageService(uploadBasePath, auditLogService);
-});
+// builder.Services.AddScoped<IFileStorageService>(provider =>
+// {
+//     var uploadBasePath = builder.Configuration["UploadSettings:BasePath"];
+//     var auditLogService = provider.GetRequiredService<IAuditLogService>();
+//     return new LocalFileStorageService(uploadBasePath, auditLogService);
+// });
+
+builder.Services.AddScoped<IFileStorageService>(sp =>
+    new BlobFileStorageService(
+        builder.Configuration["AzureBlobStorage:ConnectionString"],
+        builder.Configuration["AzureBlobStorage:ContainerName"],
+        sp.GetRequiredService<IAuditLogService>()
+    ));
 
 
 // --- Configure JWT Authentication ---

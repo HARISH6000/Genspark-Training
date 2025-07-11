@@ -26,6 +26,7 @@ namespace InventoryManagementAPI.Mappers
                 Username = user.Username,
                 Email = user.Email,
                 Phone = user.Phone,
+                ProfilePictureUrl = user.ProfilePictureUrl,
                 RoleId = user.RoleId,
                 RoleName = user.Role?.RoleName ?? "Unknown",
                 IsDeleted = user.IsDeleted
