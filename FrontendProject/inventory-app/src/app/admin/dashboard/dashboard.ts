@@ -10,8 +10,9 @@ import { AuthService, UserDetails } from '../../services/auth.service';
 import { InventoryService } from '../../services/inventory.service';
 import { ProductService } from '../../services/product.service';
 import { SignalrService } from '../../services/signalr.service';
-import { UserService } from '../../services/user.service'; // New service
-import { CategoryService } from '../../services/category.service'; // New service
+import { UserService } from '../../services/user.service';
+import { CategoryService } from '../../services/category.service'; 
+import { NotificationService } from '../../services/notification.service';
 
 // Models
 import { Inventory, Product, ProductsForInventories } from '../../models/inventory';
@@ -82,6 +83,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     private signalrService: SignalrService,
     private userService: UserService,
     private categoryService: CategoryService,
+    private notificationService: NotificationService,
     private router: Router
   ) { }
 
@@ -94,7 +96,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.startSignalRConnection();
+    //this.startSignalRConnection();
+    this.notificationService.lowStockNotification$.subscribe((notifications: LowStockNotificationDto[]) => {
+      if(notifications.length > 4) {
+        this.lowStockNotifications = notifications.slice(0, 4);
+      }
+      else{
+        this.lowStockNotifications = notifications;
+      }
+    });
+
+    this.connectionStatusSub = this.signalrService.connectionStatus$.subscribe(isConnected => {
+      this.signalRConnectionStatus = isConnected ? 'Connected' : 'Disconnected/Connecting...';
+    });
     this.fetchDashboardData();
   }
 
@@ -301,8 +315,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/products']);
   }
 
-  viewUserInfo(userId: number): void {
-    this.router.navigate(['/user-info', userId]);
+  viewUserInfo(user: UserDetails): void {
+    this.router.navigate(['/user-info', user.userId],{ state: { user: user } });
   }
 
   viewInventoryDetails(inventoryId: number): void {

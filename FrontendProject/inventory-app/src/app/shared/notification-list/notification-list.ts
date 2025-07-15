@@ -44,7 +44,7 @@ export class NotificationListComponent implements OnInit {
   clearAllNotifications(): void {
     if (confirm('Are you sure you want to clear all notifications? This action cannot be undone.')) {
       this.notifications = [];
-      this.notificationService.setLowStockNotification(this.notifications);
+      this.notificationService.setLowStockNotification([]);
       sessionStorage.removeItem('lowStockNotifications'); 
     }
   }

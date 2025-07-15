@@ -150,8 +150,7 @@ export class InventoryInfoComponent implements OnInit {
 
           // Determine if current user is a manager of this inventory
           const currentUserId = this.authService.currentUserId??0;
-          this.isManagerOfThisInventory = this.authService.isAdmin() ||
-            (managers.some(m => m.userId === currentUserId));
+          this.isManagerOfThisInventory = (managers.some(m => m.userId === currentUserId));
 
           this.filterAvailableProductsForDropdown();
           this.filterAvailableUsersForManagerDropdown(); // Filter users for manager dropdown

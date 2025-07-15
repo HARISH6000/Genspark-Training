@@ -31,12 +31,15 @@ export class App implements OnInit, OnDestroy {
       console.error('Error starting SignalR connection:', err);
     });
 
-    const storedNotifications = sessionStorage.getItem('lowStockNotifications');
+    let storedNotifications = sessionStorage.getItem('lowStockNotifications');
     this.notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
 
     this.notificationService.setLowStockNotification(this.notifications);
 
     this.notificationsSub = this.signalrService.lowStockNotifications$.subscribe(notification => {
+
+      storedNotifications = sessionStorage.getItem('lowStockNotifications');
+      this.notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
 
       const isAdmin = this.authService.isAdmin();
 
