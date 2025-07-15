@@ -15,10 +15,13 @@ using AspNetCoreRateLimit;
 using InventoryManagementAPI.Utilities;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning; 
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.IdentityModel.Tokens.Jwt;
 using Serilog;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,7 +60,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAllOrigins",
         builder =>
         {
-            builder.WithOrigins("http://127.0.0.1:5500", "http://localhost:5085","http://127.0.0.1:4200","http://localhost:4200","http://127.0.0.1:8080","http://localhost:8080")
+            builder.WithOrigins("http://127.0.0.1:5500", "http://localhost:5085", "http://127.0.0.1:4200", "http://localhost:4200", "http://127.0.0.1:8080", "http://localhost:8080")
                    .AllowAnyMethod()
                    .AllowAnyHeader()
                    .AllowCredentials();
@@ -120,12 +123,16 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 //     return new LocalFileStorageService(uploadBasePath, auditLogService);
 // });
 
+var client = new SecretClient(new Uri(builder.Configuration["AzureKeyVault:VaultUri"]), new DefaultAzureCredential());
+KeyVaultSecret secret = await client.GetSecretAsync(builder.Configuration["AzureKeyVault:secretName"]);
+
 builder.Services.AddScoped<IFileStorageService>(sp =>
     new BlobFileStorageService(
-        builder.Configuration["AzureBlobStorage:ConnectionString"],
+        secret.Value,
         builder.Configuration["AzureBlobStorage:ContainerName"],
         sp.GetRequiredService<IAuditLogService>()
-    ));
+    )
+);
 
 
 // --- Configure JWT Authentication ---
