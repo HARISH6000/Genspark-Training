@@ -1,0 +1,48 @@
+Azure - Microsoft
+AWS - Amazon
+Google Cloud Platform - Google
+IBM Cloud - IBM
+ 
+Req -> Server(IP Address- like a physical address on  the internet) - DNS(Map IP to Domain name)
+Server -> Response
+ 
+ISP -> uses its machine ID/ Hardware ID to get an Ip -> Broadcast the need for IP
+ISP->has DHCP server which when reached checks the mac and then unicast the IP for the system to join the network
+Based on the IP and Subnet mask the system is included in the respective network
+Authentication -> to access resource over the network
+AD - Active directory 
+Resource -> hardware/software/file available over the network
+ 
+File -> Multiple people edit. view from any system as long as we had the right credentials and access
+ 
+IaaS
+SaaS
+PaaS
+ 
+ 
+Data Centers -> Infra
+Resource Group ->a way to logically collect the resources provisioned on the cloud
+Selection of region
+   Cost
+   Latency
+   Local Government Rules
+ 
+------------------------------------------------------------------------------
+Azure Boards
+ 
+PosGre Database in cloud
+ 
+Connect to the database
+ 
+Use Azure Vault Service for storing Connection String
+ 
+Provision Blob service and connect to it for storing files(images and so)
+ 
+Deploy app in app service
+ 
+Move to CI CD pipeline
+ 
+Use container to deploy application
+ 
+ 
+ 

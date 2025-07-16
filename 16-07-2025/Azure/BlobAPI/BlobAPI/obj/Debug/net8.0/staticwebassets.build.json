@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "bCo8FhjRvoMqlTQHtIi5xFgGH9sJ94OZuKG91lrPDhc=",
+  "Source": "BlobAPI",
+  "BasePath": "_content/BlobAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

@@ -1,0 +1,141 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|c:\\corp\\genspark\\may25\\presidiomay25\\azure\\blobapi\\blobapi\\services\\blobstorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|solutionrelative:blobapi\\services\\blobstorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|c:\\corp\\genspark\\may25\\presidiomay25\\azure\\blobapi\\blobapi\\controllers\\filescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|solutionrelative:blobapi\\controllers\\filescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|c:\\corp\\genspark\\may25\\presidiomay25\\azure\\blobapi\\blobapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|solutionrelative:blobapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|c:\\corp\\genspark\\may25\\presidiomay25\\azure\\blobapi\\blobapi\\models\\uploadrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|solutionrelative:blobapi\\models\\uploadrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|c:\\corp\\genspark\\may25\\presidiomay25\\azure\\blobapi\\blobapi\\models\\sasresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|solutionrelative:blobapi\\models\\sasresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|c:\\corp\\genspark\\may25\\presidiomay25\\azure\\blobapi\\blobapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|solutionrelative:blobapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|c:\\corp\\genspark\\may25\\presidiomay25\\azure\\blobapi\\blobapi\\blobapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{2D33B79E-EDDC-4D74-8DFB-5008FF1C109F}|BlobAPI\\BlobAPI.csproj|solutionrelative:blobapi\\blobapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SasResponse.cs",
+              "DocumentMoniker": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Models\\SasResponse.cs",
+              "RelativeDocumentMoniker": "BlobAPI\\Models\\SasResponse.cs",
+              "ToolTip": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Models\\SasResponse.cs",
+              "RelativeToolTip": "BlobAPI\\Models\\SasResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T14:24:53.778Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UploadRequestDto.cs",
+              "DocumentMoniker": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Models\\UploadRequestDto.cs",
+              "RelativeDocumentMoniker": "BlobAPI\\Models\\UploadRequestDto.cs",
+              "ToolTip": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Models\\UploadRequestDto.cs",
+              "RelativeToolTip": "BlobAPI\\Models\\UploadRequestDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T05:36:12.512Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "BlobAPI.csproj",
+              "DocumentMoniker": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\BlobAPI.csproj",
+              "RelativeDocumentMoniker": "BlobAPI\\BlobAPI.csproj",
+              "ToolTip": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\BlobAPI.csproj",
+              "RelativeToolTip": "BlobAPI\\BlobAPI.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-07-11T05:32:34.325Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "FilesController.cs",
+              "DocumentMoniker": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Controllers\\FilesController.cs",
+              "RelativeDocumentMoniker": "BlobAPI\\Controllers\\FilesController.cs",
+              "ToolTip": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Controllers\\FilesController.cs",
+              "RelativeToolTip": "BlobAPI\\Controllers\\FilesController.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAA0wCkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T04:57:55.427Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Program.cs",
+              "RelativeDocumentMoniker": "BlobAPI\\Program.cs",
+              "ToolTip": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Program.cs",
+              "RelativeToolTip": "BlobAPI\\Program.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAIwBsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T04:56:42.344Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BlobStorageService.cs",
+              "DocumentMoniker": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Services\\BlobStorageService.cs",
+              "RelativeDocumentMoniker": "BlobAPI\\Services\\BlobStorageService.cs",
+              "ToolTip": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\Services\\BlobStorageService.cs*",
+              "RelativeToolTip": "BlobAPI\\Services\\BlobStorageService.cs*",
+              "ViewState": "AgIAAA8AAAAAAAAAAADwvxcAAACrAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T04:48:19.252Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "BlobAPI\\appsettings.json",
+              "ToolTip": "C:\\Corp\\Genspark\\May25\\PresidioMay25\\Azure\\BlobAPI\\BlobAPI\\appsettings.json",
+              "RelativeToolTip": "BlobAPI\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-11T04:46:15.306Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
