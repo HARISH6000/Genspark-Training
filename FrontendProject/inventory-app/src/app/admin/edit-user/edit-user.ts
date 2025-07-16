@@ -178,6 +178,7 @@ export class EditUserComponent implements OnInit {
       if (this.editingUserId) {
         this.fetchUserToEdit(this.editingUserId);
       }
+      this.authService.getUserDetails(this.userToEdit?.username || '').subscribe();
     });
   }
 

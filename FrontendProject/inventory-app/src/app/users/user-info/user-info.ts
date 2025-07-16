@@ -68,6 +68,7 @@ export class UserInfoComponent implements OnInit {
         // this.router.navigate(['/login']);
       }
     }
+    this.profilePictureUrl = this.user?.profilePictureUrl || this.profilePictureUrl; // Use user's profile picture if available
   }
 
   ngOnInit(): void {
