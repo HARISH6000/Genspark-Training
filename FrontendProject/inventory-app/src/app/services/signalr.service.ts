@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import * as signalR from '@microsoft/signalr'; 
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { LowStockNotificationDto } from '../models/notification'; 
+import { LowStockNotificationDto} from '../models/notification'; 
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -51,6 +51,11 @@ export class SignalrService implements OnDestroy {
 
     this.hubConnection.on('ReceiveLowStockNotification', (notification: LowStockNotificationDto) => {
       console.log('Received Low Stock Notification:', notification);
+      this.lowStockNotificationSubject.next(notification);
+    });
+
+    this.hubConnection.on('ReceiveManagerChangeNotification', (notification: LowStockNotificationDto) => {
+      console.log('Received Manager Change Notification:', notification);
       this.lowStockNotificationSubject.next(notification);
     });
 

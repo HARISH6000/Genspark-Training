@@ -4,9 +4,9 @@ namespace InventoryManagementAPI.DTOs
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
-        public string SKU { get; set; } = string.Empty;
-        public int CurrentQuantity { get; set; }
-        public int MinStockQuantity { get; set; }
+        public string? SKU { get; set; } = null;
+        public int? CurrentQuantity { get; set; } = null;
+        public int? MinStockQuantity { get; set; } = null;
         public int InventoryId { get; set; }
         public string InventoryName { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;

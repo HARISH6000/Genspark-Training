@@ -43,22 +43,37 @@ export class App implements OnInit, OnDestroy {
 
       const isAdmin = this.authService.isAdmin();
 
-      if (!isAdmin) {
+      if (notification.sku) {
+        if (!isAdmin) {
 
-        this.inventoryService.getInventoriesByManagerId(this.authService.currentUserId ?? 0).pipe(catchError(error => {
-          return [];
-        })).subscribe(inventories => {
-          if (inventories.some(inventory => inventory.inventoryId === notification.inventoryId)) {
+          this.inventoryService.getInventoriesByManagerId(this.authService.currentUserId ?? 0).pipe(catchError(error => {
+            return [];
+          })).subscribe(inventories => {
+            if (inventories.some(inventory => inventory.inventoryId === notification.inventoryId)) {
+              this.notifications = [notification, ...this.notifications];
+              this.notificationService.setLowStockNotification(this.notifications);
+              sessionStorage.setItem('lowStockNotifications', JSON.stringify(this.notifications));
+            }
+          });
+        }
+        else {
           this.notifications = [notification, ...this.notifications];
           this.notificationService.setLowStockNotification(this.notifications);
           sessionStorage.setItem('lowStockNotifications', JSON.stringify(this.notifications));
         }
-        });
       }
       else{
-        this.notifications = [notification, ...this.notifications];
-        this.notificationService.setLowStockNotification(this.notifications);
-        sessionStorage.setItem('lowStockNotifications', JSON.stringify(this.notifications));
+        if(isAdmin) {
+          this.notifications = [notification, ...this.notifications];
+          this.notificationService.setLowStockNotification(this.notifications);
+          sessionStorage.setItem('lowStockNotifications', JSON.stringify(this.notifications));
+        }
+        else if (notification.productId === this.authService.currentUserId) {
+          this.notifications = this.notifications.filter(n => n.productId === this.authService.currentUserId || n.sku);
+          this.notifications = [notification, ...this.notifications];
+          this.notificationService.setLowStockNotification(this.notifications);
+          sessionStorage.setItem('lowStockNotifications', JSON.stringify(this.notifications));
+        }
       }
     });
   }

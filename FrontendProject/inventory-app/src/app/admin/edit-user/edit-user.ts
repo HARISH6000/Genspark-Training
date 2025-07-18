@@ -170,11 +170,16 @@ export class EditUserComponent implements OnInit {
         this.selectedFile = null;
       }),
       catchError(error => {
+        console.error('Error segment of component:', error);
         this.errorMessage = error.message || 'Failed to upload profile picture.';
         return of(null);
       })
-    ).subscribe(() => {
-      this.successMessage = 'Profile picture uploaded successfully!';
+    ).subscribe((res:any) => {
+      if (!res) {
+        return;
+      }
+      console.log('Profile picture upload response:', res);
+      this.successMessage = res?.message || 'Profile picture uploaded successfully!';
       if (this.editingUserId) {
         this.fetchUserToEdit(this.editingUserId);
       }

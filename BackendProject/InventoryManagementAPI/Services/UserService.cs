@@ -328,6 +328,12 @@ namespace InventoryManagementAPI.Services
         
         public async Task<UserResponseDto> UploadProfilePictureAsync(int userId, byte[] fileBytes, string fileName, string contentType, int? currentUserId)
         {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(extension))
+                throw new UnsupportedMediaTypeException("Unsupported file type.");
+
             var user = await _userRepository.Get(userId);
             if (user == null)
             {

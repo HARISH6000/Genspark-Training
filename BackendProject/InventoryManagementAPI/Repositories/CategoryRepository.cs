@@ -17,7 +17,8 @@ namespace InventoryManagementAPI.Repositories
         public async Task<Category?> GetByName(string categoryName)
         {
             return await _applicationDbContext.Categories
-                                              .SingleOrDefaultAsync(c => c.CategoryName == categoryName);
+                                            .Include(c => c.Products)
+                                            .SingleOrDefaultAsync(c => c.CategoryName == categoryName);
         }
 
         
@@ -25,13 +26,16 @@ namespace InventoryManagementAPI.Repositories
         {
             
             return await _applicationDbContext.Categories
-                                              .SingleOrDefaultAsync(c => c.CategoryId == key);
+                                            .Include(c => c.Products)
+                                            .SingleOrDefaultAsync(c => c.CategoryId == key);
         }
 
         
         public override async Task<IEnumerable<Category>> GetAll()
         {
-            return await _applicationDbContext.Categories.ToListAsync();
+            return await _applicationDbContext.Categories
+                                            .Include(c => c.Products)
+                                            .ToListAsync();
         }
     }
 }

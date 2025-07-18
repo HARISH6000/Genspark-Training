@@ -33,13 +33,21 @@
             <ul class="list-group list-group-flush" *ngIf="lowStockNotifications.length > 0">
               <li *ngFor="let notif of lowStockNotifications" class="list-group-item d-flex justify-content-between align-items-start"
                 style="background-color: var(--color-content-bg); border-color: var(--color-border); color: var(--color-primary-text);">
-                <div class="me-auto">
-                  <div class="fw-bold" style="color: var(--color-primary-text);">{{ notif.productName }} (SKU: {{ notif.sku }})</div>
-                  <small class="text-muted" style="color: var(--color-secondary-text) !important;">{{ notif.message }}</small>
+                <div *ngIf="notif.sku">
+                  <div class="me-auto">
+                    <div class="fw-bold" style="color: var(--color-primary-text);">{{ notif.productName }} (SKU: {{ notif.sku }})</div>
+                    <small class="text-muted" style="color: var(--color-secondary-text) !important;">{{ notif.message }}</small>
+                  </div>
+                  <span class="badge bg-danger rounded-pill" style="background-color: var(--color-danger) !important; color: var(--color-content-bg);">
+                    Qty: {{ notif.currentQuantity }} / Min: {{ notif.minStockQuantity }}
+                  </span>
                 </div>
-                <span class="badge bg-danger rounded-pill" style="background-color: var(--color-danger) !important; color: var(--color-content-bg);">
-                  Qty: {{ notif.currentQuantity }} / Min: {{ notif.minStockQuantity }}
-                </span>
+                <div *ngIf="!notif.sku">
+                  <div class="me-auto">
+                    <div class="fw-bold" style="color: var(--color-primary-text);">{{ notif.productName }} </div>
+                    <small class="text-muted" style="color: var(--color-secondary-text) !important;">{{ notif.message }}</small>
+                  </div>
+                </div>
               </li>
             </ul>
           </div>

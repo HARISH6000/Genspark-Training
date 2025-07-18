@@ -26,7 +26,8 @@ namespace InventoryManagementAPI.Mappers
             {
                 CategoryId = category.CategoryId,
                 CategoryName = category.CategoryName,
-                Description = category.Description
+                Description = category.Description,
+                ProductCount = category.Products?.Count() ?? 0
             };
         }
     }

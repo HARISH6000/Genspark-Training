@@ -42,6 +42,7 @@ export class CategoryManagementComponent implements OnInit {
         return of([]);
       })
     ).subscribe(categories => {
+      console.log('Fetched categories:', categories); // Debugging line
       this.categories = categories;
       this.loading = false;
     });

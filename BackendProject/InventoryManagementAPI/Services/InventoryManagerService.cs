@@ -4,10 +4,12 @@ using InventoryManagementAPI.Models;
 using InventoryManagementAPI.Exceptions;
 using InventoryManagementAPI.Mappers;
 using InventoryManagementAPI.Utilities;
+using InventoryManagementAPI.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text.Json; 
+using System.Text.Json;
 
 namespace InventoryManagementAPI.Services
 {
@@ -16,18 +18,47 @@ namespace InventoryManagementAPI.Services
         private readonly IInventoryManagerRepository _inventoryManagerRepository;
         private readonly IInventoryRepository _inventoryRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IAuditLogService _auditLogService; 
+        private readonly IHubContext<LowStockHub> _hubContext;
+        private readonly IAuditLogService _auditLogService;
+
 
         public InventoryManagerService(
             IInventoryManagerRepository inventoryManagerRepository,
             IInventoryRepository inventoryRepository,
             IUserRepository userRepository,
+            IHubContext<LowStockHub> hubContext,
             IAuditLogService auditLogService)
         {
             _inventoryManagerRepository = inventoryManagerRepository;
             _inventoryRepository = inventoryRepository;
             _userRepository = userRepository;
-            _auditLogService = auditLogService; 
+            _hubContext = hubContext;
+            _auditLogService = auditLogService;
+        }
+
+        private async Task NotifyManagerChange(User user, Inventory inventory, int? currentUserId, string message = "assigned")
+        {
+
+            if (user != null && inventory != null && currentUserId.HasValue)
+            {
+                var notification = new LowStockNotificationDto
+                {
+                    ProductId = user.UserId,
+                    ProductName = (message == "assigned") ?
+                        $"Assigned as Manager To Inventory {inventory.Name}" :
+                        $"Removed as Manager From Inventory {inventory.Name}",
+                    SKU = null,
+                    CurrentQuantity = null,
+                    MinStockQuantity = null,
+                    InventoryId = inventory.InventoryId,
+                    InventoryName = inventory.Name,
+                    Timestamp = DateTime.UtcNow,
+                    Message = $"{user.Username}(Id:{user.UserId}) have been {message} as a manager for inventory '{inventory.Name}' (Id:{inventory.InventoryId}).",
+                };
+
+                await _hubContext.Clients.All.SendAsync("ReceiveManagerChangeNotification", notification);
+            }
+
         }
 
         public async Task<InventoryManagerResponseDto> AssignManagerToInventoryAsync(AssignRemoveInventoryManagerDto dto, int? currentUserId)
@@ -61,7 +92,9 @@ namespace InventoryManagementAPI.Services
             try
             {
                 var addedAssignment = await _inventoryManagerRepository.Add(newAssignment);
-                
+
+                await NotifyManagerChange(managerUser, inventory, currentUserId);
+
                 // AUDIT LOGGING: INSERT Assignment
                 await _auditLogService.LogActionAsync(new AuditLogEntryDto
                 {
@@ -96,7 +129,9 @@ namespace InventoryManagementAPI.Services
             var oldAssignmentSnapshot = JsonSerializer.Deserialize<InventoryManager>(JsonSerializer.Serialize(assignmentToDelete));
 
             var deletedAssignment = await _inventoryManagerRepository.Delete(assignmentToDelete.Id);
-            
+
+            await NotifyManagerChange(deletedAssignment.Manager, deletedAssignment.Inventory, currentUserId, "removed");
+
             // AUDIT LOGGING: DELETE Assignment
             await _auditLogService.LogActionAsync(new AuditLogEntryDto
             {
@@ -105,7 +140,7 @@ namespace InventoryManagementAPI.Services
                 RecordId = deletedAssignment.Id.ToString(),
                 ActionType = "DELETE",
                 OldValues = oldAssignmentSnapshot,
-                NewValues = null 
+                NewValues = null
             });
 
             return InventoryManagerMapper.ToInventoryManagerResponseDto(deletedAssignment);
@@ -126,7 +161,7 @@ namespace InventoryManagementAPI.Services
                                             .DistinctBy(u => u.UserId);
 
             var responseDto = activeManagers.Select(m => InventoryManagerMapper.ToManagerForInventoryResponseDto(m));
-            
+
 
             return SortHelper.ApplySorting(responseDto, sortBy);
         }
@@ -146,7 +181,7 @@ namespace InventoryManagementAPI.Services
                                                .DistinctBy(i => i.InventoryId);
 
             var responseDto = activeInventories.Select(i => InventoryManagerMapper.ToInventoryManagedByManagerResponseDto(i));
-            
+
             return SortHelper.ApplySorting(responseDto, sortBy);
         }
 
