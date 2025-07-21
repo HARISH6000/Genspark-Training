@@ -1,0 +1,64 @@
+az login
+
+dotnet publish -c Release -o ./publish
+
+az appservice plan create \
+  --name "my-weather-app-hg-plan" \
+  --resource-group "harish_genspark_training" \
+  --sku B1 \
+  --is-linux
+
+az webapp create \
+  --resource-group "harish_genspark_training" \
+  --plan "my-weather-app-hg-plan" \
+  --name "my-weather-app-hg" \
+  --runtime "DOTNETCORE:9.0" \
+  --deployment-local-git
+
+
+az webapp deploy \
+  --resource-group "harish_genspark_training" \
+  --name "my-weather-app-hg" \
+  --src-path ./publish.zip \
+  --type zip
+
+
+container registry
+
+az acr create \
+  --resource-group harish_genspark_training \
+  --name myweatherappregistryhg \
+  --sku Basic
+
+az acr login --name myweatherappregistryhg
+
+acrLoginServer=$(az acr show --name myweatherappregistryhg --query loginServer --output tsv)
+
+docker build -t $acrLoginServer/myweatherapp:latest .
+
+docker push $acrLoginServer/myweatherapp:latest
+
+az webapp create \
+  --resource-group harish_genspark_training \
+  --plan my-weather-app-hg-plan \
+  --name my-weather-app-hg-container \
+  --deployment-container-image-name myweatherapp:latest \
+  --registry-login-server $acrLoginServer \
+  --registry-username $(az acr credential show --name myweatherappregistryhg --query username -o tsv) \
+  --registry-password $(az acr credential show --name myweatherappregistryhg --query "passwords[0].value" -o tsv) \
+  --multicontainer-config-type docker
+
+
+az webapp config appsettings set \
+  --name my-weather-app-hg-container \
+  --resource-group harish_genspark_training \
+  --settings WEBSITES_PORT=8080
+
+az webapp restart \
+  --name my-weather-app-hg-container \
+  --resource-group harish_genspark_training
+
+az webapp log tail \
+  --name my-weather-app-hg-container \
+  --resource-group harish_genspark_training
+

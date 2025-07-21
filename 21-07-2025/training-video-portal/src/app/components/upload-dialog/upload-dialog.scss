@@ -1,0 +1,62 @@
+.heading {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+.mat-mdc-dialog-content.dialog-content {
+  padding: 1.5rem; 
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-upload {
+  label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .file-name {
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .no-file-text {
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    font-style: italic;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.mat-mdc-dialog-actions { 
+  padding: 1rem 1.5rem 1rem 1.5rem;
+  display: flex;
+  width: 500px;
+  justify-content: flex-end;
+  gap: 1rem;
+}

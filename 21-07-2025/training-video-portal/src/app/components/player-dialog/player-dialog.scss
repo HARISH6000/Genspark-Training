@@ -1,0 +1,17 @@
+.player-content {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-player {
+  max-width: 1000px;
+  height: auto;
+  display: block;
+}
+
+.mat-mdc-dialog-actions {
+  padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+  justify-content: flex-end;
+}

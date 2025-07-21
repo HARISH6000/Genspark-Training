@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Video Player</h2>
+
+<mat-dialog-content class="mat-typography player-content">
+  <video width="100%" controls class="video-player">
+    <source [src]="data.blobUrl" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

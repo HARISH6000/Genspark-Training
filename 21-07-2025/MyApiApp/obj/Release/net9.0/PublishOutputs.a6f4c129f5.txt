@@ -1,0 +1,12 @@
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/MyApiApp
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/appsettings.Development.json
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/appsettings.json
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/MyApiApp.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/MyApiApp.deps.json
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/MyApiApp.runtimeconfig.json
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/MyApiApp.pdb
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/Microsoft.AspNetCore.OpenApi.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/Microsoft.OpenApi.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/Swashbuckle.AspNetCore.Swagger.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/21-07-2025/MyApiApp/publish/Swashbuckle.AspNetCore.SwaggerUI.dll

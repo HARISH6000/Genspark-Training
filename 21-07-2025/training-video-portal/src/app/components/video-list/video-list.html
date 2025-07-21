@@ -1,0 +1,27 @@
+<div class="video-list-container">
+  <div class="header">
+    <button mat-raised-button color="primary" (click)="openUploadDialog()">
+      Upload Video
+    </button>
+  </div>
+
+  <div class="video-grid">
+    <mat-card *ngFor="let video of videos" class="video-card">
+      <mat-card-header>
+        <mat-card-title>{{ video.title }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="video-description">{{ video.description }}</p>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button color="accent" (click)="openPlayerDialog(video.blobUrl)">
+          Play
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div *ngIf="videos.length === 0" class="no-videos-message">
+    <p>No videos available. Click "Upload Video" to add one!</p>
+  </div>
+</div>

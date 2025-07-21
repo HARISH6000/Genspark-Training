@@ -1,0 +1,39 @@
+<h2 mat-dialog-title class="heading">Upload Video</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="upload-form">
+  <mat-dialog-content class="mat-typography dialog-content">
+    <div class="form-field">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" required />
+        <mat-error *ngIf="form.get('title')?.hasError('required') && form.get('title')?.touched">
+          Title is required.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-field">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-field file-upload">
+      <label>Select Video</label>
+      <input #fileInput hidden type="file" (change)="onFileSelected($event)" />
+      <button mat-raised-button color="accent" (click)="fileInput.click()">
+        Choose File
+      </button>
+      <span *ngIf="selectedFile" class="file-name">{{ selectedFile.name }}</span>
+      <span *ngIf="!selectedFile" class="no-file-text">No file chosen</span>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || !selectedFile">
+      Upload
+    </button>
+  </mat-dialog-actions>
+</form>
