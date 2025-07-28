@@ -1,0 +1,6 @@
+@ChienVHShopOnline_HostAddress = http://localhost:5127
+
+GET {{ChienVHShopOnline_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
