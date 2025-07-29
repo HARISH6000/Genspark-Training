@@ -5,10 +5,12 @@ using ChienVHShopOnline.Interfaces;
 using ChienVHShopOnline.Services;
 using ChienVHShopOnline.Profiles;
 using OfficeOpenXml; 
-
+using QuestPDF.Infrastructure;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 // Register repositories
 builder.Services.AddScoped<ProductRepository>();
@@ -22,10 +24,16 @@ builder.Services.AddScoped<ModelRepository>();
 builder.Services.AddScoped<ContactURepository>();
 builder.Services.AddScoped<CartRepository>();
 
+
 // Register services
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<INewsService, NewsService>();
+builder.Services.AddScoped<IContactUService, ContactUService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IModelService, ModelService>();
 
 
 // Add services
