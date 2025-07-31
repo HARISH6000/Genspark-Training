@@ -1,11 +1,13 @@
 using ChienVHShopOnline.DTOs;
 using ChienVHShopOnline.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChienVHShopOnline.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ContactUController : ControllerBase
 {
     private readonly IContactUService _service;

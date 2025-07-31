@@ -5,11 +5,13 @@ using ChienVHShopOnline.Services;
 using ChienVHShopOnline.Interfaces;
 using ChienVHShopOnline.Profiles;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChienVHShopOnline.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CategoryController : ControllerBase
 {
     private readonly ICategoryService _service;

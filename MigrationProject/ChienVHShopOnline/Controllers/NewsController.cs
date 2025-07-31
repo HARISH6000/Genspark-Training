@@ -2,6 +2,7 @@
 using ChienVHShopOnline.DTOs;
 using ChienVHShopOnline.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using OfficeOpenXml;
 
@@ -10,6 +11,7 @@ namespace ChienVHShopOnline.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class NewsController : ControllerBase
 {
     private readonly INewsService _newsService;

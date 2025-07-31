@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using ChienVHShopOnline.Interfaces;
 using ChienVHShopOnline.DTOs;
 
@@ -6,6 +7,7 @@ namespace ChienVHShopOnline.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ColorsController : ControllerBase
 {
     private readonly IColorService _colorService;

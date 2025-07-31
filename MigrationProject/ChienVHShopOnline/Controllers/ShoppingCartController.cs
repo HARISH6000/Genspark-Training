@@ -1,11 +1,13 @@
 using ChienVHShopOnline.DTOs;
 using ChienVHShopOnline.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChienVHShopOnline.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ShoppingCartController : ControllerBase
 {
     private readonly IShoppingCartService _shoppingCartService;

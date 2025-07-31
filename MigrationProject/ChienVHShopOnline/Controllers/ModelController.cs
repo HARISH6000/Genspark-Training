@@ -1,11 +1,13 @@
 using ChienVHShopOnline.DTOs;
 using ChienVHShopOnline.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChienVHShopOnline.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ModelController : ControllerBase
 {
     private readonly IModelService _service;

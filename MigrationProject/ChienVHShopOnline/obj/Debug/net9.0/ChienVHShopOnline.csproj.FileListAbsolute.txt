@@ -224,3 +224,5 @@
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/MigrationProject/ChienVHShopOnline/obj/Debug/net9.0/ChienVHShopOnline.pdb
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/MigrationProject/ChienVHShopOnline/obj/Debug/net9.0/ChienVHShopOnline.genruntimeconfig.cache
 /Users/presidio/Documents/PresidioTraining/Genspark-Training/MigrationProject/ChienVHShopOnline/obj/Debug/net9.0/ref/ChienVHShopOnline.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/MigrationProject/ChienVHShopOnline/bin/Debug/net9.0/BCrypt.Net-Next.dll
+/Users/presidio/Documents/PresidioTraining/Genspark-Training/MigrationProject/ChienVHShopOnline/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll

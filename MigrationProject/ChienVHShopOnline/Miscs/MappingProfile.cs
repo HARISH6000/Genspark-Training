@@ -44,5 +44,7 @@ public class MappingProfile : Profile
         CreateMap<ModelCreateDto, Model>();
         CreateMap<ModelUpdateDto, Model>();
 
+        CreateMap<User, UserReadDto>();
+
     }
 }
