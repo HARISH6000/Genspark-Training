@@ -25,11 +25,11 @@ using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.Host.UseSerilog((context, services, configuration) => configuration
-//     .ReadFrom.Configuration(context.Configuration)
-//     .ReadFrom.Services(services)
-//     .Enrich.FromLogContext()
-// );
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext()
+);
 
 
 builder.Services.AddControllers();
@@ -195,7 +195,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-//app.UseSerilogRequestLogging();
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
